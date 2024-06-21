@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaCross, FaShareSquare } from "react-icons/fa";
-import { FaDeleteLeft } from "react-icons/fa6";
+import { FaDeleteLeft, FaLifeRing } from "react-icons/fa6";
 import Logo from "./ui/Logo";
 import NavLinks from "./NavLinks";
 import Button from "./ui/Button";
@@ -34,7 +34,7 @@ function NavBarMobile() {
     <nav
       className={`navMobile w-full px-48 py-24 bg-[#FFFFFC]/70 flex ${
         opened ? "flex-col items-center" : " flex-row-reverse items-start"
-      } justify-between lg:hidden `}
+      } justify-between lg:hidden z-50`}
     >
       <div className="flex justify-end w-full">
         <div
@@ -42,7 +42,11 @@ function NavBarMobile() {
             setOpened(!opened);
           }}
         >
-          <FaDeleteLeft size={50} className="text-danger" />
+          {opened ? (
+            <FaDeleteLeft size={50} className="text-danger" />
+          ) : (
+            <FaLifeRing size={50} className="text-danger" />
+          )}
         </div>
       </div>
       <div className="logo">

@@ -19,10 +19,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <div className="w-screen h-screen relative">
-          <div className="absolute w-screen">
+          <div className="fixed w-screen z-50">
             <NavBar />
           </div>
-          <div className="">{children}</div>
+          <div className=" overflow-y-scroll overflow-x-hidden">{children}</div>
         </div>
       </body>
     </html>
