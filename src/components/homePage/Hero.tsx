@@ -44,7 +44,7 @@ function Hero() {
 
         <div className="w-full h-full pt-[100px] px-8  md:px-[20%] absolute ">
           <div className="w-full h-full flex flex-col space-y-8 md:space-y-0 md:flex-row items-center justify-center md:space-x-96">
-            <div className="p-16 md:p-24 space-y-24 bg-success rounded-15 max-w-[550px] shadow-lg">
+            <div className="p-16 md:p-24 space-y-24 bg-[#004E3A] rounded-15 max-w-[550px] shadow-lg">
               <h1 className="text-center text-white font-bold">
                 Moving Cargo Worldwide
               </h1>

@@ -1,6 +1,9 @@
 import Image from "next/image";
 import { Client } from "appwrite";
 import Hero from "@/components/homePage/Hero";
+import SectionTitle from "@/components/SectionTitle";
+import Partners from "@/components/homePage/Partners";
+import Services from "@/components/homePage/Services";
 const client = new Client();
 client
   .setEndpoint("https://cloud.appwrite.io/v1")
@@ -9,6 +12,8 @@ export default function Home() {
   return (
     <main className="">
       <Hero />
+      <Partners />
+      <Services />
     </main>
   );
 }
