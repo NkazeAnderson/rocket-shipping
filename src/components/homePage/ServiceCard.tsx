@@ -4,7 +4,7 @@ import { FaArrowRight, FaCheck, FaPlayCircle } from "react-icons/fa";
 
 function ServiceCard() {
   return (
-    <div className="p-16 flex flex-col serviceCardShadow space-y-24 border-primary hover:border-success border-2 rounded-15">
+    <div className="p-16 flex flex-col serviceCardShadow space-y-24 border-primary hover:border-success border-2 rounded-15 hover:-translate-y-8 relative hover:transition ease-in-out">
       <div className="flex space-x-16">
         <FaPlayCircle size={48} className="text-[#1C274C]" />
         <h3 className="text-success">Service</h3>
