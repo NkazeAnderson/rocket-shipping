@@ -8,7 +8,7 @@ import NavBarMobile from "./NavBarMobile";
 function NavBar() {
   return (
     <>
-      <nav className="w-full px-48 py-24 bg-[#FFFFFC]/95 justify-between items-center hidden lg:flex z-50">
+      <nav className="w-full px-48 py-8 bg-[#FFFFFC]/95 justify-between items-center hidden lg:flex z-50">
         <Logo />
 
         <NavLinks />
