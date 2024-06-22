@@ -9,6 +9,7 @@ import Gallery from "@/components/homePage/Gallery";
 import Reviews from "@/components/homePage/Reviews";
 import GetQuote from "@/components/homePage/GetQuote";
 import Tracker from "@/components/homePage/Tracker";
+import Footer from "@/components/Footer";
 const client = new Client();
 client
   .setEndpoint("https://cloud.appwrite.io/v1")
@@ -24,6 +25,7 @@ export default function Home() {
       <Reviews />
       <GetQuote />
       <Tracker />
+      <Footer />
     </main>
   );
 }

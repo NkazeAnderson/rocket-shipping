@@ -21,11 +21,13 @@ function ServiceWrapper({ children }: { children: React.ReactNode }) {
           x: width - width * p,
           y: height - height * p,
           rotate: p * 180,
+          scale: (1 + p) * 1.5,
         });
         gsap.to(".bottomSphere", {
           x: width + width * p,
           y: height + height * p,
           rotate: p * 180,
+          scale: (1 + p) * 1.5,
         });
       }
     },
