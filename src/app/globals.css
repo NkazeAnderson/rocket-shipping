@@ -39,6 +39,9 @@
   .largeOnlyView {
     @apply hidden md:block;
   }
+  .galleryImg {
+    @apply mx-auto rounded-30 hover:scale-110 transition-transform duration-500 ease-in hover:rounded-15;
+  }
 }
 @layer utilities {
   .text-balance {

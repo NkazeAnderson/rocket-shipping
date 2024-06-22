@@ -4,6 +4,8 @@ import Hero from "@/components/homePage/Hero";
 import SectionTitle from "@/components/SectionTitle";
 import Partners from "@/components/homePage/Partners";
 import Services from "@/components/homePage/Services";
+import WhyUs from "@/components/homePage/WhyUs";
+import Gallery from "@/components/homePage/Gallery";
 const client = new Client();
 client
   .setEndpoint("https://cloud.appwrite.io/v1")
@@ -14,6 +16,8 @@ export default function Home() {
       <Hero />
       <Partners />
       <Services />
+      <WhyUs />
+      <Gallery />
     </main>
   );
 }
