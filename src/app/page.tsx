@@ -6,6 +6,9 @@ import Partners from "@/components/homePage/Partners";
 import Services from "@/components/homePage/Services";
 import WhyUs from "@/components/homePage/WhyUs";
 import Gallery from "@/components/homePage/Gallery";
+import Reviews from "@/components/homePage/Reviews";
+import GetQuote from "@/components/homePage/GetQuote";
+import Tracker from "@/components/homePage/Tracker";
 const client = new Client();
 client
   .setEndpoint("https://cloud.appwrite.io/v1")
@@ -18,6 +21,9 @@ export default function Home() {
       <Services />
       <WhyUs />
       <Gallery />
+      <Reviews />
+      <GetQuote />
+      <Tracker />
     </main>
   );
 }

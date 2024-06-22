@@ -15,7 +15,7 @@ function ServiceWrapper({ children }: { children: React.ReactNode }) {
       if (wrapper.current) {
         const width = wrapper.current.clientWidth / 2;
         const height = wrapper.current.clientHeight / 2;
-        console.log(progress);
+
         const p = progress - 0.6;
         gsap.to(".topSphere", {
           x: width - width * p,
