@@ -1,9 +1,9 @@
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { FaLock } from "react-icons/fa";
-import { FaShareFromSquare } from "react-icons/fa6";
 
 function Login() {
   return (
@@ -16,6 +16,11 @@ function Login() {
         </p>
         <form className=" py-32 md:py-48 space-y-16" action="">
           <Input placeholder="email" label="Email" type="email" />
+          <p className="text-right">
+            <Link className="font-bold  text-primary" href={"/auth/login"}>
+              Return to login
+            </Link>
+          </p>
           <Button props={{ text: "Get Access Key", icon: FaLock }} />
         </form>
       </div>

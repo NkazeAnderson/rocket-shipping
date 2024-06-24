@@ -4,6 +4,7 @@ import NavLinks from "./NavLinks";
 import Button from "./ui/Button";
 import { FaCross, FaShareSquare } from "react-icons/fa";
 import NavBarMobile from "./NavBarMobile";
+import Link from "next/link";
 
 function NavBar() {
   return (
@@ -12,7 +13,9 @@ function NavBar() {
         <Logo />
 
         <NavLinks />
-        <Button props={{ text: "Login", icon: FaShareSquare }} />
+        <Link href={"/auth/login"}>
+          <Button props={{ text: "Login", icon: FaShareSquare }} />
+        </Link>
       </nav>
       {/* "mobile" */}
       <NavBarMobile />

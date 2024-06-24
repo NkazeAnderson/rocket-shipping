@@ -13,7 +13,10 @@ function ReviewsWrapper({ children }: { children: React.ReactNode }) {
       const w_lg = wrapper.current.scrollWidth;
       gsap.to(".reviews", {
         translateX: -(w_lg - w_sm * 0.6),
-        scrollTrigger: ".reviewsWrapper",
+        scrollTrigger: {
+          trigger: ".reviewsWrapper",
+          scroller: "#layoutWrapper",
+        },
         duration: 12 * (w_lg / w_sm),
         repeat: -1,
         ease: "none",

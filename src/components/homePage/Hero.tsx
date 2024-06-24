@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 import Button from "../ui/Button";
 import HeroWrapper from "./HeroWrapper";
+import Link from "next/link";
 
 function Hero() {
   return (
@@ -54,7 +55,9 @@ function Hero() {
                 know to do best.
               </p>
               <div className="flex justify-center">
-                <Button props={{ text: "Login" }} />
+                <Link href={"/auth/login"}>
+                  <Button props={{ text: "Login" }} />
+                </Link>
               </div>
             </div>
             <div className="relative w-[340px] md:w-[440px] h-[250px] md:h-[440px] rounded-15">
