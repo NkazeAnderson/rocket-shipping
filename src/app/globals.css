@@ -42,6 +42,9 @@
   .galleryImg {
     @apply mx-auto rounded-30 hover:scale-110 transition-transform duration-500 ease-in hover:rounded-15;
   }
+  .dashboardHeadings {
+    @apply font-bold text-success;
+  }
 }
 @layer utilities {
   .text-balance {

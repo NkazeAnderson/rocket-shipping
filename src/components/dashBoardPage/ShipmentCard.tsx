@@ -6,7 +6,7 @@ import { FaMap } from "react-icons/fa";
 
 function ShipmentCard() {
   return (
-    <div className="dashboardCardBG w-full rounded-15 text-white">
+    <div className="dashboardCardBG w-full rounded-15 text-white border border-success">
       <div className="flex justify-between items-center">
         <div className="bg-black flex w-full rounded-t-15 py-8 px-16 border-b border-white items-center justify-between space-x-8">
           <div>

@@ -5,8 +5,14 @@ import { FaBell, FaComment, FaComments, FaHome } from "react-icons/fa";
 import { FaChevronLeft, FaChevronRight, FaTruckFront } from "react-icons/fa6";
 import { dashBoardContextT } from "@/types/types";
 import Link from "next/link";
-import NotificationCard from "./NotificationCard";
-import ShipmentCard from "./ShipmentCard";
+import Home from "./Home";
+import Messages from "./Messages";
+import Shipments from "./Shipments";
+import Notifications from "./Notifications";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+
+gsap.registerPlugin(useGSAP);
 
 export const Context = createContext<null | dashBoardContextT>(null);
 
@@ -21,6 +27,20 @@ function DashBoardWrapper() {
       setScreenSize(window.innerWidth);
     });
   }, [screenSize]);
+
+  useGSAP(() => {
+    gsap.fromTo(
+      ".dashboardCardBG",
+      { yPercent: 50 },
+      { yPercent: 0, duration: 1.5 }
+    );
+    gsap.fromTo(
+      ".dashboardHeadings",
+      { xPercent: -50 },
+      { xPercent: 0, duration: 1 }
+    );
+    setShowText(false);
+  }, [activeTab]);
 
   return (
     <Context.Provider value={{ activeTab, setActiveTab }}>
@@ -68,14 +88,10 @@ function DashBoardWrapper() {
               screenSize > 500 && showText ? "md:px-40" : "md:px-96"
             }  h-full overflow-y-scroll bg-primary/10`}
           >
-            <h2 className=" font-bold text-success">Notifications</h2>
-            <div className="py-24">
-              <NotificationCard />
-            </div>
-            <h2 className=" font-bold text-success">Shipments</h2>
-            <div className="py-24">
-              <ShipmentCard />
-            </div>
+            {activeTab.toLowerCase() === "home" && <Home />}
+            {activeTab.toLowerCase() === "messages" && <Messages />}
+            {activeTab.toLowerCase() === "notifications" && <Notifications />}
+            {activeTab.toLowerCase() === "shipments" && <Shipments />}
           </div>
         </div>
         <div className="w-screen lg:w-[50%] hidden lg:block">
