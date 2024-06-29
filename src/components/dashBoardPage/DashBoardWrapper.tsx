@@ -8,7 +8,12 @@ import {
   FaHome,
   FaPlusCircle,
 } from "react-icons/fa";
-import { FaChevronLeft, FaChevronRight, FaTruckFront } from "react-icons/fa6";
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaTruckFront,
+  FaXmark,
+} from "react-icons/fa6";
 import { dashBoardContextT } from "@/types/types";
 import Link from "next/link";
 import Home from "./Home";
@@ -50,19 +55,22 @@ function DashBoardWrapper() {
   }, [activeTab]);
 
   useGSAP(() => {
-    showSidePanel
-      ? gsap.to("#sidePanel", { xPercent: 0, duration: 3 })
-      : gsap.to("#sidePanel", { xPercent: 100, duration: 3 });
-    console.log(showSidePanel);
-  }, [showSidePanel]);
+    if (screenSize < 500 && screenSize != 0) {
+      showSidePanel
+        ? gsap.to("#sidePanel", { xPercent: 0, duration: 1.5 })
+        : gsap.to("#sidePanel", { xPercent: 100, duration: 1.5 });
+    } else {
+      gsap.to("#sidePanel", { xPercent: 0, duration: 0.1 });
+    }
+  }, [showSidePanel, screenSize]);
 
   return (
     <Context.Provider value={{ activeTab, setActiveTab, setShowSidePanel }}>
       <div
-        className="w-full h-full flex flex-nowrap items-stretch overflow-y-hidden"
+        className="w-full h-full flex flex-nowrap overflow-y-hidden relative"
         ref={wrapper}
       >
-        <div className="w-full lg:w-[50%] flex items-stretch ">
+        <div className="w-full lg:w-[50%] flex items-stretch h-full">
           <div className="bg-success text-white pb-32 pt-24 dashboardSideBarShadow">
             <div
               className="w-full flex justify-center py-16"
@@ -110,10 +118,17 @@ function DashBoardWrapper() {
         </div>
         <div
           id="sidePanel"
-          className="w-full absolute lg:left-0 lg:static lg:w-[50%] lg:block"
+          className="w-full h-full absolute lg:left-0 lg:static lg:w-[50%] lg:block bg-light-gray"
         >
-          <div className="w-full h-full border-2 border-primary border-r-0 relative rounded-30 rounded-r-[0]">
-            details
+          <div className="w-full h-full border-2 border-primary border-r-0 relative rounded-30 rounded-r-[0] z-40">
+            <span
+              onClick={() => {
+                setShowSidePanel((prev) => !prev);
+              }}
+              className=" absolute top-16 left-24 p-16 rounded-full bg-danger text-white border border-success hover:border-danger"
+            >
+              <FaXmark className=" inline" size={25} />
+            </span>
           </div>
         </div>
         <span

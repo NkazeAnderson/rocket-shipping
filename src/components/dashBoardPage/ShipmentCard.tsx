@@ -28,6 +28,7 @@ function ShipmentCard() {
         <div className="flex items center justify-between py-16">
           <div>
             <span
+              className=" hover:cursor-pointer"
               onClick={() => {
                 setShowSidePanel((prev) => !prev);
               }}
@@ -36,7 +37,12 @@ function ShipmentCard() {
             </span>
           </div>
           <div>
-            <span>
+            <span
+              className=" hover:cursor-pointer"
+              onClick={() => {
+                setShowSidePanel((prev) => !prev);
+              }}
+            >
               <Pill text="Maps" isprimary outlined icon={FaMap} />
             </span>
           </div>
