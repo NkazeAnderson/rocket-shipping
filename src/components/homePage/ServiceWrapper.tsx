@@ -12,7 +12,7 @@ function ServiceWrapper({ children }: { children: React.ReactNode }) {
   useGSAP(() => {
     ScrollTrigger.create({
       trigger: "#serviceWrapper",
-      scroller: "#layoutWrapper",
+      scroller: "#homeWrapper",
       onToggle: (self) => console.log("toggled, isActive:", self.isActive),
 
       onUpdate: ({ progress }) => {

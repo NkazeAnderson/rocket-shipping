@@ -22,10 +22,7 @@ export default function RootLayout({
           <div className="fixed w-screen z-50">
             <NavBar />
           </div>
-          <div
-            id="layoutWrapper"
-            className="overflow-y-scroll overflow-x-hidden w-full h-full"
-          >
+          <div className="overflow-y-hidden overflow-x-hidden w-full h-full">
             {children}
           </div>
         </div>

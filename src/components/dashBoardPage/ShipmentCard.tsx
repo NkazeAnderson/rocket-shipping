@@ -1,10 +1,15 @@
-import React from "react";
+"use client";
+import React, { useContext } from "react";
 import { FaBraille, FaComment, FaFileLines, FaHandDots } from "react-icons/fa6";
 import Pill from "../ui/Pill";
 import Image from "next/image";
 import { FaMap } from "react-icons/fa";
+import { Context } from "./DashBoardWrapper";
+import { dashBoardContextT } from "@/types/types";
 
 function ShipmentCard() {
+  const { setShowSidePanel } = useContext(Context) as dashBoardContextT;
+
   return (
     <div className="dashboardCardBG w-full rounded-15 text-white border border-success">
       <div className="flex justify-between items-center">
@@ -22,7 +27,11 @@ function ShipmentCard() {
         </p>
         <div className="flex items center justify-between py-16">
           <div>
-            <span>
+            <span
+              onClick={() => {
+                setShowSidePanel((prev) => !prev);
+              }}
+            >
               <Pill text="Info" isprimary icon={FaFileLines} />
             </span>
           </div>

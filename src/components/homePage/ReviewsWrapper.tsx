@@ -15,7 +15,7 @@ function ReviewsWrapper({ children }: { children: React.ReactNode }) {
         translateX: -(w_lg - w_sm * 0.6),
         scrollTrigger: {
           trigger: ".reviewsWrapper",
-          scroller: "#layoutWrapper",
+          scroller: "#homeWrapper",
         },
         duration: 12 * (w_lg / w_sm),
         repeat: -1,

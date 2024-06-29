@@ -1,7 +1,13 @@
 "use client";
 import React, { createContext, useEffect, useRef, useState } from "react";
 import SideIcon from "../ui/SideIcons";
-import { FaBell, FaComment, FaComments, FaHome } from "react-icons/fa";
+import {
+  FaBell,
+  FaComment,
+  FaComments,
+  FaHome,
+  FaPlusCircle,
+} from "react-icons/fa";
 import { FaChevronLeft, FaChevronRight, FaTruckFront } from "react-icons/fa6";
 import { dashBoardContextT } from "@/types/types";
 import Link from "next/link";
@@ -18,6 +24,7 @@ export const Context = createContext<null | dashBoardContextT>(null);
 
 function DashBoardWrapper() {
   const [showText, setShowText] = useState(false);
+  const [showSidePanel, setShowSidePanel] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
   const [screenSize, setScreenSize] = useState(0);
   const wrapper = useRef<null | HTMLDivElement>(null);
@@ -42,10 +49,17 @@ function DashBoardWrapper() {
     setShowText(false);
   }, [activeTab]);
 
+  useGSAP(() => {
+    showSidePanel
+      ? gsap.to("#sidePanel", { xPercent: 0, duration: 3 })
+      : gsap.to("#sidePanel", { xPercent: 100, duration: 3 });
+    console.log(showSidePanel);
+  }, [showSidePanel]);
+
   return (
-    <Context.Provider value={{ activeTab, setActiveTab }}>
+    <Context.Provider value={{ activeTab, setActiveTab, setShowSidePanel }}>
       <div
-        className="w-full h-full flex items-stretch overflow-y-hidden"
+        className="w-full h-full flex flex-nowrap items-stretch overflow-y-hidden"
         ref={wrapper}
       >
         <div className="w-full lg:w-[50%] flex items-stretch ">
@@ -94,11 +108,21 @@ function DashBoardWrapper() {
             {activeTab.toLowerCase() === "shipments" && <Shipments />}
           </div>
         </div>
-        <div className="w-screen lg:w-[50%] hidden lg:block">
+        <div
+          id="sidePanel"
+          className="w-full absolute lg:left-0 lg:static lg:w-[50%] lg:block"
+        >
           <div className="w-full h-full border-2 border-primary border-r-0 relative rounded-30 rounded-r-[0]">
             details
           </div>
         </div>
+        <span
+          className={` text-primary hover:text-success hover:cursor-pointer fixed ${
+            screenSize > 500 ? "bottom-16" : "top-98"
+          }   right-16 bg-white rounded-[100%]`}
+        >
+          <FaPlusCircle size={50} />
+        </span>
       </div>
     </Context.Provider>
   );
