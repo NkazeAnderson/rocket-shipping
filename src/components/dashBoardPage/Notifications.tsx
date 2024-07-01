@@ -7,7 +7,7 @@ function Notifications() {
     <>
       <h2 className="dashboardHeadings">Notifications</h2>
       <div className="py-24">
-        <NotificationCard />
+        <NotificationCard props={{ id: "Nt09828" }} />
       </div>
     </>
   );

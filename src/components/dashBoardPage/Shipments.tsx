@@ -7,7 +7,7 @@ function Shipments() {
     <>
       <h2 className="dashboardHeadings ">Shipments</h2>
       <div className="py-24">
-        <ShipmentCard />
+        <ShipmentCard props={{ id: "pas09828" }} />
       </div>
     </>
   );

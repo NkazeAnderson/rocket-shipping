@@ -16,7 +16,10 @@ client
   .setProject("6674479b00230f8c4e57");
 export default function Home() {
   return (
-    <main id="homeWrapper" className=" overflow-y-scroll w-full h-full">
+    <main
+      id="homeWrapper"
+      className=" overflow-y-scroll overflow-x-hidden w-full h-full"
+    >
       <Hero />
       <Partners />
       <Services />

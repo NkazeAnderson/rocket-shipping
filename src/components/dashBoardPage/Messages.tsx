@@ -6,7 +6,7 @@ function Messages() {
     <>
       <h2 className="dashboardHeadings">Messages</h2>
       <div className="py-24">
-        <ConversationCard />
+        <ConversationCard props={{ id: "Con09828" }} />
       </div>
     </>
   );

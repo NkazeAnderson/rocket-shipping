@@ -1,8 +1,15 @@
+"use client";
+import { dashBoardContextT, subjectT } from "@/types/types";
 import Image from "next/image";
-import React from "react";
+import React, { useContext } from "react";
 import { FaCheckCircle } from "react-icons/fa";
+import { Context } from "./DashBoardWrapper";
 
-function ConversationCard() {
+function ConversationCard({ props }: { props: { id: string } }) {
+  const subject: subjectT = "conversation";
+  const { setShowSidePanel, setSidePanelContent } = useContext(
+    Context
+  ) as dashBoardContextT;
   return (
     <div className="dashboardCardBG flex justify-between items-center bg-black p-8 rounded-15 text-white hover:cursor-pointer border border-success">
       <div className="flex space-x-8">
@@ -16,7 +23,12 @@ function ConversationCard() {
             alt=""
           />
         </div>
-        <div>
+        <div
+          onClick={() => {
+            setShowSidePanel((prev) => !prev);
+            setSidePanelContent({ id: props?.id, subject });
+          }}
+        >
           <h5 className="font-bold">Anthony miller</h5>
           <div className="flex items-center space-x-8">
             <span className="p-[4px] rounded-[100%] bg-success animate-ping"></span>

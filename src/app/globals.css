@@ -43,7 +43,7 @@
     @apply mx-auto rounded-30 hover:scale-110 transition-transform duration-500 ease-in hover:rounded-15;
   }
   .dashboardHeadings {
-    @apply font-bold text-success;
+    @apply font-bold text-success border-b border-primary w-full p-[4px] bg-primary/20;
   }
 }
 @layer utilities {
@@ -76,4 +76,14 @@
   -webkit-box-shadow: 0px 8px 10px 0px rgba(0, 0, 0, 0.86);
   -moz-box-shadow: 0px 8px 10px 0px rgba(0, 0, 0, 0.86);
   box-shadow: 0px 8px 10px 0px rgba(0, 0, 0, 0.86);
+}
+.dashboardBg {
+  background: linear-gradient(
+      0deg,
+      rgb(255 107 43 / 0.1),
+      rgb(255 107 43 / 0.1)
+    ),
+    url("/dashboardBg.jpg");
+  background-size: 200px 200px;
+  background-repeat: repeat;
 }

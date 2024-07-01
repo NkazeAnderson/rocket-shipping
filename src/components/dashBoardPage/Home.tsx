@@ -7,11 +7,11 @@ function Home() {
     <>
       <h2 className="dashboardHeadings">Notifications</h2>
       <div className="py-24">
-        <NotificationCard />
+        <NotificationCard props={{ id: "Nt-17372636" }} />
       </div>
       <h2 className="dashboardHeadings ">Shipments</h2>
       <div className="py-24">
-        <ShipmentCard />
+        <ShipmentCard props={{ id: "Rs-097899" }} />
       </div>
     </>
   );

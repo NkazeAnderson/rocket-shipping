@@ -14,7 +14,7 @@ import {
   FaTruckFront,
   FaXmark,
 } from "react-icons/fa6";
-import { dashBoardContextT } from "@/types/types";
+import { dashBoardContextT, sidePanelContentT } from "@/types/types";
 import Link from "next/link";
 import Home from "./Home";
 import Messages from "./Messages";
@@ -22,6 +22,7 @@ import Shipments from "./Shipments";
 import Notifications from "./Notifications";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import SidePanel from "./SidePanel";
 
 gsap.registerPlugin(useGSAP);
 
@@ -30,6 +31,8 @@ export const Context = createContext<null | dashBoardContextT>(null);
 function DashBoardWrapper() {
   const [showText, setShowText] = useState(false);
   const [showSidePanel, setShowSidePanel] = useState(false);
+  const [sidePanelContent, setSidePanelContent] =
+    useState<null | sidePanelContentT>(null);
   const [activeTab, setActiveTab] = useState("Home");
   const [screenSize, setScreenSize] = useState(0);
   const wrapper = useRef<null | HTMLDivElement>(null);
@@ -65,9 +68,17 @@ function DashBoardWrapper() {
   }, [showSidePanel, screenSize]);
 
   return (
-    <Context.Provider value={{ activeTab, setActiveTab, setShowSidePanel }}>
+    <Context.Provider
+      value={{
+        activeTab,
+        setActiveTab,
+        setShowSidePanel,
+        setSidePanelContent,
+        sidePanelContent,
+      }}
+    >
       <div
-        className="w-full h-full flex flex-nowrap overflow-y-hidden relative"
+        className="w-full h-full flex flex-nowrap overflow-y-hidden overflow-x-hidden relative"
         ref={wrapper}
       >
         <div className="w-full lg:w-[50%] flex items-stretch h-full">
@@ -106,7 +117,7 @@ function DashBoardWrapper() {
             </div>
           </div>
           <div
-            className={`flex-grow p-8 ${
+            className={` dashboardBg flex-grow p-8 ${
               screenSize > 500 && showText ? "md:px-40" : "md:px-96"
             }  h-full overflow-y-scroll bg-primary/10`}
           >
@@ -116,25 +127,15 @@ function DashBoardWrapper() {
             {activeTab.toLowerCase() === "shipments" && <Shipments />}
           </div>
         </div>
-        <div
-          id="sidePanel"
-          className="w-full h-full absolute lg:left-0 lg:static lg:w-[50%] lg:block bg-light-gray"
-        >
-          <div className="w-full h-full border-2 border-primary border-r-0 relative rounded-30 rounded-r-[0] z-40">
-            <span
-              onClick={() => {
-                setShowSidePanel((prev) => !prev);
-              }}
-              className=" absolute top-16 left-24 p-16 rounded-full bg-danger text-white border border-success hover:border-danger"
-            >
-              <FaXmark className=" inline" size={25} />
-            </span>
-          </div>
-        </div>
+        <SidePanel />
         <span
           className={` text-primary hover:text-success hover:cursor-pointer fixed ${
             screenSize > 500 ? "bottom-16" : "top-98"
-          }   right-16 bg-white rounded-[100%]`}
+          } ${showSidePanel && "hidden"}  right-16 bg-white rounded-[100%]`}
+          onClick={() => {
+            setSidePanelContent({ id: "user1", subject: "admin" });
+            setShowSidePanel(true);
+          }}
         >
           <FaPlusCircle size={50} />
         </span>

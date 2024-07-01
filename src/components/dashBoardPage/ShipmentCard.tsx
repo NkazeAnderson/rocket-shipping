@@ -5,17 +5,20 @@ import Pill from "../ui/Pill";
 import Image from "next/image";
 import { FaMap } from "react-icons/fa";
 import { Context } from "./DashBoardWrapper";
-import { dashBoardContextT } from "@/types/types";
+import { dashBoardContextT, subjectT } from "@/types/types";
 
-function ShipmentCard() {
-  const { setShowSidePanel } = useContext(Context) as dashBoardContextT;
+function ShipmentCard({ props }: { props: { id: string } }) {
+  const subject: subjectT = "shipment";
+  const { setShowSidePanel, setSidePanelContent } = useContext(
+    Context
+  ) as dashBoardContextT;
 
   return (
     <div className="dashboardCardBG w-full rounded-15 text-white border border-success">
       <div className="flex justify-between items-center">
         <div className="bg-black flex w-full rounded-t-15 py-8 px-16 border-b border-white items-center justify-between space-x-8">
           <div>
-            <FaBraille /> <h5 className="font-bold">#RS-1547273</h5>
+            <FaBraille /> <h5 className="font-bold">#{props?.id}</h5>
           </div>
           <Pill text="In Transit" isprimary={false} />
         </div>
@@ -31,6 +34,7 @@ function ShipmentCard() {
               className=" hover:cursor-pointer"
               onClick={() => {
                 setShowSidePanel((prev) => !prev);
+                setSidePanelContent({ id: props?.id, subject });
               }}
             >
               <Pill text="Info" isprimary icon={FaFileLines} />
@@ -41,6 +45,11 @@ function ShipmentCard() {
               className=" hover:cursor-pointer"
               onClick={() => {
                 setShowSidePanel((prev) => !prev);
+                setSidePanelContent({
+                  id: props?.id,
+                  maps: true,
+                  subject,
+                });
               }}
             >
               <Pill text="Maps" isprimary outlined icon={FaMap} />
