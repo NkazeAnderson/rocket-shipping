@@ -87,3 +87,13 @@
   background-size: 200px 200px;
   background-repeat: repeat;
 }
+.sidePanelBg {
+  background: linear-gradient(
+      0deg,
+      rgba(247, 245, 244, 0.925),
+      rgba(247, 245, 244, 0.925)
+    ),
+    url("/dashboardBg.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
