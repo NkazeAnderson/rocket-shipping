@@ -14,7 +14,7 @@ function SidePanel() {
   return (
     <div
       id="sidePanel"
-      className="sidePanelBg w-full h-full absolute lg:left-0 lg:static lg:w-[50%] rounded-30 lg:block rounded-r-[0] "
+      className="sidePanelBg w-full h-full absolute lg:left-0 lg:static lg:w-[50%] rounded-tl-30 lg:block"
     >
       <div className="w-full h-full border-2 border-primary border-r-0 relative  rounded-tl-30 z-40 overflow-scroll">
         <span
