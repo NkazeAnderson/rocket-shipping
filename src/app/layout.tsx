@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="w-screen h-screen relative">
+        <div className="w-screen h-[100dvh] relative">
           <div className="fixed w-screen z-50">
             <NavBar />
           </div>

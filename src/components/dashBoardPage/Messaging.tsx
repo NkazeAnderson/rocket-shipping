@@ -24,8 +24,8 @@ function Messaging() {
       <div className="flex justify-between sticky top-0 items-center bg-black p-8 rounded-b-15 text-white">
         <div className="flex space-x-8">
           <Image
-            width={100}
-            height={100}
+            width={60}
+            height={60}
             style={{ objectFit: "cover" }}
             className="rounded-full"
             src="/courier.png"
@@ -33,7 +33,7 @@ function Messaging() {
           />
           <div>
             <h5 className="font-bold">Anthony miller</h5>
-            <p>Courier</p>
+            <p>Online</p>
           </div>
         </div>
       </div>
@@ -91,7 +91,7 @@ function Messaging() {
                 name="message"
                 id="message"
                 className={`w-full outline-none focus:outline-none`}
-                rows={4}
+                rows={2}
                 placeholder="Type your message here... "
                 value={message}
                 onChange={(e) => {

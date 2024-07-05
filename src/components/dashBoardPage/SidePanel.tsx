@@ -5,6 +5,7 @@ import { Context } from "./DashBoardWrapper";
 import { dashBoardContextT, subjectT } from "@/types/types";
 import ShipmentInfo from "./ShipmentInfo";
 import Messaging from "./Messaging";
+import Admin from "./Admin";
 
 function SidePanel() {
   const { setShowSidePanel, sidePanelContent } = useContext(
@@ -28,6 +29,7 @@ function SidePanel() {
         <div>
           {sidePanelContent?.subject === "shipment" && <ShipmentInfo />}
           {sidePanelContent?.subject === "conversation" && <Messaging />}
+          {sidePanelContent?.subject === "admin" && <Admin />}
         </div>
       </div>
     </div>

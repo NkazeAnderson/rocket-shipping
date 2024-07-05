@@ -72,7 +72,16 @@ function ShipmentCard({ props }: { props: { id: string } }) {
             <p>Courier</p>
           </div>
         </div>
-        <div className="rounded-[100%] p-16 md:p-24 bg-success text-white">
+        <div
+          className="rounded-[100%] p-16 md:p-24 bg-success text-white hover:cursor-pointer"
+          onClick={() => {
+            setShowSidePanel((prev) => !prev);
+            setSidePanelContent({
+              id: "messageID",
+              subject: "conversation",
+            });
+          }}
+        >
           <FaComment size={25} />
         </div>
       </div>
