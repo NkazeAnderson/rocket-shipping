@@ -1,17 +1,21 @@
 import React from "react";
 import NotificationCard from "./NotificationCard";
 import ShipmentCard from "./ShipmentCard";
+import ViewMore from "./ViewMore";
+import { notifications, shipments } from "@/utils/contants";
 
 function Home() {
   return (
     <>
       <h2 className="dashboardHeadings">Notifications</h2>
       <div className="py-24">
-        <NotificationCard props={{ id: "Nt-17372636" }} />
+        <NotificationCard props={notifications[0]} />
+        <ViewMore value="notifications" />
       </div>
       <h2 className="dashboardHeadings ">Shipments</h2>
-      <div className="py-24">
-        <ShipmentCard props={{ id: "Rs-097899" }} />
+      <div className="">
+        <ShipmentCard props={shipments[0]} />
+        <ViewMore value="shipments" />
       </div>
     </>
   );

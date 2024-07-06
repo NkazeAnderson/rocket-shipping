@@ -5,29 +5,46 @@ import Pill from "../ui/Pill";
 import Image from "next/image";
 import { FaMap } from "react-icons/fa";
 import { Context } from "./DashBoardWrapper";
-import { dashBoardContextT, subjectT } from "@/types/types";
+import { dashBoardContextT, shipmentT, subjectT } from "@/types/types";
 
-function ShipmentCard({ props }: { props: { id: string } }) {
+function ShipmentCard({ props }: { props: shipmentT }) {
   const subject: subjectT = "shipment";
   const { setShowSidePanel, setSidePanelContent } = useContext(
     Context
   ) as dashBoardContextT;
 
   return (
-    <div className="dashboardCardBG w-full rounded-15 text-white border border-success">
+    <div className="dashboardCardBG w-full rounded-15 text-white border border-success mb-24">
       <div className="flex justify-between items-center">
         <div className="bg-black flex w-full rounded-t-15 py-8 px-16 border-b border-white items-center justify-between space-x-8">
           <div>
-            <FaBraille /> <h5 className="font-bold">#{props?.id}</h5>
+            <FaBraille /> <h5 className="font-bold">#{props.id}</h5>
           </div>
-          <Pill text="In Transit" isprimary={false} />
+          <Pill text={props.status} isprimary={false} />
         </div>
       </div>
-      <div className=" px-48  rounded-15 py-8">
+      <div className=" px-48  rounded-15 py-8 space-y-8">
         <p>
-          New Shipment from New York to Miami is now registered for delivery
-          ORDER NO: RS-108287177271
+          <strong>Product:</strong>
+          <span className="ml-8"> {props.product}</span>
         </p>
+        <p>
+          <strong>Sender:</strong>
+          <span className="ml-8">{props.sender.name}</span>
+        </p>
+        <p>
+          <strong>Destination:</strong>
+          <span className="ml-8">{props.destination.cityStateCountry}</span>
+        </p>
+        <p>
+          <strong>Mode:</strong>
+          <span className="ml-8">{props.mode}</span>
+        </p>
+        <p>
+          <strong>Package:</strong>
+          <span className="ml-8">{props.package}</span>
+        </p>
+
         <div className="flex items center justify-between py-16">
           <div>
             <span
@@ -64,11 +81,11 @@ function ShipmentCard({ props }: { props: { id: string } }) {
             height={100}
             style={{ objectFit: "cover" }}
             className="rounded-full"
-            src="/courier.png"
-            alt=""
+            src={props.courier.image as string}
+            alt="courier  image"
           />
           <div>
-            <h5 className="font-bold">Anthony miller</h5>
+            <h5 className="font-bold">{props.courier.name}</h5>
             <p>Courier</p>
           </div>
         </div>
@@ -77,7 +94,7 @@ function ShipmentCard({ props }: { props: { id: string } }) {
           onClick={() => {
             setShowSidePanel((prev) => !prev);
             setSidePanelContent({
-              id: "messageID",
+              id: props.conversationId as string,
               subject: "conversation",
             });
           }}

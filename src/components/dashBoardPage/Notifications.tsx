@@ -1,13 +1,15 @@
 import React from "react";
-import ConversationCard from "./ConversationCard";
 import NotificationCard from "./NotificationCard";
+import { notifications } from "@/utils/contants";
 
 function Notifications() {
   return (
     <>
       <h2 className="dashboardHeadings">Notifications</h2>
       <div className="py-24">
-        <NotificationCard props={{ id: "Nt09828" }} />
+        {notifications.map((notification) => (
+          <NotificationCard key={notification.id} props={notification} />
+        ))}
       </div>
     </>
   );

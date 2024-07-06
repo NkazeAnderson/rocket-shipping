@@ -6,6 +6,7 @@ import {
   FaComment,
   FaComments,
   FaHome,
+  FaPlus,
   FaPlusCircle,
 } from "react-icons/fa";
 import {
@@ -14,15 +15,19 @@ import {
   FaTruckFront,
   FaXmark,
 } from "react-icons/fa6";
-import { dashBoardContextT, sidePanelContentT } from "@/types/types";
+import {
+  activeTabT,
+  dashBoardContextT,
+  sidePanelContentT,
+} from "@/types/types";
 import Link from "next/link";
 import Home from "./Home";
-import Messages from "./Messages";
 import Shipments from "./Shipments";
 import Notifications from "./Notifications";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import SidePanel from "./SidePanel";
+import Conversations from "./Conversations";
 
 gsap.registerPlugin(useGSAP);
 
@@ -33,7 +38,7 @@ function DashBoardWrapper() {
   const [showSidePanel, setShowSidePanel] = useState(false);
   const [sidePanelContent, setSidePanelContent] =
     useState<null | sidePanelContentT>(null);
-  const [activeTab, setActiveTab] = useState("Home");
+  const [activeTab, setActiveTab] = useState<activeTabT>("home");
   const [screenSize, setScreenSize] = useState(0);
   const wrapper = useRef<null | HTMLDivElement>(null);
   useEffect(() => {
@@ -94,22 +99,34 @@ function DashBoardWrapper() {
 
             <div className=" flex flex-col justify-between h-full">
               <div className="w-full">
-                <SideIcon showText={showText} text="Home" icon={FaHome} />
+                <SideIcon showText={showText} text="home" icon={FaHome} />
                 <SideIcon
                   showText={showText}
-                  text="Shipments"
+                  text="shipments"
                   icon={FaTruckFront}
                 />
                 <SideIcon
                   showText={showText}
-                  text="Messages"
+                  text="conversations"
                   icon={FaComments}
+                  count={10}
                 />
                 <SideIcon
                   showText={showText}
-                  text="Notifications"
+                  text="notifications"
                   icon={FaBell}
                 />
+                <div className="w-full flex justify-center mt-32">
+                  <span
+                    className={` text-white mx-auto hover:cursor-pointer  right-16 rounded-[100%]`}
+                    onClick={() => {
+                      setSidePanelContent({ id: "user1", subject: "admin" });
+                      setShowSidePanel(true);
+                    }}
+                  >
+                    <FaPlusCircle size={30} />
+                  </span>
+                </div>
               </div>
               <p className=" text-center font-bold underline pb-16">
                 <Link href={"/login"}> Logout</Link>
@@ -122,23 +139,12 @@ function DashBoardWrapper() {
             }  h-full overflow-y-scroll bg-primary/10`}
           >
             {activeTab.toLowerCase() === "home" && <Home />}
-            {activeTab.toLowerCase() === "messages" && <Messages />}
+            {activeTab.toLowerCase() === "conversations" && <Conversations />}
             {activeTab.toLowerCase() === "notifications" && <Notifications />}
             {activeTab.toLowerCase() === "shipments" && <Shipments />}
           </div>
         </div>
         <SidePanel />
-        <span
-          className={` text-primary hover:text-success hover:cursor-pointer fixed ${
-            screenSize > 500 ? "bottom-16" : "top-98"
-          } ${showSidePanel && "hidden"}  right-16 bg-white rounded-[100%]`}
-          onClick={() => {
-            setSidePanelContent({ id: "user1", subject: "admin" });
-            setShowSidePanel(true);
-          }}
-        >
-          <FaPlusCircle size={50} />
-        </span>
       </div>
     </Context.Provider>
   );

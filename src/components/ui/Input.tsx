@@ -9,6 +9,8 @@ function Input({
   max,
   required,
   value,
+  setValue,
+  options,
 }: {
   label: string;
   placeholder: string;
@@ -18,24 +20,23 @@ function Input({
   max?: number;
   required?: boolean;
   value?: string | number | readonly string[];
+  setValue?: React.Dispatch<React.SetStateAction<string | number>>;
+  options?: string[];
 }) {
   return (
     <div className="w-full">
       <label htmlFor={label}>
         <p className="font-bold pb-8">{label}</p>
       </label>
-      <input
-        className="w-full p-8 caret-success rounded-15 text-black"
-        type={type}
-        name={name}
-        id={label}
-        placeholder={placeholder}
-        min={min}
-        max={max}
-        required={required}
-        value={value}
-      />
-      {value ? (
+      {options ? (
+        <select id={name} name={name} className=" w-full p-8">
+          {options.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
+      ) : value ? (
         <input
           className="w-full p-8 caret-success rounded-15 text-black"
           type={type}
@@ -46,6 +47,9 @@ function Input({
           max={max}
           required={required}
           value={value}
+          onChange={(e) => {
+            setValue && setValue(e.currentTarget.value);
+          }}
         />
       ) : (
         <input
@@ -59,6 +63,7 @@ function Input({
           required={required}
         />
       )}
+      {}
     </div>
   );
 }

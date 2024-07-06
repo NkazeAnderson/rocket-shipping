@@ -1,18 +1,26 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import MessageCard from "./MessageCard";
 import { FaCamera, FaPaperPlane } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
+import { conversations, messages } from "@/utils/contants";
+import { Context } from "./DashBoardWrapper";
+import { conversationT, dashBoardContextT } from "@/types/types";
 
 function Messaging() {
   const [message, setMessage] = useState("");
   const [image, setImage] = useState<null | File>(null);
   const imageRef = useRef<HTMLInputElement | null>(null);
+  const { sidePanelContent } = useContext(Context) as dashBoardContextT;
   const clearNewMessages = () => {
     setMessage("");
     setImage(null);
   };
+
+  const conversation = conversations.find(
+    (item) => item.id === sidePanelContent?.id
+  ) as conversationT;
   useEffect(() => {
     if (image) {
       const blob = URL.createObjectURL(image);
@@ -28,42 +36,25 @@ function Messaging() {
             height={60}
             style={{ objectFit: "cover" }}
             className="rounded-full"
-            src="/courier.png"
+            src={
+              conversation.memberId2.image
+                ? conversation.memberId2.image
+                : "/no-pic.jpg"
+            }
             alt=""
           />
           <div>
-            <h5 className="font-bold">Anthony miller</h5>
+            <h5 className="font-bold">{conversation.memberId2.name}</h5>
             <p>Online</p>
           </div>
         </div>
       </div>
       <div className=" w-full p-16">
-        <MessageCard
-          isSender={false}
-          read={true}
-          text="Storage costs are in GiB/month and calculated daily. Firestore measures the database size daily. Over the period of a month, these sample points are averaged to calculate the database storage size. This average value is multiplied by the unit price of storage (GiB-month)"
-        />
-        <MessageCard
-          isSender={true}
-          read={false}
-          text="Storage costs are in GiB/month and calculated daily. "
-        />
-        <MessageCard
-          isSender={true}
-          read={false}
-          text="Storage costs are in GiB/month and calculated daily. "
-        />
-        <MessageCard
-          isSender={true}
-          read={false}
-          text="Storage costs are in GiB/month and calculated daily. "
-        />
-        <MessageCard
-          isSender={true}
-          read={false}
-          text="Storage costs are in GiB/month and calculated daily. "
-          image="/image-placeholder.jpg"
-        />
+        {messages
+          .filter((item) => item.conversationId === conversation.id)
+          .map((item) => (
+            <MessageCard key={item.id} props={item} />
+          ))}
       </div>
       <div className="w-full border-2 border-success sticky bottom-0 rounded-tl-30">
         <div className="flex items-center bg-light-gray px-16 py-8 rounded-tl-30">
