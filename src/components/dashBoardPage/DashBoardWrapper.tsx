@@ -65,8 +65,8 @@ function DashBoardWrapper() {
   useGSAP(() => {
     if (screenSize < 500 && screenSize != 0) {
       showSidePanel
-        ? gsap.to("#sidePanel", { xPercent: 0, duration: 1.5 })
-        : gsap.to("#sidePanel", { xPercent: 100, duration: 1.5 });
+        ? gsap.to("#sidePanel", { xPercent: 0, duration: 1 })
+        : gsap.to("#sidePanel", { xPercent: 100, duration: 1 });
     } else {
       gsap.to("#sidePanel", { xPercent: 0, duration: 0.1 });
     }

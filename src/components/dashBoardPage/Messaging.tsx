@@ -13,6 +13,7 @@ function Messaging() {
   const [image, setImage] = useState<null | File>(null);
   const imageRef = useRef<HTMLInputElement | null>(null);
   const { sidePanelContent } = useContext(Context) as dashBoardContextT;
+  const lastElement = useRef<null | HTMLDivElement>(null);
   const clearNewMessages = () => {
     setMessage("");
     setImage(null);
@@ -27,6 +28,11 @@ function Messaging() {
       console.log(blob);
     }
   }, [image]);
+  useEffect(() => {
+    setTimeout(() => {
+      lastElement.current && lastElement.current.scrollIntoView(false);
+    }, 1000);
+  }, [sidePanelContent?.id]);
   return (
     <div className=" w-full">
       <div className="flex justify-between sticky top-0 items-center bg-black p-8 rounded-b-15 text-white">
@@ -56,6 +62,7 @@ function Messaging() {
             <MessageCard key={item.id} props={item} />
           ))}
       </div>
+      <div ref={lastElement} className=" pb-96"></div>
       <div className="w-full border-2 border-success sticky bottom-0 rounded-tl-30">
         <div className="flex items-center bg-light-gray px-16 py-8 rounded-tl-30">
           <div className="flex-grow">

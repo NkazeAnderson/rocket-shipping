@@ -42,17 +42,27 @@ type locationT = {
   cityStateCountry: string;
   zip: string;
 };
-const statusT =
-  "Registered" |
-  "Picked Up" |
-  "Out for Delivery" |
-  "In Transit" |
-  "On Hold" |
-  "Cancelled" |
-  "Delivered";
-const modeT =
-  "Air Freight" | "Land Transport" | "Rail Transport" | "Ship Transport";
-const packageT = "Crate" | "Pallet" | "Carton" | "Envelope";
+type statusT =
+  | "Registered"
+  | "Picked Up"
+  | "Out for Delivery"
+  | "In Transit"
+  | "On Hold"
+  | "Cancelled"
+  | "Delivered";
+type modeT =
+  | "Air Freight"
+  | "Land Transport"
+  | "Rail Transport"
+  | "Ship Transport";
+type packageT = "Crate" | "Pallet" | "Carton" | "Envelope";
+type paymentMethodT =
+  | "Cash"
+  | "Zelle"
+  | "Apple Pay"
+  | "Gift Card"
+  | "Cashapp"
+  | "Paypal";
 type shipmentT = {
   id: string;
   sender: userT;
@@ -62,7 +72,9 @@ type shipmentT = {
   currentLocation: locationT;
   destination: locationT;
   quantity: number;
+  weight: number;
   mode: modeT;
+  paymentMethod: paymentMethodT;
   pickupDate: string;
   deliveryDate: string;
   eta: string;
@@ -72,6 +84,15 @@ type shipmentT = {
   action?: string;
   image?: string | File;
   conversationId?: string;
+};
+
+type shipmentHistoryT = {
+  id: string;
+  date: string;
+  location: string;
+  status: string;
+  time: string;
+  shipmentId: string;
 };
 type conversationT = {
   id: string;

@@ -4,6 +4,7 @@ import {
   messageT,
   navLinkT,
   notificationT,
+  shipmentHistoryT,
   shipmentT,
   userT,
 } from "@/types/types";
@@ -94,6 +95,10 @@ export const shipments: shipmentT[] = [
     eta: "10:00 am",
     mode: "Land Transport",
     courier: users[2],
+    weight: 1,
+    paymentMethod: "Cash",
+    conversationId: "Cv-1",
+    action: "Insurance",
   },
   {
     id: "Sh-2",
@@ -112,6 +117,44 @@ export const shipments: shipmentT[] = [
     mode: "Air Freight",
     action: "Insurance",
     courier: users[2],
+    weight: 2,
+    paymentMethod: "Paypal",
+    conversationId: "Cv-2",
+  },
+];
+
+export const shipmentHistory: shipmentHistoryT[] = [
+  {
+    id: "SLH-1",
+    location: "123 west vimnord, Talahasse, WV, USA, 19920",
+    date: "June 11, 2024",
+    time: "10:00 am",
+    status: "Registered",
+    shipmentId: "Sh-1",
+  },
+  {
+    id: "SLH-2",
+    location: "123 west vimnord, Talahasse, WV, USA, 19920",
+    date: "June 11, 2024",
+    time: "11:00 am",
+    status: "In Transit",
+    shipmentId: "Sh-1",
+  },
+  {
+    id: "SLH-3",
+    location: "123 west vimnord, Talahasse, WV, USA, 19920",
+    date: "June 11, 2024",
+    time: "11:00 am",
+    status: "Delivered",
+    shipmentId: "Sh-1",
+  },
+  {
+    id: "SLH-4",
+    location: "123 west vimnord, Talahasse, WV, USA, 19920",
+    date: "June 11, 2024",
+    time: "10:00 am",
+    status: "Registered",
+    shipmentId: "Sh-2",
   },
 ];
 

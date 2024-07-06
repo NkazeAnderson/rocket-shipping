@@ -1,7 +1,11 @@
-import { locationT, shipmentT, userT } from "@/types/types";
-import React from "react";
+"use client";
+import { dashBoardContextT, locationT, shipmentT, userT } from "@/types/types";
+import React, { useContext, useEffect, useRef } from "react";
 import { FaLandmark, FaPhone } from "react-icons/fa";
 import { FaLocationPin, FaMessage, FaPerson } from "react-icons/fa6";
+import Pill from "../ui/Pill";
+import { Context } from "./DashBoardWrapper";
+import { shipmentHistory } from "@/utils/contants";
 
 function UserDetails({ user, location }: { user: userT; location: locationT }) {
   return (
@@ -52,7 +56,7 @@ function UserDetails({ user, location }: { user: userT; location: locationT }) {
 
 function ShipmentData({ heading, data }: { heading: string; data: string }) {
   return (
-    <div className=" w-1/2 lg:w-1/3">
+    <div className=" w-1/2 lg:w-1/3 my-16">
       <h5 className="text-brown font-bold">{heading}:</h5>
       <p>{data}</p>
     </div>
@@ -60,10 +64,23 @@ function ShipmentData({ heading, data }: { heading: string; data: string }) {
 }
 
 function ShipmentInfo({ shipment }: { shipment: shipmentT }) {
+  const { sidePanelContent } = useContext(Context) as dashBoardContextT;
+  const firstElement = useRef<null | HTMLDivElement>(null);
+  useEffect(() => {
+    setTimeout(() => {
+      firstElement.current && firstElement.current.scrollIntoView(false);
+    }, 1000);
+  }, [sidePanelContent?.id]);
   return (
-    <div className="">
-      <div className="p-16 rounded-15 w-full bg-black">
+    <>
+      <div ref={firstElement} className="p-16 rounded-15 w-full bg-black">
         <h3 className=" text-white font-bold">Shipment No: {shipment.id}</h3>
+      </div>
+      <div className="flex justify-start w-full p-16 items-center sticky top-0  bg-black/70 text-white space-x-16">
+        <h4 className="font-bold">Status:</h4>
+        <div className="w-fit animate-pulse ease-linear duration-[4000]">
+          <Pill text={shipment.status} isprimary />
+        </div>
       </div>
       <div className="p-16">
         <h2 className="dashboardHeadings text-center">Users</h2>
@@ -91,20 +108,24 @@ function ShipmentInfo({ shipment }: { shipment: shipmentT }) {
             heading="Destination"
             data={shipment.destination.cityStateCountry}
           />
+          <ShipmentData heading="Payment" data={shipment.paymentMethod} />
           <ShipmentData heading="Status" data={shipment.status} />
           <ShipmentData heading="Mode" data={shipment.mode} />
           <ShipmentData
             heading="Quantity"
             data={shipment.quantity.toString()}
           />
+          <ShipmentData heading="Weight" data={shipment.weight.toString()} />
           <ShipmentData heading="Product" data={shipment.product} />
+          <ShipmentData heading="Package" data={shipment.package} />
           <ShipmentData heading="Pickup Date" data={shipment.pickupDate} />
           <ShipmentData heading="Delivery Date" data={shipment.deliveryDate} />
           <ShipmentData heading="ETA" data={shipment.eta} />
+          <ShipmentData heading="Handler" data={shipment.courier.name} />
         </div>
         <h2 className="dashboardHeadings text-center">Shipment History</h2>
-        <table className=" w-full">
-          <thead>
+        <table className=" w-full table-auto my-16">
+          <thead className={`my-8 py-16 bg-dark-gray/20`}>
             <tr>
               <th>Date:</th>
               <th>Time:</th>
@@ -112,9 +133,24 @@ function ShipmentInfo({ shipment }: { shipment: shipmentT }) {
               <th>Status:</th>
             </tr>
           </thead>
+          <tbody>
+            {shipmentHistory
+              .filter((item) => item.shipmentId === shipment.id)
+              .map((item, index) => (
+                <tr
+                  key={item.id}
+                  className={`my-8 ${index % 2 === 1 && "bg-dark-gray/20"}`}
+                >
+                  <td>{item.date}</td>
+                  <td>{item.time}</td>
+                  <td>{item.location}</td>
+                  <td>{item.status}</td>
+                </tr>
+              ))}
+          </tbody>
         </table>
       </div>
-    </div>
+    </>
   );
 }
 
