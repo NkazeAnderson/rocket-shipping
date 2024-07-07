@@ -7,6 +7,10 @@ import {
   shipmentHistoryT,
   shipmentT,
   userT,
+  statusT,
+  modeT,
+  paymentMethodT,
+  packageT,
 } from "@/types/types";
 import { FaHome, FaEdit } from "react-icons/fa";
 
@@ -78,6 +82,34 @@ export const locations: locationT[] = [
     zip: "23772",
   },
 ];
+
+export const status: statusT[] = [
+  "Registered",
+  "Picked Up",
+  "Out for Delivery",
+  "In Transit",
+  "On Hold",
+  "Cancelled",
+  "Delivered",
+];
+export const modes: modeT[] = [
+  "Air Freight",
+  "Land Transport",
+  "Rail Transport",
+  "Ship Transport",
+];
+export const paymentModes: paymentMethodT[] = [
+  "Cash",
+  "Zelle",
+  "Apple Pay",
+  "Gift Card",
+  "Cashapp",
+  "Paypal",
+  "Google Pay",
+  "Credit Card",
+  "Bank",
+];
+export const packages: packageT[] = ["Crate", "Pallet", "Carton", "Envelope"];
 export const shipments: shipmentT[] = [
   {
     id: "Sh-1",
@@ -86,7 +118,7 @@ export const shipments: shipmentT[] = [
     origin: locations[0],
     destination: locations[1],
     currentLocation: locations[0],
-    quantity: 1,
+    quantity: 2,
     package: "Crate",
     status: "Registered",
     product: "Pet",
@@ -95,7 +127,7 @@ export const shipments: shipmentT[] = [
     eta: "10:00 am",
     mode: "Land Transport",
     courier: users[2],
-    weight: 1,
+    weight: 4,
     paymentMethod: "Cash",
     conversationId: "Cv-1",
     action: "Insurance",

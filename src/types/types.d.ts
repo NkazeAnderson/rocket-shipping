@@ -62,7 +62,10 @@ type paymentMethodT =
   | "Apple Pay"
   | "Gift Card"
   | "Cashapp"
-  | "Paypal";
+  | "Paypal"
+  | "Google Pay"
+  | "Credit Card"
+  | "Bank";
 type shipmentT = {
   id: string;
   sender: userT;
@@ -113,3 +116,5 @@ type messageT = {
   time: string;
   day: string;
 };
+
+type formRegisterT = UseFormRegister<FieldValues>;
