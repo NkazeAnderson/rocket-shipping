@@ -9,7 +9,7 @@ import Toggler from "../ui/Toggler";
 import { useForm } from "react-hook-form";
 import EditUserForm from "./EditUserForm";
 import EditPackageForm from "./EditPackageForm";
-import { packages, shipments } from "@/utils/contants";
+import { packages, shipments, users } from "@/utils/contants";
 
 function Admin() {
   const [addOrEditToggle, setAddOrEditToggle] = useState("add");
@@ -65,13 +65,13 @@ function Admin() {
           text={`${addOrEditToggle} ${userOrPackageToggle}`.toUpperCase()}
         />
         {addOrEditToggle === "add" && userOrPackageToggle === "user" ? (
-          <AddUserForm register={register} />
+          <AddUserForm />
         ) : addOrEditToggle === "add" && userOrPackageToggle === "package" ? (
-          <AddPackageForm register={register} />
+          <AddPackageForm />
         ) : addOrEditToggle === "edit" && userOrPackageToggle === "user" ? (
-          <EditUserForm register={register} />
+          <EditUserForm user={users[0]} />
         ) : (
-          <EditPackageForm register={register} shipment={shipments[0]} />
+          <EditPackageForm shipment={shipments[0]} />
         )}
 
         <span className="p-40"></span>

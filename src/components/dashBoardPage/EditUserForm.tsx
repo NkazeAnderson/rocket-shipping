@@ -1,16 +1,23 @@
 import React from "react";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
-import { formRegisterT } from "@/types/types";
+import { userT } from "@/types/types";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
-function EditUserForm({ register }: { register: formRegisterT }) {
+function EditUserForm({ user }: { user: userT }) {
+  const { register, handleSubmit } = useForm();
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    const userInfo = data as userT;
+    alert(JSON.stringify(data));
+  };
   return (
-    <form className=" space-y-8" action="">
+    <form onSubmit={handleSubmit(onSubmit)} className=" space-y-8" action="">
       <Input
         label="Name"
         placeholder="John Doe"
         type="text"
         name={"name"}
+        defaultValue={user.name}
         register={register}
       />
       <Input
@@ -18,6 +25,7 @@ function EditUserForm({ register }: { register: formRegisterT }) {
         placeholder="johndoe@gmail.com"
         type="email"
         name={"email"}
+        defaultValue={user.email}
         register={register}
       />
       <Input
@@ -25,20 +33,16 @@ function EditUserForm({ register }: { register: formRegisterT }) {
         placeholder="413 265 2766"
         type="text"
         name={"phone"}
+        defaultValue={user.phone}
         register={register}
       />
-      <Input
-        label="Password"
-        placeholder="password"
-        type="text"
-        name={"password"}
-        register={register}
-      />
+
       <Input
         label="Picture"
         placeholder="Profile Pic"
         type="file"
         name={"picture"}
+        defaultValue={user.image}
         register={register}
       />
       <div className="w-full flex justify-center">

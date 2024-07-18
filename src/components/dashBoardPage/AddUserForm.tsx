@@ -1,11 +1,17 @@
 import React from "react";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
-import { formRegisterT } from "@/types/types";
+import { formRegisterT, userT } from "@/types/types";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
-function AddUserForm({ register }: { register: formRegisterT }) {
+function AddUserForm() {
+  const { register, handleSubmit } = useForm();
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    const userInfo = data as userT;
+    alert(JSON.stringify(data));
+  };
   return (
-    <form className=" space-y-8" action="">
+    <form onSubmit={handleSubmit(onSubmit)} className=" space-y-8" action="">
       <Input
         label="Name"
         placeholder="John Doe"

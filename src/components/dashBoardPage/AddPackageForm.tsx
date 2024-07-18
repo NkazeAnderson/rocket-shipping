@@ -1,12 +1,18 @@
 import React from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
-import { formRegisterT } from "@/types/types";
 import { modes, packages, paymentModes } from "@/utils/contants";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { packageT, shipmentT, userT } from "@/types/types";
 
-function AddPackageForm({ register }: { register: formRegisterT }) {
+function AddPackageForm() {
+  const { register, handleSubmit } = useForm();
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    const shipmentInfo = data as shipmentT;
+    alert(JSON.stringify(data));
+  };
   return (
-    <form className="space-y-8" action="">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" action="">
       <Input
         label="Shipper's Name"
         placeholder="John Doe"
