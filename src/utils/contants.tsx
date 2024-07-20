@@ -13,12 +13,14 @@ import {
   packageT,
 } from "@/types/types";
 import { FaHome, FaEdit } from "react-icons/fa";
+import { GiCargoShip } from "react-icons/gi";
+import { MdEmail } from "react-icons/md";
 
 export const navLinks: navLinkT[] = [
   { text: "Home", icon: FaHome, path: "/" },
   { text: "Dashboard", icon: FaEdit, path: "/dashboard" },
-  { text: "Contact", icon: FaHome, path: "/" },
-  { text: "FAQs", icon: FaHome, path: "/" },
+  { text: "Contact", icon: MdEmail, path: "/contact" },
+  { text: "About Us", icon: GiCargoShip, path: "/about-us" },
 ];
 export const partners: string[] = [
   "/partner1.png",
@@ -264,5 +266,33 @@ export const messages: messageT[] = [
     read: true,
     conversationId: "Cv-2",
     image: "/image-placeholder.jpg",
+  },
+];
+
+export const ourValues: { image: string; title: string; text: string }[] = [
+  {
+    image: "/smart.webp",
+    title: "Customer Success",
+    text: "The success of our customers is at the core of what we do. We succeed when our customers succeed.",
+  },
+  {
+    image: "/smart1.webp",
+    title: "Geeky Spirit",
+    text: "We are curious and passionate about what we do. We thrive when we are continuously raising the bar for ourselves and our team.",
+  },
+  {
+    image: "/smart2.webp",
+    title: "Quick Delivery",
+    text: "We work in a highly competitive market and must deliver quality work as fast as possible to stay ahead.",
+  },
+  {
+    image: "/smart3.webp",
+    title: "Keep it Simple",
+    text: "We put all our energy into work and aim for continual progress. We adhere to a flat organizational structure, keeping our communications simple and straightforward.",
+  },
+  {
+    image: "/smart4.webp",
+    title: "Diversity and Inclusion",
+    text: "We value talent and drive above all else. We welcome and respect diversity in all its forms - race, language, culture, beliefs, gender, and identity.",
   },
 ];
