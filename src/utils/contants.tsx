@@ -296,3 +296,25 @@ export const ourValues: { image: string; title: string; text: string }[] = [
     text: "We value talent and drive above all else. We welcome and respect diversity in all its forms - race, language, culture, beliefs, gender, and identity.",
   },
 ];
+
+export const aboutPartners: { image: string; text: string }[] = [
+  { image: "/wise.webp", text: "Wise" },
+  { image: "/harry.webp", text: "Harry" },
+  { image: "/etsy.webp", text: "Etsy" },
+  { image: "/manomano.webp", text: "ManoMano" },
+  { image: "/Rakuten.webp", text: "Rakuten" },
+];
+
+export const companyInfo: {
+  name: string;
+  logo: string;
+  email: string;
+  phone: string;
+  address: string;
+} = {
+  name: "Rocket Shipping",
+  logo: "/logo.png",
+  email: "info@rocketshippping.com",
+  phone: "+19727727261",
+  address: "123 East Baffalo, New York, NY, 10882",
+};

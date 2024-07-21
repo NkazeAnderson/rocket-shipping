@@ -2,7 +2,7 @@ import React from "react";
 import Logo from "./ui/Logo";
 import NavLinks from "./NavLinks";
 import Button from "./ui/Button";
-import { FaCross, FaShareSquare } from "react-icons/fa";
+import { FaShareSquare } from "react-icons/fa";
 import NavBarMobile from "./NavBarMobile";
 import Link from "next/link";
 
