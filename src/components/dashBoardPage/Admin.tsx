@@ -14,8 +14,8 @@ import { packages, shipments, users } from "@/utils/contants";
 function Admin() {
   const [addOrEditToggle, setAddOrEditToggle] = useState("add");
   const [userOrPackageToggle, setUserOrPackageToggle] = useState("user");
-
-  const { register } = useForm();
+  const group = { searchUser: "" };
+  const { register } = useForm<typeof group>();
   return (
     <div className="w-full">
       <div className="rounded-30 bg-black text-white p-16 w-full ">
@@ -48,6 +48,7 @@ function Admin() {
                 type="search"
                 name="searchUser"
                 register={register}
+                group={group}
               />
             </div>
             <div className="flex items-center py-[2] border-y-dark-gray border-y hover:cursor-pointer">
