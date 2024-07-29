@@ -1,6 +1,11 @@
 import { IconType } from "react-icons";
 type navLinkT = { text: string; icon: IconType; path: string };
-type button = { text: string; icon?: IconType };
+type button = {
+  text: string;
+  icon?: IconType;
+  disabled?: boolean;
+  pending?: boolean;
+};
 type subjectT = "shipment" | "notification" | "conversation" | "admin";
 type activeTabT = "home" | "conversations" | "notifications" | "shipments";
 type sidePanelContentT = {
@@ -33,10 +38,12 @@ type userT = {
   name: string;
   email: string;
   phone?: string;
-  password?: string;
+  access?: string;
   image?: string;
   isAdmin?: boolean;
 };
+type signUpFormT = Required<Pick<userT, "name" | "email" | "access">>;
+type loginFormT = Required<Pick<userT, "email" | "access">>;
 type locationT = {
   street: string;
   cityStateCountry: string;
@@ -118,3 +125,35 @@ type messageT = {
 };
 
 type formRegisterT = UseFormRegister<FieldValues>;
+
+type shipmentFormGroupT = {
+  shipperName: string;
+  shipperEmail: string;
+  originStreet: string;
+  origin: string;
+  originZip: string;
+  receiver: string;
+  destinationStreet: string;
+  destination: string;
+  destinationZip: string;
+  courier: string;
+  pickUpDate: string;
+  deliveryDate: string;
+  eta: string;
+  product: string;
+  package: string;
+  mode: string;
+  quantity: string;
+  weight: string;
+  image: string;
+  status: string;
+  action: string;
+};
+
+type userFormGroupT = {
+  name: "";
+  email: "";
+  access: "";
+  phone: "";
+  picture: "";
+};

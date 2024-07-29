@@ -2,7 +2,14 @@ import React from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import { formRegisterT, shipmentT } from "@/types/types";
-import { modes, packages, paymentModes, status, users } from "@/utils/contants";
+import {
+  modes,
+  packages,
+  paymentModes,
+  shipmentFormGroup,
+  status,
+  users,
+} from "@/utils/contants";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 function EditPackageForm({ shipment }: { shipment: shipmentT }) {
@@ -11,6 +18,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
     const shipmentInfo = data as shipmentT;
     alert(JSON.stringify(data));
   };
+  const group = shipmentFormGroup;
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" action="">
       <Input
@@ -20,7 +28,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         name="shipperName"
         defaultValue={shipment.sender.name}
         register={register}
-        required
+        group={group}
       />
       <Input
         label="Shipper's Email"
@@ -30,6 +38,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         defaultValue={shipment.sender.email}
         register={register}
         required
+        group={group}
       />
       <Input
         label="Origin Street"
@@ -39,6 +48,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         defaultValue={shipment.origin.street}
         register={register}
         required
+        group={group}
       />
       <Input
         label="Origin City, State, Country"
@@ -48,6 +58,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         defaultValue={shipment.origin.cityStateCountry}
         register={register}
         required
+        group={group}
       />
       <Input
         label="Origin Zip"
@@ -57,6 +68,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         defaultValue={shipment.origin.zip}
         register={register}
         required
+        group={group}
       />
 
       <Input
@@ -70,6 +82,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         name="receiver"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Current Street"
@@ -79,6 +92,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         defaultValue={shipment.currentLocation.street}
         register={register}
         required
+        group={group}
       />
       <Input
         label="current City, State, Country"
@@ -88,6 +102,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         defaultValue={shipment.currentLocation.cityStateCountry}
         register={register}
         required
+        group={group}
       />
       <Input
         label="Current Zip"
@@ -97,6 +112,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         defaultValue={shipment.currentLocation.zip}
         register={register}
         required
+        group={group}
       />
       <Input
         label="Destination Street"
@@ -106,6 +122,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         defaultValue={shipment.destination.street}
         register={register}
         required
+        group={group}
       />
       <Input
         label="Destination City, State, Country"
@@ -115,6 +132,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         defaultValue={shipment.destination.cityStateCountry}
         register={register}
         required
+        group={group}
       />
       <Input
         label="Destination Zip"
@@ -124,6 +142,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         defaultValue={shipment.destination.zip}
         register={register}
         required
+        group={group}
       />
 
       <Input
@@ -133,6 +152,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         name="pickUpDate"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Delivery Date"
@@ -141,6 +161,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         name="deliveryDate"
         register={register}
         required
+        group={group}
       />
       <Input
         label="ETA"
@@ -149,6 +170,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         name="eta"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Product"
@@ -158,6 +180,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         defaultValue={shipment.product}
         register={register}
         required
+        group={group}
       />
       <Input
         label="Package"
@@ -168,6 +191,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         defaultValue={packages.findIndex((item) => item === shipment.package)}
         register={register}
         required
+        group={group}
       />
       <Input
         label="Shipment Mode"
@@ -178,6 +202,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         name="mode"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Payment Mode"
@@ -190,6 +215,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         )}
         register={register}
         required
+        group={group}
       />
       <Input
         label="Quantity"
@@ -201,6 +227,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         defaultValue={shipment.quantity}
         register={register}
         required
+        group={group}
       />
       <Input
         label="Weight"
@@ -212,6 +239,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         name="weight"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Image"
@@ -220,6 +248,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         name="image"
         register={register}
         disabled
+        group={group}
       />
       <Input
         label="Status"
@@ -230,6 +259,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         name="weight"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Action"
@@ -238,6 +268,7 @@ function EditPackageForm({ shipment }: { shipment: shipmentT }) {
         name="action"
         register={register}
         required
+        group={group}
       />
 
       <div className="w-full flex justify-center">

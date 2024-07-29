@@ -1,21 +1,60 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../ui/Input";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import Button from "../ui/Button";
 import { FaShareFromSquare } from "react-icons/fa6";
+import { logIn } from "@/actions";
+import { loginFormT } from "@/types/types";
+import { account } from "@/utils/appwrite";
+import { useRouter } from "next/navigation";
+import { FaPlane, FaPlaneArrival } from "react-icons/fa";
 
 function Loginform() {
-  const { register } = useForm();
+  const { register, handleSubmit } = useForm<loginFormT>();
+  const [pending, setPending] = useState(false);
+  const router = useRouter();
+  const group: loginFormT = {
+    email: "",
+    access: "",
+  };
+  useEffect(() => {
+    account
+      .get()
+      .then((data) => {
+        logIn(data.email);
+        router.push("/dashboard");
+      })
+      .catch((e) => {});
+  }, []);
+
   return (
-    <form className=" py-32 md:py-48 space-y-16" action="">
+    <form
+      className=" py-32 md:py-48 space-y-16"
+      onSubmit={handleSubmit(async (data) => {
+        if (data.email && data.access) {
+          setPending(true);
+          try {
+            await account.createEmailPasswordSession(data.email, data.access);
+            const loggedIn = await logIn(data.email);
+            console.log(loggedIn);
+
+            loggedIn === "ok" && router.push("/dashboard");
+          } catch (error) {
+            console.log(error);
+          }
+          setPending(false);
+        }
+      })}
+    >
       <Input
         name="email"
         register={register}
         placeholder="email"
         label="Email"
         type="email"
+        group={group}
       />
       <Input
         name="access"
@@ -23,6 +62,7 @@ function Loginform() {
         placeholder="Access Key"
         label="Access"
         type="text"
+        group={group}
       />
       <div>
         <Link
@@ -33,7 +73,7 @@ function Loginform() {
         </Link>
       </div>
       <div className="flex justify-center">
-        <Button props={{ text: "Track", icon: FaShareFromSquare }} />
+        <Button props={{ text: "Track", icon: FaPlane, pending }} />
       </div>
       <div className=" pt-24 md:pt-48">
         <h5 className="text-right">

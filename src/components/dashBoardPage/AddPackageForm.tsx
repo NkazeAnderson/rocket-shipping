@@ -1,16 +1,23 @@
 import React from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
-import { modes, packages, paymentModes } from "@/utils/contants";
+import {
+  modes,
+  packages,
+  paymentModes,
+  shipmentFormGroup,
+} from "@/utils/contants";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { packageT, shipmentT, userT } from "@/types/types";
 
 function AddPackageForm() {
+  const group = shipmentFormGroup;
   const { register, handleSubmit } = useForm();
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     const shipmentInfo = data as shipmentT;
     alert(JSON.stringify(data));
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" action="">
       <Input
@@ -20,6 +27,7 @@ function AddPackageForm() {
         name="shipperName"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Shipper's Email"
@@ -28,6 +36,7 @@ function AddPackageForm() {
         name="shipperEmail"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Origin Street"
@@ -36,6 +45,7 @@ function AddPackageForm() {
         name="originStreet"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Origin City, State, Country"
@@ -44,6 +54,7 @@ function AddPackageForm() {
         name="origin"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Origin Zip"
@@ -52,6 +63,7 @@ function AddPackageForm() {
         name="originZip"
         register={register}
         required
+        group={group}
       />
 
       <Input
@@ -65,6 +77,7 @@ function AddPackageForm() {
         name="receiver"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Destination Street"
@@ -73,6 +86,7 @@ function AddPackageForm() {
         name="destinationStreet"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Destination City, State, Country"
@@ -81,6 +95,7 @@ function AddPackageForm() {
         name="destination"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Destination Zip"
@@ -89,6 +104,21 @@ function AddPackageForm() {
         name="destinationZip"
         register={register}
         required
+        group={group}
+      />
+
+      <Input
+        label="Courier"
+        placeholder="Select Receiver"
+        type="options"
+        options={[
+          "John Doe - johnDoe@gmail.com",
+          "MaryJane - maryjane@gmail.com",
+        ]}
+        name="courier"
+        register={register}
+        required
+        group={group}
       />
 
       <Input
@@ -98,6 +128,7 @@ function AddPackageForm() {
         name="pickUpDate"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Delivery Date"
@@ -106,6 +137,7 @@ function AddPackageForm() {
         name="deliveryDate"
         register={register}
         required
+        group={group}
       />
       <Input
         label="ETA"
@@ -114,6 +146,7 @@ function AddPackageForm() {
         name="eta"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Product"
@@ -122,6 +155,7 @@ function AddPackageForm() {
         name="product"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Package"
@@ -131,6 +165,7 @@ function AddPackageForm() {
         options={packages}
         register={register}
         required
+        group={group}
       />
       <Input
         label="Shipment Mode"
@@ -140,6 +175,7 @@ function AddPackageForm() {
         name="mode"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Payment Mode"
@@ -149,6 +185,7 @@ function AddPackageForm() {
         name="paymentMode"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Quantity"
@@ -159,6 +196,7 @@ function AddPackageForm() {
         name="quantity"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Weight"
@@ -169,6 +207,7 @@ function AddPackageForm() {
         name="weight"
         register={register}
         required
+        group={group}
       />
       <Input
         label="Image"
@@ -176,6 +215,7 @@ function AddPackageForm() {
         type="file"
         name="image"
         register={register}
+        group={group}
       />
 
       <div className="w-full flex justify-center">

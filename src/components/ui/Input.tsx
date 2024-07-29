@@ -1,14 +1,15 @@
 "use client";
 import React from "react";
-import { FieldValues, UseFormRegister } from "react-hook-form";
+import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 
-function Input({
+function Input<T extends FieldValues>({
   label,
   placeholder,
   type,
   name,
   min,
   max,
+  group,
   required,
   options,
   register,
@@ -18,13 +19,14 @@ function Input({
   label: string;
   placeholder: string;
   type: string;
-  name: string;
+  group: T;
+  name: Path<T>;
   min?: number;
   max?: number;
   defaultValue?: string | number | readonly string[] | undefined;
   required?: boolean;
   options?: string[];
-  register: UseFormRegister<FieldValues>;
+  register: UseFormRegister<T>;
   disabled?: boolean;
 }) {
   return (

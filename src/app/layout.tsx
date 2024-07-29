@@ -19,16 +19,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
-          <div className="w-screen h-[100dvh] lg:h-screen select-none">
-            <div className="fixed w-screen z-50">
-              <NavBar />
-            </div>
-            <div className="overflow-y-hidden overflow-x-hidden w-full h-full">
-              {children}
-            </div>
+        <div className="w-screen h-[100dvh] lg:h-screen select-none">
+          <div className="fixed w-screen z-50">
+            <NavBar />
           </div>
-        </AuthProvider>
+          <div className="overflow-y-hidden overflow-x-hidden w-full h-full">
+            {children}
+          </div>
+        </div>
       </body>
     </html>
   );

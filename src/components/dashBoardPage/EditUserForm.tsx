@@ -3,6 +3,7 @@ import Input from "../ui/Input";
 import Button from "../ui/Button";
 import { userT } from "@/types/types";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { userFormGroup } from "@/utils/contants";
 
 function EditUserForm({ user }: { user: userT }) {
   const { register, handleSubmit } = useForm();
@@ -10,6 +11,7 @@ function EditUserForm({ user }: { user: userT }) {
     const userInfo = data as userT;
     alert(JSON.stringify(data));
   };
+  const group = userFormGroup;
   return (
     <form onSubmit={handleSubmit(onSubmit)} className=" space-y-8" action="">
       <Input
@@ -19,6 +21,7 @@ function EditUserForm({ user }: { user: userT }) {
         name={"name"}
         defaultValue={user.name}
         register={register}
+        group={group}
       />
       <Input
         label="Email"
@@ -27,6 +30,7 @@ function EditUserForm({ user }: { user: userT }) {
         name={"email"}
         defaultValue={user.email}
         register={register}
+        group={group}
       />
       <Input
         label="Phone"
@@ -35,6 +39,7 @@ function EditUserForm({ user }: { user: userT }) {
         name={"phone"}
         defaultValue={user.phone}
         register={register}
+        group={group}
       />
 
       <Input
@@ -44,6 +49,7 @@ function EditUserForm({ user }: { user: userT }) {
         name={"picture"}
         defaultValue={user.image}
         register={register}
+        group={group}
       />
       <div className="w-full flex justify-center">
         <Button props={{ text: "Edit" }} />

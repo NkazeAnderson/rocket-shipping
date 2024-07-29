@@ -10,10 +10,7 @@ import Reviews from "@/components/homePage/Reviews";
 import GetQuote from "@/components/homePage/GetQuote";
 import Tracker from "@/components/homePage/Tracker";
 import Footer from "@/components/Footer";
-const client = new Client();
-client
-  .setEndpoint("https://cloud.appwrite.io/v1")
-  .setProject("6674479b00230f8c4e57");
+
 export default function Home() {
   return (
     <main

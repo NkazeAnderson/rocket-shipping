@@ -6,6 +6,13 @@ import { useForm } from "react-hook-form";
 
 function GetQuote() {
   const { register } = useForm();
+  const group = {
+    origin: "",
+    destination: "",
+    weight: 0,
+    quantity: 0,
+    livepet: "No",
+  };
   return (
     <div className=" md:flex px-16 md:px-48 text-white bg-success">
       <div className="md:w-[50%] p-24">
@@ -24,6 +31,7 @@ function GetQuote() {
             type="text"
             name="origin"
             register={register}
+            group={group}
           />
           <Input
             placeholder="123 SunSet City, Miami, FL, 20237"
@@ -31,6 +39,7 @@ function GetQuote() {
             type="text"
             name="destination"
             register={register}
+            group={group}
           />
           <div className="flex">
             <div className="w-[50%] pr-8">
@@ -40,6 +49,7 @@ function GetQuote() {
                 placeholder="24"
                 name="weight"
                 register={register}
+                group={group}
               />
             </div>
             <div className="w-[50%] pr-8">
@@ -49,6 +59,7 @@ function GetQuote() {
                 placeholder="1"
                 name="quantity"
                 register={register}
+                group={group}
               />
             </div>
           </div>
@@ -58,8 +69,9 @@ function GetQuote() {
               label="Is live Pet?"
               placeholder="No"
               options={["Yes", "No"]}
-              name="LivePet"
+              name="livepet"
               register={register}
+              group={group}
             />
           </div>
 

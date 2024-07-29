@@ -9,10 +9,17 @@ import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import Link from "next/link";
+import AuthButton from "./AuthButton";
 
 gsap.registerPlugin(useGSAP);
 
-function NavBarMobile() {
+function NavBarMobile({
+  loggedIn,
+  userEmail,
+}: {
+  loggedIn: boolean;
+  userEmail?: string;
+}) {
   const [opened, setOpened] = useState(false);
   const path = usePathname();
   useEffect(() => {
@@ -59,9 +66,7 @@ function NavBarMobile() {
         } w-full h-full  flex-col items-center justify-between pt-24`}
       >
         <NavLinks />
-        <Link href="/auth/login">
-          <Button props={{ text: "Login", icon: FaShareSquare }} />
-        </Link>
+        <AuthButton loggedIn={loggedIn} userEmail={userEmail} />
       </div>
     </nav>
   );
