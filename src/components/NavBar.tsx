@@ -22,7 +22,7 @@ function NavBar() {
         <NavLinks />
         <AuthButton loggedIn={loggedIn} userEmail={userEmail?.value} />
       </nav>
-      {/* "mobile" */}``
+      {/* "mobile" */}
       <NavBarMobile loggedIn={loggedIn} userEmail={userEmail?.value} />
     </>
   );
