@@ -6,7 +6,8 @@ import Button from "../ui/Button";
 import { MdEmail } from "react-icons/md";
 
 function ContactForm() {
-  const { register } = useForm();
+  const group = { email: "", phone: "", message: "", name: "" };
+  const { register } = useForm<typeof group>();
   return (
     <form className=" md:py-48 space-y-16" action="">
       <Input
@@ -15,6 +16,7 @@ function ContactForm() {
         placeholder="john doe"
         label="Name"
         type="text"
+        group={group}
       />
       <Input
         name="email"
@@ -22,6 +24,7 @@ function ContactForm() {
         placeholder="email"
         label="Email"
         type="email"
+        group={group}
       />
       <Input
         name="phone"
@@ -29,6 +32,7 @@ function ContactForm() {
         placeholder="phone"
         label="Phone"
         type="text"
+        group={group}
       />
       <div>
         <label htmlFor="message">
@@ -36,9 +40,9 @@ function ContactForm() {
         </label>
         <textarea
           className="w-full rounded-15 p-8"
-          name="message"
           rows={3}
           placeholder="Message"
+          {...register("message")}
         ></textarea>
       </div>
       <Button props={{ text: "Send Email", icon: MdEmail }} />

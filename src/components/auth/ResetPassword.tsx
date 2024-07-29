@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { FaLock } from "react-icons/fa";
 
 function ResetPassword() {
+  const group = { email: "" };
   const { register } = useForm();
   return (
     <form className=" py-32 md:py-48 space-y-16" action="">
@@ -16,6 +17,7 @@ function ResetPassword() {
         placeholder="email"
         label="Email"
         type="email"
+        group={group}
       />
       <p className="text-right">
         <Link className="font-bold  text-primary" href={"/auth/login"}>
