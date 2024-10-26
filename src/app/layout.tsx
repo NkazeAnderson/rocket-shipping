@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import AuthProvider from "@/components/ContextProviders/AuthProvider";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
           </div>
           <div className="overflow-y-hidden overflow-x-hidden w-full h-full">
             {children}
+            <Toaster position="bottom-left" reverseOrder={false} />
           </div>
         </div>
       </body>

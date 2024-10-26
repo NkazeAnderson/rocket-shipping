@@ -7,7 +7,7 @@ import { FaMap } from "react-icons/fa";
 import { Context } from "./DashBoardWrapper";
 import { dashBoardContextT, shipmentT, subjectT } from "@/types/types";
 
-function ShipmentCard({ props }: { props: shipmentT }) {
+function ShipmentCard({ props }: { props: shipmentT & { $id: string } }) {
   const subject: subjectT = "shipment";
   const { setShowSidePanel, setSidePanelContent } = useContext(
     Context
@@ -18,7 +18,7 @@ function ShipmentCard({ props }: { props: shipmentT }) {
       <div className="flex justify-between items-center">
         <div className="bg-black flex w-full rounded-t-15 py-8 px-16 border-b border-white items-center justify-between space-x-8">
           <div>
-            <FaBraille /> <h5 className="font-bold">#{props.id}</h5>
+            <FaBraille /> <h5 className="font-bold">#{props.$id}</h5>
           </div>
           <Pill text={props.status} isprimary={false} />
         </div>
@@ -30,11 +30,11 @@ function ShipmentCard({ props }: { props: shipmentT }) {
         </p>
         <p>
           <strong>Sender:</strong>
-          <span className="ml-8">{props.sender.name}</span>
+          <span className="ml-8">{props.shipperName}</span>
         </p>
         <p>
           <strong>Destination:</strong>
-          <span className="ml-8">{props.destination.cityStateCountry}</span>
+          <span className="ml-8">{props.destinationCityStateCountry}</span>
         </p>
         <p>
           <strong>Mode:</strong>
@@ -51,7 +51,7 @@ function ShipmentCard({ props }: { props: shipmentT }) {
               className=" hover:cursor-pointer"
               onClick={() => {
                 setShowSidePanel((prev) => !prev);
-                setSidePanelContent({ id: props?.id, subject });
+                setSidePanelContent({ id: props?.$id, subject });
               }}
             >
               <Pill text="Info" isprimary icon={FaFileLines} />
@@ -63,7 +63,7 @@ function ShipmentCard({ props }: { props: shipmentT }) {
               onClick={() => {
                 setShowSidePanel((prev) => !prev);
                 setSidePanelContent({
-                  id: props?.id,
+                  id: props?.$id,
                   maps: true,
                   subject,
                 });
@@ -76,16 +76,16 @@ function ShipmentCard({ props }: { props: shipmentT }) {
       </div>
       <div className="flex justify-between items-center bg-black p-8 rounded-b-15">
         <div className="flex space-x-8">
-          <Image
+          {/* <Image
             width={100}
             height={100}
             style={{ objectFit: "cover" }}
             className="rounded-full"
-            src={props.courier.image as string}
+            src={props.courier as string}
             alt="courier  image"
-          />
+          /> */}
           <div>
-            <h5 className="font-bold">{props.courier.name}</h5>
+            <h5 className="font-bold">{props.courier}</h5>
             <p>Courier</p>
           </div>
         </div>

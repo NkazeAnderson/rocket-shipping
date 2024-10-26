@@ -1,26 +1,66 @@
 import React from "react";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
-import { formRegisterT, userFormGroupT, userT } from "@/types/types";
+import { formRegisterT, signUpFormT, userT } from "@/types/types";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { userFormGroup } from "@/utils/contants";
+import { bucket, database, userCollection } from "@/utils/contants";
+import { account, db, storage } from "@/utils/appwrite";
+import { AppwriteException, ID, Query } from "appwrite";
+import toast from "react-hot-toast";
 
 function AddUserForm() {
-  const { register, handleSubmit } = useForm<userFormGroupT>();
-  const onSubmit: SubmitHandler<userFormGroupT> = (data) => {
-    const userInfo = data;
-    alert(JSON.stringify(data));
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = useForm<userT>();
+  const onSubmit: SubmitHandler<userT> = async (data) => {
+    if (data.access && data.email && data.name) {
+      try {
+        const user = await db.listDocuments(database, userCollection, [
+          Query.equal("email", data.email.trim()),
+        ]);
+        if (user.total === 0) {
+          const id = ID.unique();
+          //@ts-ignore
+
+          const image = data.image
+            ? //@ts-ignore
+              await storage.createFile(bucket, id, data.image[0])
+            : undefined;
+
+          await db.createDocument(database, userCollection, id, {
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            image: image ? image.$id : undefined,
+          });
+          await account.create(id, data.email, data.access, data.name);
+          reset();
+          toast.success("Account created");
+        }
+      } catch (error) {
+        if (
+          error instanceof AppwriteException &&
+          error.message.includes("email")
+        ) {
+          toast.error("User already exist");
+        } else {
+          toast.error("Error adding new user");
+        }
+      }
+    }
   };
-  const group = userFormGroup;
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className=" space-y-8" action="">
+    <form onSubmit={handleSubmit(onSubmit)} className=" space-y-8">
       <Input
         label="Name"
         placeholder="John Doe"
         type="text"
         name={"name"}
         register={register}
-        group={group}
       />
       <Input
         label="Email"
@@ -28,7 +68,6 @@ function AddUserForm() {
         type="email"
         name={"email"}
         register={register}
-        group={group}
       />
       <Input
         label="Phone"
@@ -36,7 +75,6 @@ function AddUserForm() {
         type="text"
         name={"phone"}
         register={register}
-        group={group}
       />
       <Input
         label="Access Key"
@@ -44,18 +82,16 @@ function AddUserForm() {
         type="text"
         name={"access"}
         register={register}
-        group={group}
       />
       <Input
         label="Picture"
         placeholder="Profile Pic"
         type="file"
-        name={"picture"}
+        name={"image"}
         register={register}
-        group={group}
       />
       <div className="w-full flex justify-center">
-        <Button props={{ text: "Add" }} />
+        <Button props={{ text: "Add", pending: isSubmitting }} />
       </div>
     </form>
   );

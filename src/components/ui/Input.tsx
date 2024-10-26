@@ -19,7 +19,7 @@ function Input<T extends FieldValues>({
   label: string;
   placeholder: string;
   type: string;
-  group: T;
+  group?: T;
   name: Path<T>;
   min?: number;
   max?: number;
@@ -44,6 +44,7 @@ function Input<T extends FieldValues>({
           id={name}
           {...register(name)}
           className=" w-full p-8"
+          defaultValue={defaultValue}
           disabled={disabled}
         >
           {options.map((item, index) => (

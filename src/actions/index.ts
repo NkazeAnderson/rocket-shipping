@@ -19,12 +19,18 @@ export async function signUp(prevState: unknown, data: FormData) {
 export async function logIn(email: string) {
   cookies().set("loggedIn", "true");
   cookies().set("userEmail", email);
-  revalidatePath("/");
+  revalidatePath("/dashboard");
   return "ok";
 }
 export async function logOut() {
   // account.createEmailPasswordSession(email, access);
   cookies().delete("loggedIn");
-  revalidatePath("/");
+  revalidatePath("/dashboard");
+  return "ok";
+}
+export async function setAlert(alert1: string) {
+  console.log("Ser5ver");
+
+  cookies().set("alert", "oki");
   return "ok";
 }

@@ -28,6 +28,8 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import SidePanel from "./SidePanel";
 import Conversations from "./Conversations";
+import { getCookie } from "@/utils/frontendCookies";
+import { useRouter } from "next/navigation";
 
 gsap.registerPlugin(useGSAP);
 
@@ -40,6 +42,7 @@ function DashBoardWrapper() {
     useState<null | sidePanelContentT>(null);
   const [activeTab, setActiveTab] = useState<activeTabT>("home");
   const [screenSize, setScreenSize] = useState(0);
+  const router = useRouter();
   const wrapper = useRef<null | HTMLDivElement>(null);
   useEffect(() => {
     screenSize === 0 && setScreenSize(window.innerWidth);
@@ -71,6 +74,12 @@ function DashBoardWrapper() {
       gsap.to("#sidePanel", { xPercent: 0, duration: 0.1 });
     }
   }, [showSidePanel, screenSize]);
+  useEffect(() => {
+    const loggedIn = getCookie("loggedIn");
+    if (!loggedIn) {
+      router.back();
+    }
+  });
 
   return (
     <Context.Provider

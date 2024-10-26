@@ -5,6 +5,7 @@ type button = {
   icon?: IconType;
   disabled?: boolean;
   pending?: boolean;
+  action?: () => {};
 };
 type subjectT = "shipment" | "notification" | "conversation" | "admin";
 type activeTabT = "home" | "conversations" | "notifications" | "shipments";
@@ -73,35 +74,38 @@ type paymentMethodT =
   | "Google Pay"
   | "Credit Card"
   | "Bank";
+
 type shipmentT = {
-  id: string;
-  sender: userT;
-  receiver: userT;
-  courier: userT;
-  origin: locationT;
-  currentLocation: locationT;
-  destination: locationT;
-  quantity: number;
-  weight: number;
-  mode: modeT;
-  paymentMethod: paymentMethodT;
+  shipperName: string;
+  shipperEmail: string;
+  originStreet: string;
+  originCityStateCountry: string;
+  originZip: string;
+  destinationStreet: string;
+  destinationCityStateCountry: string;
+  destinationZip: string;
+  receiver: string;
+  courier: string;
   pickupDate: string;
   deliveryDate: string;
   eta: string;
   product: string;
-  status: statusT;
+  mode: modeT;
+  paymentMethod: paymentMethodT;
+  quantity: number;
+  weight: number;
+  image?: string | FileList;
   package: packageT;
-  action?: string;
-  image?: string | File;
+  action?: actionsT;
   conversationId?: string;
 };
 
 type shipmentHistoryT = {
-  id: string;
   date: string;
-  location: string;
-  status: string;
-  time: string;
+  currentStreet: string;
+  currentCityStateCountry: string;
+  currentZip: string;
+  status: statusT;
   shipmentId: string;
 };
 type conversationT = {
@@ -149,11 +153,4 @@ type shipmentFormGroupT = {
   status: string;
   action: string;
 };
-
-type userFormGroupT = {
-  name: "";
-  email: "";
-  access: "";
-  phone: "";
-  picture: "";
-};
+type actionsT = "Insurance" | "Crate change" | "None";

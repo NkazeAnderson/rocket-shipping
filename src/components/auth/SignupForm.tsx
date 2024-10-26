@@ -12,6 +12,7 @@ import { signUpFormT } from "@/types/types";
 import { account, db } from "@/utils/appwrite";
 import { AppwriteException, ID, Query } from "appwrite";
 import { database, userCollection } from "@/utils/contants";
+import toast from "react-hot-toast";
 
 function SignupForm() {
   const { register, handleSubmit } = useForm<signUpFormT>();
@@ -38,6 +39,7 @@ function SignupForm() {
             email: data.email,
           });
           await account.create(id, data.email, data.access, data.name);
+          toast.success("Account created");
         }
         router.push("/auth/login");
       } catch (error) {

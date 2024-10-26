@@ -11,8 +11,8 @@ import {
   modeT,
   paymentMethodT,
   packageT,
-  userFormGroupT,
   shipmentFormGroupT,
+  actionsT,
 } from "@/types/types";
 import { FaHome, FaEdit } from "react-icons/fa";
 import { GiCargoShip } from "react-icons/gi";
@@ -116,84 +116,42 @@ export const paymentModes: paymentMethodT[] = [
 export const packages: packageT[] = ["Crate", "Pallet", "Carton", "Envelope"];
 export const shipments: shipmentT[] = [
   {
-    id: "Sh-1",
-    sender: users[0],
-    receiver: users[1],
-    origin: locations[0],
-    destination: locations[1],
-    currentLocation: locations[0],
-    quantity: 2,
-    package: "Crate",
-    status: "Registered",
-    product: "Pet",
-    pickupDate: "Wed, 18 July 2024",
-    deliveryDate: "Thurs, 20 July 2024",
-    eta: "10:00 am",
+    shipperName: "string",
+    shipperEmail: "string",
+    originStreet: "string",
+    originCityStateCountry: "string",
+    originZip: "string",
+    destinationStreet: "string",
+    destinationCityStateCountry: "string",
+    destinationZip: "string",
+    receiver: "string",
+    courier: "string",
+    pickupDate: "string",
+    deliveryDate: "string",
+    eta: "string",
+    product: "string",
     mode: "Land Transport",
-    courier: users[2],
-    weight: 4,
-    paymentMethod: "Cash",
-    conversationId: "Cv-1",
-    action: "Insurance",
-  },
-  {
-    id: "Sh-2",
-    sender: users[0],
-    receiver: users[1],
-    origin: locations[0],
-    destination: locations[1],
-    currentLocation: locations[0],
+    paymentMethod: "Bank",
     quantity: 1,
-    package: "Pallet",
-    status: "In Transit",
-    product: "Power Tools",
-    pickupDate: "Wed, 18 July 2024",
-    deliveryDate: "Thurs, 20 July 2024",
-    eta: "12:00 pm",
-    mode: "Air Freight",
-    action: "Insurance",
-    courier: users[2],
-    weight: 2,
-    paymentMethod: "Paypal",
-    conversationId: "Cv-2",
+    weight: 1,
+    image: "string",
+    package: "Crate",
+    action: "None",
+    conversationId: "string",
   },
 ];
 
 export const shipmentHistory: shipmentHistoryT[] = [
   {
-    id: "SLH-1",
-    location: "123 west vimnord, Talahasse, WV, USA, 19920",
+    currentCityStateCountry: "usa",
+    currentStreet: "123 str",
+    currentZip: "14250",
     date: "June 11, 2024",
-    time: "10:00 am",
-    status: "Registered",
-    shipmentId: "Sh-1",
-  },
-  {
-    id: "SLH-2",
-    location: "123 west vimnord, Talahasse, WV, USA, 19920",
-    date: "June 11, 2024",
-    time: "11:00 am",
-    status: "In Transit",
-    shipmentId: "Sh-1",
-  },
-  {
-    id: "SLH-3",
-    location: "123 west vimnord, Talahasse, WV, USA, 19920",
-    date: "June 11, 2024",
-    time: "11:00 am",
     status: "Delivered",
     shipmentId: "Sh-1",
   },
-  {
-    id: "SLH-4",
-    location: "123 west vimnord, Talahasse, WV, USA, 19920",
-    date: "June 11, 2024",
-    time: "10:00 am",
-    status: "Registered",
-    shipmentId: "Sh-2",
-  },
 ];
-
+export const actions: actionsT[] = ["Crate change", "Insurance", "None"];
 export const conversations: conversationT[] = [
   {
     id: "Cv-1",
@@ -345,14 +303,8 @@ export const shipmentFormGroup: shipmentFormGroupT = {
   action: "",
 };
 
-export const userFormGroup: userFormGroupT = {
-  name: "",
-  email: "",
-  access: "",
-  phone: "",
-  picture: "",
-};
-
 export const database = "66a76afd0037bfc1a9fc";
+export const bucket = "671bbd68001407857b37";
 export const userCollection = "66a76bc00017ba31b41d";
 export const shipmentCollection = "66a76de00030d63f37e0";
+export const shipmentHistoryCollection = "671ca238002e6cd68770";

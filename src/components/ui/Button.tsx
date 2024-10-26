@@ -8,6 +8,7 @@ function Button({ props }: { props: button }) {
     <button
       className="py-[20px] px-[40px] border border-primary rounded-15 flex space-x-16 bg-primary items-center text-white hover:bg-success"
       disabled={props.disabled || props.pending}
+      type={props.action ? undefined : "submit"}
     >
       {props.pending && <FaSpinner className=" animate-spin" />}
       <p className="font-bold">{props.text}</p>

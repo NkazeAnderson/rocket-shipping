@@ -10,6 +10,8 @@ import { loginFormT } from "@/types/types";
 import { account } from "@/utils/appwrite";
 import { useRouter } from "next/navigation";
 import { FaPlane, FaPlaneArrival } from "react-icons/fa";
+import { getCookie } from "@/utils/frontendCookies";
+import toast from "react-hot-toast";
 
 function Loginform() {
   const { register, handleSubmit } = useForm<loginFormT>();
@@ -26,7 +28,10 @@ function Loginform() {
         logIn(data.email);
         router.push("/dashboard");
       })
-      .catch((e) => {});
+      .catch((e) => {
+        const alert = getCookie("alert");
+        alert && toast("Please Login");
+      });
   }, []);
 
   return (
@@ -39,15 +44,25 @@ function Loginform() {
             await account.createEmailPasswordSession(data.email, data.access);
             const loggedIn = await logIn(data.email);
             console.log(loggedIn);
-
+            toast.success("Successfully logged in");
             loggedIn === "ok" && router.push("/dashboard");
           } catch (error) {
+            toast.error("Failed logging in");
             console.log(error);
           }
           setPending(false);
         }
       })}
     >
+      <div
+        onClick={() => {
+          console.log("Pressed");
+
+          toast.success("Ok");
+        }}
+      >
+        Press
+      </div>
       <Input
         name="email"
         register={register}

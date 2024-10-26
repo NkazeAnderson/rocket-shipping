@@ -2,20 +2,77 @@ import React from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import {
+  bucket,
+  database,
   modes,
   packages,
   paymentModes,
+  shipmentCollection,
   shipmentFormGroup,
+  shipmentHistoryCollection,
 } from "@/utils/contants";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { packageT, shipmentT, userT } from "@/types/types";
+import { packageT, shipmentHistoryT, shipmentT, userT } from "@/types/types";
+import { db, storage } from "@/utils/appwrite";
+import { ID } from "appwrite";
+import toast from "react-hot-toast";
 
-function AddPackageForm() {
-  const group = shipmentFormGroup;
-  const { register, handleSubmit } = useForm();
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    const shipmentInfo = data as shipmentT;
-    alert(JSON.stringify(data));
+function AddPackageForm({ users }: { users: (userT & { $id: string })[] }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+    reset,
+  } = useForm<shipmentT>();
+  const onSubmit: SubmitHandler<shipmentT> = async (data) => {
+    try {
+      let imageId = "";
+      data.courier = users[Number(data.courier)].$id;
+      data.receiver = users[Number(data.receiver)].$id;
+      console.log(data.image);
+
+      if (
+        data.image &&
+        typeof data.image !== "string" &&
+        typeof data.image !== "undefined" &&
+        data.image.length
+      ) {
+        imageId = ID.unique();
+        await storage.createFile(bucket, imageId, data.image[0]);
+        data.image = imageId;
+      } else {
+        delete data.image;
+      }
+      data.quantity = Number(data.quantity);
+      data.weight = Number(data.weight);
+      data.mode = modes[Number(data.mode)];
+      data.package = packages[Number(data.package)];
+      data.paymentMethod = paymentModes[Number(data.paymentMethod)];
+      data.action = "None";
+
+      const shipmentId = ID.unique();
+      await db.createDocument(database, shipmentCollection, shipmentId, data);
+      const shipmentHistory: shipmentHistoryT = {
+        currentCityStateCountry: data.originCityStateCountry,
+        currentStreet: data.originStreet,
+        currentZip: data.originZip,
+        status: "Registered",
+        date: data.pickupDate,
+        shipmentId,
+      };
+      await db.createDocument(
+        database,
+        shipmentHistoryCollection,
+        ID.unique(),
+        shipmentHistory
+      );
+      reset();
+      toast.success("Successfully added package");
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Error adding package");
+    }
   };
 
   return (
@@ -27,7 +84,6 @@ function AddPackageForm() {
         name="shipperName"
         register={register}
         required
-        group={group}
       />
       <Input
         label="Shipper's Email"
@@ -36,7 +92,6 @@ function AddPackageForm() {
         name="shipperEmail"
         register={register}
         required
-        group={group}
       />
       <Input
         label="Origin Street"
@@ -45,16 +100,14 @@ function AddPackageForm() {
         name="originStreet"
         register={register}
         required
-        group={group}
       />
       <Input
         label="Origin City, State, Country"
         placeholder="New York, NY, USA"
         type="text"
-        name="origin"
+        name="originCityStateCountry"
         register={register}
         required
-        group={group}
       />
       <Input
         label="Origin Zip"
@@ -63,21 +116,16 @@ function AddPackageForm() {
         name="originZip"
         register={register}
         required
-        group={group}
       />
 
       <Input
         label="Receiver"
         placeholder="Select Receiver"
         type="options"
-        options={[
-          "John Doe - johnDoe@gmail.com",
-          "MaryJane - maryjane@gmail.com",
-        ]}
+        options={users.map((user) => `${user.name} - ${user.email}`)}
         name="receiver"
         register={register}
         required
-        group={group}
       />
       <Input
         label="Destination Street"
@@ -86,16 +134,14 @@ function AddPackageForm() {
         name="destinationStreet"
         register={register}
         required
-        group={group}
       />
       <Input
         label="Destination City, State, Country"
         placeholder="Miami, FL, USA"
         type="text"
-        name="destination"
+        name="destinationCityStateCountry"
         register={register}
         required
-        group={group}
       />
       <Input
         label="Destination Zip"
@@ -104,31 +150,25 @@ function AddPackageForm() {
         name="destinationZip"
         register={register}
         required
-        group={group}
       />
 
       <Input
         label="Courier"
         placeholder="Select Receiver"
         type="options"
-        options={[
-          "John Doe - johnDoe@gmail.com",
-          "MaryJane - maryjane@gmail.com",
-        ]}
+        options={users.map((user, index) => `${user.name} - ${user.email}`)}
         name="courier"
         register={register}
         required
-        group={group}
       />
 
       <Input
         label="PickUp Date"
         placeholder="Date"
         type="date"
-        name="pickUpDate"
+        name="pickupDate"
         register={register}
         required
-        group={group}
       />
       <Input
         label="Delivery Date"
@@ -137,7 +177,6 @@ function AddPackageForm() {
         name="deliveryDate"
         register={register}
         required
-        group={group}
       />
       <Input
         label="ETA"
@@ -146,7 +185,6 @@ function AddPackageForm() {
         name="eta"
         register={register}
         required
-        group={group}
       />
       <Input
         label="Product"
@@ -155,7 +193,6 @@ function AddPackageForm() {
         name="product"
         register={register}
         required
-        group={group}
       />
       <Input
         label="Package"
@@ -165,7 +202,6 @@ function AddPackageForm() {
         options={packages}
         register={register}
         required
-        group={group}
       />
       <Input
         label="Shipment Mode"
@@ -175,17 +211,15 @@ function AddPackageForm() {
         name="mode"
         register={register}
         required
-        group={group}
       />
       <Input
-        label="Payment Mode"
+        label="Payment Method"
         placeholder="Select Mode"
         type="options"
         options={paymentModes}
-        name="paymentMode"
+        name="paymentMethod"
         register={register}
         required
-        group={group}
       />
       <Input
         label="Quantity"
@@ -196,18 +230,16 @@ function AddPackageForm() {
         name="quantity"
         register={register}
         required
-        group={group}
       />
       <Input
-        label="Weight"
+        label="Weight in Kg"
         placeholder="1"
         type="number"
         min={1}
-        max={10}
+        max={10000}
         name="weight"
         register={register}
         required
-        group={group}
       />
       <Input
         label="Image"
@@ -215,11 +247,10 @@ function AddPackageForm() {
         type="file"
         name="image"
         register={register}
-        group={group}
       />
 
       <div className="w-full flex justify-center">
-        <Button props={{ text: "Add" }} />
+        <Button props={{ text: "Add", pending: isSubmitting }} />
       </div>
     </form>
   );

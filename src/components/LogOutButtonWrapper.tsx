@@ -3,6 +3,7 @@ import { logOut } from "@/actions";
 import { account } from "@/utils/appwrite";
 import { useRouter } from "next/navigation";
 import React from "react";
+import toast from "react-hot-toast";
 
 function LogOutButtonWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -10,7 +11,10 @@ function LogOutButtonWrapper({ children }: { children: React.ReactNode }) {
     <div
       onClick={async () => {
         await logOut();
-        await account.deleteSessions();
+        try {
+          await account.deleteSessions();
+          toast.success("You are now logged out");
+        } catch (error) {}
         router.replace("/auth/login");
       }}
     >
