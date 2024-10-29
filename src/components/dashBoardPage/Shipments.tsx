@@ -1,15 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import ConversationCard from "./ConversationCard";
 import ShipmentCard from "./ShipmentCard";
 import { locations, shipments, users } from "@/utils/contants";
+import { AppContext } from "../ContextProviders/AppProvider";
+import { appContextT } from "@/types/types";
 
 function Shipments() {
+  const { shipments } = useContext(AppContext) as appContextT;
   return (
     <>
       <h2 className="dashboardHeadings ">Shipments</h2>
       <div className="py-24">
-        <ShipmentCard props={shipments[0]} />
-        <ShipmentCard props={shipments[1]} />
+        {shipments.map((shipment, index) => (
+          <ShipmentCard key={`ss${index}`} props={shipment} />
+        ))}
       </div>
     </>
   );

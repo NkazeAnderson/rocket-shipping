@@ -1,3 +1,4 @@
+"use client";
 import {
   conversationT,
   locationT,
@@ -14,7 +15,7 @@ import {
   shipmentFormGroupT,
   actionsT,
 } from "@/types/types";
-import { FaHome, FaEdit } from "react-icons/fa";
+import { FaEdit, FaHome } from "react-icons/fa";
 import { GiCargoShip } from "react-icons/gi";
 import { MdEmail } from "react-icons/md";
 
@@ -54,19 +55,16 @@ export const notifications: notificationT[] = [
 
 export const users: userT[] = [
   {
-    id: "Us-1",
     name: "John Doe",
     email: "johnDoe@gmail.com",
     phone: "625526666",
   },
   {
-    id: "Us-2",
     name: "Mary Jane",
     email: "maryjane@gmail.com",
     phone: "625546666",
   },
   {
-    id: "Us-3",
     name: "Anthony Johnson",
     email: "AnthonyJohson@gmail.com",
     phone: "625546866",
@@ -308,3 +306,5 @@ export const bucket = "671bbd68001407857b37";
 export const userCollection = "66a76bc00017ba31b41d";
 export const shipmentCollection = "66a76de00030d63f37e0";
 export const shipmentHistoryCollection = "671ca238002e6cd68770";
+export const profilePicPlaceholder =
+  "https://cloud.appwrite.io/v1/storage/buckets/671bbd68001407857b37/files/67210bf6001ce8f34c2c/view?project=6674479b00230f8c4e57&project=6674479b00230f8c4e57";

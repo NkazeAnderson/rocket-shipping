@@ -1,5 +1,12 @@
 "use client";
-import { dashBoardContextT, locationT, shipmentT, userT } from "@/types/types";
+import {
+  dashBoardContextT,
+  locationT,
+  shipmentHistoryT,
+  shipmentT,
+  shipmentWithHistoryT,
+  userT,
+} from "@/types/types";
 import React, { useContext, useEffect, useRef } from "react";
 import { FaLandmark, FaPhone } from "react-icons/fa";
 import { FaLocationPin, FaMessage, FaPerson } from "react-icons/fa6";
@@ -63,7 +70,7 @@ function ShipmentData({ heading, data }: { heading: string; data: string }) {
   );
 }
 
-function ShipmentInfo({ shipment }: { shipment: shipmentT }) {
+function ShipmentInfo({ info }: { info: shipmentWithHistoryT }) {
   const { sidePanelContent } = useContext(Context) as dashBoardContextT;
   const firstElement = useRef<null | HTMLDivElement>(null);
   useEffect(() => {
@@ -74,12 +81,17 @@ function ShipmentInfo({ shipment }: { shipment: shipmentT }) {
   return (
     <>
       <div ref={firstElement} className="p-16 rounded-15 w-full bg-black">
-        <h3 className=" text-white font-bold">Shipment No: {shipment.id}</h3>
+        <h3 className=" text-white font-bold">
+          Shipment No: {info.shipment.$id}
+        </h3>
       </div>
       <div className="flex justify-start w-full p-16 items-center sticky top-0  bg-black/70 text-white space-x-16">
         <h4 className="font-bold">Status:</h4>
         <div className="w-fit animate-pulse ease-linear duration-[4000]">
-          <Pill text={shipment.status} isprimary />
+          <Pill
+            text={info.histories[info.histories.length - 1].status}
+            isprimary
+          />
         </div>
       </div>
       <div className="p-16">
@@ -88,65 +100,91 @@ function ShipmentInfo({ shipment }: { shipment: shipmentT }) {
         <div className="lg:flex">
           <div className="lg:w-1/2">
             <h4 className="font-bold text-brown">Sender Information</h4>
-            <UserDetails user={shipment.sender} location={shipment.origin} />
-          </div>
-          <div className="lg:w-1/2">
-            <h4 className="font-bold text-brown">Receiver Information</h4>
             <UserDetails
-              user={shipment.receiver}
-              location={shipment.destination}
+              user={{
+                name: info.shipment.shipperName,
+                email: info.shipment.shipperEmail,
+              }}
+              location={{
+                street: info.shipment.originStreet,
+                cityStateCountry: info.shipment.originCityStateCountry,
+                zip: info.shipment.originZip,
+              }}
             />
           </div>
+          {typeof info.shipment.receiver !== "string" && (
+            <div className="lg:w-1/2">
+              <h4 className="font-bold text-brown">Receiver Information</h4>
+              <UserDetails
+                user={info.shipment.receiver}
+                location={{
+                  street: info.shipment.destinationStreet,
+                  cityStateCountry: info.shipment.destinationCityStateCountry,
+                  zip: info.shipment.destinationZip,
+                }}
+              />
+            </div>
+          )}
         </div>
         <h2 className="dashboardHeadings text-center">Shipment Information</h2>
         <div className="flex flex-wrap">
           <ShipmentData
             heading="Origin"
-            data={shipment.origin.cityStateCountry}
+            data={`${info.shipment.originStreet}, ${info.shipment.originCityStateCountry}, ${info.shipment.originZip}`}
           />
           <ShipmentData
             heading="Destination"
-            data={shipment.destination.cityStateCountry}
+            data={`${info.shipment.destinationStreet}, ${info.shipment.destinationCityStateCountry}, ${info.shipment.destinationZip}`}
           />
-          <ShipmentData heading="Payment" data={shipment.paymentMethod} />
-          <ShipmentData heading="Status" data={shipment.status} />
-          <ShipmentData heading="Mode" data={shipment.mode} />
+          <ShipmentData heading="Payment" data={info.shipment.paymentMethod} />
+          <ShipmentData
+            heading="Status"
+            data={info.histories[info.histories.length - 1].status}
+          />
+          <ShipmentData heading="Mode" data={info.shipment.mode} />
           <ShipmentData
             heading="Quantity"
-            data={shipment.quantity.toString()}
+            data={info.shipment.quantity.toString()}
           />
-          <ShipmentData heading="Weight" data={shipment.weight.toString()} />
-          <ShipmentData heading="Product" data={shipment.product} />
-          <ShipmentData heading="Package" data={shipment.package} />
-          <ShipmentData heading="Pickup Date" data={shipment.pickupDate} />
-          <ShipmentData heading="Delivery Date" data={shipment.deliveryDate} />
-          <ShipmentData heading="ETA" data={shipment.eta} />
-          <ShipmentData heading="Handler" data={shipment.courier.name} />
+          <ShipmentData
+            heading="Weight"
+            data={info.shipment.weight.toString()}
+          />
+          <ShipmentData heading="Product" data={info.shipment.product} />
+          <ShipmentData heading="Package" data={info.shipment.package} />
+          <ShipmentData
+            heading="Pickup Date"
+            data={info.shipment.pickupDate.split("T")[0]}
+          />
+          <ShipmentData
+            heading="Delivery Date"
+            data={info.shipment.deliveryDate.split("T")[0]}
+          />
+          <ShipmentData heading="ETA" data={info.shipment.eta} />
+          {typeof info.shipment.courier !== "string" && (
+            <ShipmentData heading="Handler" data={info.shipment.courier.name} />
+          )}
         </div>
         <h2 className="dashboardHeadings text-center">Shipment History</h2>
         <table className=" w-full table-auto my-16">
           <thead className={`my-8 py-16 bg-dark-gray/20`}>
             <tr>
               <th>Date:</th>
-              <th>Time:</th>
               <th>Location:</th>
               <th>Status:</th>
             </tr>
           </thead>
           <tbody>
-            {shipmentHistory
-              .filter((item) => item.shipmentId === shipment.id)
-              .map((item, index) => (
-                <tr
-                  key={item.id}
-                  className={`my-8 ${index % 2 === 1 && "bg-dark-gray/20"}`}
-                >
-                  <td>{item.date}</td>
-                  <td>{item.time}</td>
-                  <td>{item.location}</td>
-                  <td>{item.status}</td>
-                </tr>
-              ))}
+            {info.histories.map((item, index) => (
+              <tr
+                key={item.$id}
+                className={`my-8 ${index % 2 === 1 && "bg-dark-gray/20"}`}
+              >
+                <td>{item.date}</td>
+                <td>{`${item.currentStreet}, ${item.currentCityStateCountry}, ${item.currentZip}`}</td>
+                <td>{item.status}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

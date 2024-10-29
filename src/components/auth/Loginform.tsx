@@ -1,37 +1,30 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Input from "../ui/Input";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import Button from "../ui/Button";
 import { FaShareFromSquare } from "react-icons/fa6";
 import { logIn } from "@/actions";
-import { loginFormT } from "@/types/types";
-import { account } from "@/utils/appwrite";
+import { appContextT, loginFormT } from "@/types/types";
+import { account, getMyInfo } from "@/utils/appwrite";
 import { useRouter } from "next/navigation";
 import { FaPlane, FaPlaneArrival } from "react-icons/fa";
 import { getCookie } from "@/utils/frontendCookies";
 import toast from "react-hot-toast";
+import { AppContext } from "../ContextProviders/AppProvider";
 
 function Loginform() {
   const { register, handleSubmit } = useForm<loginFormT>();
   const [pending, setPending] = useState(false);
+  const { setUser, user } = useContext(AppContext) as appContextT;
   const router = useRouter();
   const group: loginFormT = {
     email: "",
     access: "",
   };
   useEffect(() => {
-    account
-      .get()
-      .then((data) => {
-        logIn(data.email);
-        router.push("/dashboard");
-      })
-      .catch((e) => {
-        const alert = getCookie("alert");
-        alert && toast("Please Login");
-      });
+    user && router.push("/dashboard");
   }, []);
 
   return (
@@ -42,8 +35,9 @@ function Loginform() {
           setPending(true);
           try {
             await account.createEmailPasswordSession(data.email, data.access);
+            const myInfo = await getMyInfo();
+            setUser(myInfo);
             const loggedIn = await logIn(data.email);
-            console.log(loggedIn);
             toast.success("Successfully logged in");
             loggedIn === "ok" && router.push("/dashboard");
           } catch (error) {

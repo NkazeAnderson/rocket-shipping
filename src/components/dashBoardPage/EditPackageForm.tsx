@@ -23,8 +23,9 @@ import {
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { ID, Query } from "appwrite";
-import { db, storage } from "@/utils/appwrite";
+import { db, getHistory, storage } from "@/utils/appwrite";
 import EditShipmentHistoryForm from "./EditShipmentHistoryForm";
+import AddShipmentHistoryForm from "./AddShipmentHistoryForm";
 
 function EditPackageForm({
   shipment,
@@ -42,6 +43,7 @@ function EditPackageForm({
   const [shipmentHistoryList, setShipmentHistoryList] =
     useState<(shipmentHistoryT & { $id: string })[]>();
   const [editHistory, setEditHistory] = useState<undefined | number>();
+  const [addHistory, setAddHistory] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<shipmentT> = async (data) => {
     try {
@@ -90,16 +92,6 @@ function EditPackageForm({
     }
   };
 
-  async function getHistory() {
-    const historyRef = await db.listDocuments(
-      database,
-      shipmentHistoryCollection,
-      [Query.equal("shipmentId", shipment.$id)]
-    );
-    //@ts-ignore
-    return historyRef.documents as (shipmentHistoryT & { $id: string })[];
-  }
-
   useEffect(() => {
     if (typeof shipment.receiver === "number") {
       return;
@@ -125,7 +117,7 @@ function EditPackageForm({
     //@ts-ignore
     shipment.deliveryDate = shipment.deliveryDate.split("T")[0];
     reset(shipment);
-    getHistory()
+    getHistory(shipment.$id)
       .then((res) => {
         setShipmentHistoryList(res);
       })
@@ -324,12 +316,27 @@ function EditPackageForm({
       </form>
       <div className="mt-24"></div>
       <h3 className="py-16">Shipment History</h3>
-      {typeof editHistory !== "undefined" && shipmentHistoryList?.length && (
-        <>
-          <h4>Edit</h4>
-          <EditShipmentHistoryForm history={shipmentHistoryList[editHistory]} />
-        </>
+      <div className="flex flex-row items-center justify-center my-32">
+        <button
+          onClick={() => {
+            setAddHistory((prev) => !prev);
+          }}
+          className="py-8 px-16 border border-success text-success rounded-30"
+        >
+          {addHistory ? "Cancel addition" : "Add New History"}
+        </button>
+      </div>
+      {addHistory && (
+        <div className="py-8">
+          <AddShipmentHistoryForm
+            shipmentId={shipment.$id}
+            hide={() => {
+              setAddHistory(false);
+            }}
+          />
+        </div>
       )}
+
       <table className=" w-full " style={{ overflowX: "scroll" }}>
         <tr>
           <th>Edit</th>
@@ -337,25 +344,51 @@ function EditPackageForm({
           <th>Status</th>
           <th>date</th>
         </tr>
-        {shipmentHistoryList?.map((history, index) => (
-          <tr>
-            <td>
-              <button
-                className="p-2 border rounded bg-secondary text-primary underline text-center hover:cursor-pointer"
-                onClick={() => {
-                  setEditHistory(index);
-                  console.log("editHistory");
-                }}
-              >
-                Edit
-              </button>
-            </td>
-            <td className=" text-center">{`${history.currentStreet}, ${history.currentCityStateCountry}, ${history.currentZip}`}</td>
-            <td className=" text-center">{`${history.status}`}</td>
-            <td className=" text-center"> {`${history.date.split("T")[0]}`}</td>
-          </tr>
-        ))}
       </table>
+      {shipmentHistoryList?.map((history, index) => (
+        <>
+          <div className="flex flex-row overflow-x-auto items-center justify-around">
+            <div
+              onClick={() => {
+                console.log("editHistory");
+                setEditHistory(index);
+              }}
+              className="p-4  rounded bg-secondary text-primary underline text-center hover:cursor-pointer"
+            >
+              Edit history
+            </div>
+            <div className=" text-center">{`${history.currentStreet}, ${history.currentCityStateCountry}, ${history.currentZip}`}</div>
+            <div className=" text-center">{`${history.status}`}</div>
+            <div className=" text-center">
+              {" "}
+              {`${history.date.split("T")[0]}`}
+            </div>
+          </div>
+          {typeof editHistory !== "undefined" &&
+            editHistory === index &&
+            shipmentHistoryList?.length && (
+              <>
+                <div className="flex flex-row justify-between items-center py-16">
+                  <h4>Edit</h4>
+                  <p
+                    onClick={() => {
+                      setEditHistory(undefined);
+                    }}
+                    className=" text-danger "
+                  >
+                    x
+                  </p>
+                </div>
+                <EditShipmentHistoryForm
+                  history={shipmentHistoryList[editHistory]}
+                  hide={() => {
+                    setEditHistory(undefined);
+                  }}
+                />
+              </>
+            )}
+        </>
+      ))}
     </>
   );
 }

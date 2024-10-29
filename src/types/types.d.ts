@@ -35,7 +35,6 @@ type notificationT = {
 };
 
 type userT = {
-  id: string;
   name: string;
   email: string;
   phone?: string;
@@ -84,8 +83,8 @@ type shipmentT = {
   destinationStreet: string;
   destinationCityStateCountry: string;
   destinationZip: string;
-  receiver: string;
-  courier: string;
+  receiver: string | withId<userT>;
+  courier: string | withId<userT>;
   pickupDate: string;
   deliveryDate: string;
   eta: string;
@@ -154,3 +153,18 @@ type shipmentFormGroupT = {
   action: string;
 };
 type actionsT = "Insurance" | "Crate change" | "None";
+type shipmentWithHistoryT = {
+  shipment: withId<shipmentT>;
+  histories: withId<shipmentHistoryT>[];
+};
+type appContextT = {
+  shipments: shipmentWithHistory[];
+  setShipments: React.Dispatch<React.SetStateAction<shipmentWithHistoryT[]>>;
+  user: withId<userT> | undefined;
+  setUser: React.Dispatch<React.SetStateAction<withId<userT> | undefined>>;
+  notifications: withId<notificationT>[];
+  setNotifications: React.Dispatch<
+    React.SetStateAction<withId<notificationT>[]>
+  >;
+};
+type withId<T> = T & { $id: string };

@@ -17,19 +17,10 @@ import {
   userCollection,
   users,
 } from "@/utils/contants";
-import { db } from "@/utils/appwrite";
+import { db, getShipments, getUsers } from "@/utils/appwrite";
 import { Query } from "appwrite";
 import { shipmentT, userT } from "@/types/types";
-async function getUsers() {
-  const users = await db.listDocuments(database, userCollection);
-  //@ts-ignore
-  return users.documents as (userT & { $id: string })[];
-}
-async function getShipments() {
-  const shipments = await db.listDocuments(database, shipmentCollection);
-  //@ts-ignore
-  return shipments.documents as (shipmentT & { $id: string })[];
-}
+
 function Admin() {
   const [addOrEditToggle, setAddOrEditToggle] = useState("add");
   const [userOrPackageToggle, setUserOrPackageToggle] = useState("user");

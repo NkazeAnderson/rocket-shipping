@@ -9,8 +9,10 @@ import { db } from "@/utils/appwrite";
 
 function EditShipmentHistoryForm({
   history,
+  hide,
 }: {
   history: shipmentHistoryT & { $id: string };
+  hide: () => void;
 }) {
   const {
     register,
@@ -44,6 +46,7 @@ function EditShipmentHistoryForm({
       );
       reset();
       toast.success("Successfully editted shipment");
+      hide();
     } catch (error) {
       console.log(error);
       toast.error("Error editing shipment");
@@ -54,9 +57,10 @@ function EditShipmentHistoryForm({
     if (typeof history.status === "number") {
       return;
     }
+    const data = { ...history };
     //@ts-ignore
-    history.status = status.findIndex((item) => item === history.status);
-    reset(history);
+    data.status = status.findIndex((item) => item === data.status);
+    reset(data);
   }, [history]);
 
   return (
@@ -92,7 +96,7 @@ function EditShipmentHistoryForm({
       />
 
       <div className="w-full flex justify-center">
-        <Button props={{ text: "Edit", pending: isSubmitting }} />
+        <Button props={{ text: "Edit History", pending: isSubmitting }} />
       </div>
     </form>
   );

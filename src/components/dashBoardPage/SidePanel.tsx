@@ -2,16 +2,26 @@
 import React, { useContext } from "react";
 import { FaXmark } from "react-icons/fa6";
 import { Context } from "./DashBoardWrapper";
-import { dashBoardContextT, shipmentT, subjectT } from "@/types/types";
+import {
+  appContextT,
+  dashBoardContextT,
+  shipmentT,
+  shipmentWithHistoryT,
+  subjectT,
+} from "@/types/types";
 import ShipmentInfo from "./ShipmentInfo";
 import Messaging from "./Messaging";
 import Admin from "./Admin";
-import { shipments } from "@/utils/contants";
+import { AppContext } from "../ContextProviders/AppProvider";
 
 function SidePanel() {
   const { setShowSidePanel, sidePanelContent } = useContext(
     Context
   ) as dashBoardContextT;
+  const { shipments } = useContext(AppContext) as appContextT;
+  const shipment = shipments.find(
+    (_) => _.shipment.$id === sidePanelContent?.id
+  ) as shipmentWithHistoryT;
 
   return (
     <div
@@ -29,13 +39,7 @@ function SidePanel() {
         </span>
         <div>
           {sidePanelContent?.subject === "shipment" && (
-            <ShipmentInfo
-              shipment={
-                shipments.find(
-                  (_) => _.id === sidePanelContent?.id
-                ) as shipmentT
-              }
-            />
+            <ShipmentInfo info={shipment} />
           )}
           {sidePanelContent?.subject === "conversation" && <Messaging />}
           {sidePanelContent?.subject === "admin" && <Admin />}
