@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { BsPersonCheck } from "react-icons/bs";
 import LogOutButtonWrapper from "./LogOutButtonWrapper";
 import Link from "next/link";
@@ -9,6 +9,8 @@ import { logOut } from "@/actions";
 import { account } from "@/utils/appwrite";
 import { useRouter } from "next/navigation";
 import { FaRightFromBracket, FaRightToBracket } from "react-icons/fa6";
+import { AppContext } from "./ContextProviders/AppProvider";
+import { appContextT } from "@/types/types";
 
 function AuthButton({
   loggedIn,
@@ -19,6 +21,7 @@ function AuthButton({
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
+  const { setUser } = useContext(AppContext) as appContextT;
   return (
     <>
       {loggedIn ? (
@@ -36,7 +39,7 @@ function AuthButton({
                 try {
                   await logOut();
                   await account.deleteSessions();
-                  router.replace("/auth/login");
+                  setUser(undefined);
                 } catch (error) {}
 
                 setPending(false);

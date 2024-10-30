@@ -1,5 +1,5 @@
 import { IconType } from "react-icons";
-type navLinkT = { text: string; icon: IconType; path: string };
+type navLinkT = { text: string; icon: string; path: string };
 type button = {
   text: string;
   icon?: IconType;

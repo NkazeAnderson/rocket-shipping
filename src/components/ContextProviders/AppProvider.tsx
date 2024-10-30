@@ -60,8 +60,10 @@ function AppProvider({ children }: { children: React.ReactNode }) {
           setUser(res);
         })
         .catch((e) => {
+          setShipments([]);
           console.log(e);
         });
+    console.log("user effect");
   }, [user]);
 
   return (

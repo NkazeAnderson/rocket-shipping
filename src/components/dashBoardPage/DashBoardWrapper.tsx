@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import SideIcon from "../ui/SideIcons";
 import {
   FaBell,
@@ -17,6 +23,7 @@ import {
 } from "react-icons/fa6";
 import {
   activeTabT,
+  appContextT,
   dashBoardContextT,
   sidePanelContentT,
 } from "@/types/types";
@@ -30,6 +37,7 @@ import SidePanel from "./SidePanel";
 import Conversations from "./Conversations";
 import { getCookie } from "@/utils/frontendCookies";
 import { useRouter } from "next/navigation";
+import { AppContext } from "../ContextProviders/AppProvider";
 
 gsap.registerPlugin(useGSAP);
 
@@ -44,11 +52,13 @@ function DashBoardWrapper() {
   const [screenSize, setScreenSize] = useState(0);
   const router = useRouter();
   const wrapper = useRef<null | HTMLDivElement>(null);
+  const { user } = useContext(AppContext) as appContextT;
   useEffect(() => {
     screenSize === 0 && setScreenSize(window.innerWidth);
     window.addEventListener("resize", (e) => {
       setScreenSize(window.innerWidth);
     });
+    !user && router.back();
   }, [screenSize]);
 
   useGSAP(() => {
@@ -74,12 +84,6 @@ function DashBoardWrapper() {
       gsap.to("#sidePanel", { xPercent: 0, duration: 0.1 });
     }
   }, [showSidePanel, screenSize]);
-  useEffect(() => {
-    const loggedIn = getCookie("loggedIn");
-    if (!loggedIn) {
-      router.back();
-    }
-  });
 
   return (
     <Context.Provider

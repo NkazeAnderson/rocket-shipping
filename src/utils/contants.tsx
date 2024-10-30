@@ -1,4 +1,3 @@
-"use client";
 import {
   conversationT,
   locationT,
@@ -15,15 +14,12 @@ import {
   shipmentFormGroupT,
   actionsT,
 } from "@/types/types";
-import { FaEdit, FaHome } from "react-icons/fa";
-import { GiCargoShip } from "react-icons/gi";
-import { MdEmail } from "react-icons/md";
 
 export const navLinks: navLinkT[] = [
-  { text: "Home", icon: FaHome, path: "/" },
-  { text: "Dashboard", icon: FaEdit, path: "/dashboard" },
-  { text: "Contact", icon: MdEmail, path: "/contact" },
-  { text: "About Us", icon: GiCargoShip, path: "/about-us" },
+  { text: "Home", icon: "FaHome", path: "/" },
+  { text: "Dashboard", icon: "FaEdit", path: "/dashboard" },
+  { text: "Contact", icon: "MdEmail", path: "/contact" },
+  { text: "About Us", icon: "GiCargoShip", path: "/about-us" },
 ];
 export const partners: string[] = [
   "/partner1.png",
