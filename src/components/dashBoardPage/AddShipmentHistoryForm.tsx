@@ -1,6 +1,6 @@
 import { shipmentHistoryT } from "@/types/types";
 import React, { useEffect } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import toast from "react-hot-toast";
@@ -15,12 +15,7 @@ function AddShipmentHistoryForm({
   shipmentId: string;
   hide: () => void;
 }) {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting },
-  } = useForm<shipmentHistoryT>();
+  const methods = useForm<shipmentHistoryT>();
   const onSubmit: SubmitHandler<shipmentHistoryT> = async (data) => {
     try {
       data.status = status[Number(data.status)];
@@ -32,7 +27,7 @@ function AddShipmentHistoryForm({
         ID.unique(),
         data
       );
-      reset();
+      methods.reset();
       toast.success("Successfully added history shipment");
       hide();
     } catch (error) {
@@ -42,48 +37,28 @@ function AddShipmentHistoryForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className=" space-y-8">
-      <Input
-        label="Current Street"
-        placeholder="123 street"
-        type="text"
-        name={"currentStreet"}
-        register={register}
-      />
-      <Input
-        label="Current City, State, Country"
-        placeholder="New York, NY, USA"
-        type="text"
-        name={"currentCityStateCountry"}
-        register={register}
-      />
-      <Input
-        label="Current Zip"
-        placeholder="10254"
-        type="text"
-        name={"currentZip"}
-        register={register}
-      />
-      <Input
-        label="Date"
-        placeholder="Date"
-        type="date"
-        name={"date"}
-        register={register}
-      />
-      <Input
-        label="Current Zip"
-        placeholder="10254"
-        type="options"
-        options={status}
-        name={"status"}
-        register={register}
-      />
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)} className=" space-y-8">
+        <Input
+          label="Current Location"
+          placeholder="123 street"
+          type="text"
+          name={"currentLocation"}
+          location
+        />
 
-      <div className="w-full flex justify-center">
-        <Button props={{ text: "Add History", pending: isSubmitting }} />
-      </div>
-    </form>
+        <Input label="Date" placeholder="Date" type="date" name={"date"} />
+
+        <div className="w-full flex justify-center">
+          <Button
+            props={{
+              text: "Add History",
+              pending: methods.formState.isSubmitting,
+            }}
+          />
+        </div>
+      </form>
+    </FormProvider>
   );
 }
 

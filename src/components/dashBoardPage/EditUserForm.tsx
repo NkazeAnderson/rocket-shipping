@@ -2,23 +2,23 @@ import React, { useEffect } from "react";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
 import { userT } from "@/types/types";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import {
+  FieldValues,
+  FormProvider,
+  SubmitHandler,
+  useForm,
+} from "react-hook-form";
 import { account, db, storage } from "@/utils/appwrite";
 import { bucket, database, userCollection } from "@/utils/contants";
 import { AppwriteException, ID, Query } from "appwrite";
 import toast from "react-hot-toast";
 
 function EditUserForm({ user, id }: { user: userT; id: string }) {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting },
-  } = useForm<userT>();
+  const methods = useForm<userT>();
   const onSubmit: SubmitHandler<userT> = async (data) => {
     try {
       const image =
-        data.image && Array.isArray(data.image)
+        data.image && Array.isArray(data.image) && data.image.length
           ? //@ts-ignore
             await storage.createFile(bucket, ID.unique(), data.image[0])
           : undefined;
@@ -30,7 +30,7 @@ function EditUserForm({ user, id }: { user: userT; id: string }) {
         image: image ? image.$id : data.image,
       });
 
-      reset();
+      methods.reset();
       toast.success("User info updated");
     } catch (error) {
       if (
@@ -46,45 +46,39 @@ function EditUserForm({ user, id }: { user: userT; id: string }) {
     }
   };
   useEffect(() => {
-    reset(user);
-    console.log(user);
+    methods.reset(user);
   }, [user]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className=" space-y-8">
-      <Input
-        label="Name"
-        placeholder="John Doe"
-        type="text"
-        name={"name"}
-        register={register}
-      />
-      <Input
-        label="Email"
-        placeholder="johndoe@gmail.com"
-        type="email"
-        name={"email"}
-        register={register}
-      />
-      <Input
-        label="Phone"
-        placeholder="413 265 2766"
-        type="text"
-        name={"phone"}
-        register={register}
-      />
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)} className=" space-y-8">
+        <Input label="Name" placeholder="John Doe" type="text" name={"name"} />
+        <Input
+          label="Email"
+          placeholder="johndoe@gmail.com"
+          type="email"
+          name={"email"}
+        />
+        <Input
+          label="Phone"
+          placeholder="413 265 2766"
+          type="text"
+          name={"phone"}
+        />
 
-      <Input
-        label="Picture"
-        placeholder="Profile Pic"
-        type="file"
-        name={"image"}
-        register={register}
-      />
-      <div className="w-full flex justify-center">
-        <Button props={{ text: "Edit", pending: isSubmitting }} />
-      </div>
-    </form>
+        <Input
+          label="Picture"
+          placeholder="Profile Pic"
+          type="file"
+          name={"image"}
+        />
+        <div className="w-full flex justify-center">
+          <Button
+            props={{ text: "Edit", pending: methods.formState.isSubmitting }}
+          />
+        </div>
+      </form>
+    </FormProvider>
   );
 }
 

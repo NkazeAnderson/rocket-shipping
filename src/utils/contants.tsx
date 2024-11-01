@@ -11,7 +11,6 @@ import {
   modeT,
   paymentMethodT,
   packageT,
-  shipmentFormGroupT,
   actionsT,
 } from "@/types/types";
 
@@ -112,12 +111,8 @@ export const shipments: shipmentT[] = [
   {
     shipperName: "string",
     shipperEmail: "string",
-    originStreet: "string",
-    originCityStateCountry: "string",
-    originZip: "string",
-    destinationStreet: "string",
-    destinationCityStateCountry: "string",
-    destinationZip: "string",
+    origin: "string",
+    destination: "string",
     receiver: "string",
     courier: "string",
     pickupDate: "string",
@@ -137,9 +132,7 @@ export const shipments: shipmentT[] = [
 
 export const shipmentHistory: shipmentHistoryT[] = [
   {
-    currentCityStateCountry: "usa",
-    currentStreet: "123 str",
-    currentZip: "14250",
+    currentLocation: "123 str",
     date: "June 11, 2024",
     status: "Delivered",
     shipmentId: "Sh-1",
@@ -271,30 +264,6 @@ export const companyInfo: {
   email: "info@rocketshippping.com",
   phone: "+19727727261",
   address: "123 East Baffalo, New York, NY, 10882",
-};
-
-export const shipmentFormGroup: shipmentFormGroupT = {
-  shipperName: "",
-  shipperEmail: "",
-  originStreet: "",
-  origin: "",
-  originZip: "",
-  receiver: "",
-  destinationStreet: "",
-  destination: "",
-  destinationZip: "",
-  courier: "",
-  pickUpDate: "",
-  deliveryDate: "",
-  eta: "",
-  product: "",
-  package: "",
-  mode: "",
-  quantity: "",
-  weight: "",
-  image: "",
-  status: "",
-  action: "",
 };
 
 export const database = "66a76afd0037bfc1a9fc";

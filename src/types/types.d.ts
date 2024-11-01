@@ -1,4 +1,5 @@
 import { IconType } from "react-icons";
+import { HookReturn } from "use-places-autocomplete";
 type navLinkT = { text: string; icon: string; path: string };
 type button = {
   text: string;
@@ -77,12 +78,12 @@ type paymentMethodT =
 type shipmentT = {
   shipperName: string;
   shipperEmail: string;
-  originStreet: string;
-  originCityStateCountry: string;
-  originZip: string;
-  destinationStreet: string;
-  destinationCityStateCountry: string;
-  destinationZip: string;
+  origin: string;
+  originLat?: number;
+  originLong?: number;
+  destination: string;
+  destinationLat?: number;
+  destinationLong?: number;
   receiver: string | withId<userT>;
   courier: string | withId<userT>;
   pickupDate: string;
@@ -101,9 +102,9 @@ type shipmentT = {
 
 type shipmentHistoryT = {
   date: string;
-  currentStreet: string;
-  currentCityStateCountry: string;
-  currentZip: string;
+  currentLocation: string;
+  currentLat?: number;
+  currentLong?: number;
   status: statusT;
   shipmentId: string;
 };
@@ -129,29 +130,6 @@ type messageT = {
 
 type formRegisterT = UseFormRegister<FieldValues>;
 
-type shipmentFormGroupT = {
-  shipperName: string;
-  shipperEmail: string;
-  originStreet: string;
-  origin: string;
-  originZip: string;
-  receiver: string;
-  destinationStreet: string;
-  destination: string;
-  destinationZip: string;
-  courier: string;
-  pickUpDate: string;
-  deliveryDate: string;
-  eta: string;
-  product: string;
-  package: string;
-  mode: string;
-  quantity: string;
-  weight: string;
-  image: string;
-  status: string;
-  action: string;
-};
 type actionsT = "Insurance" | "Crate change" | "None";
 type shipmentWithHistoryT = {
   shipment: withId<shipmentT>;
@@ -166,5 +144,6 @@ type appContextT = {
   setNotifications: React.Dispatch<
     React.SetStateAction<withId<notificationT>[]>
   >;
+  placeApi: HookReturn;
 };
 type withId<T> = T & { $id: string };

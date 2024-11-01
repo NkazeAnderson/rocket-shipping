@@ -31,6 +31,29 @@ export async function getUserById(id: string) {
 export function getImageUrl(id: string) {
   return storage.getFilePreview(bucket, id).href;
 }
+
+export function subscribeToAdmin(
+  callbackFunction: (action: string, payload: Record<string, string>) => void
+) {
+  console.log("subscribed");
+
+  const unsubscribe = client.subscribe(
+    [
+      `databases.${database}.collections.${userCollection}.documents`,
+      `databases.${database}.collections.${shipmentCollection}.documents`,
+      `databases.${database}.collections.${shipmentHistoryCollection}.documents`,
+    ],
+    (res) => {
+      console.log(res);
+
+      const action =
+        res.events[0].split(".")[res.events[0].split(".").length - 1];
+      callbackFunction(action, res.payload as Record<string, string>);
+    }
+  );
+  return unsubscribe;
+}
+
 export async function getShipments(): Promise<(shipmentT & { $id: string })[]> {
   const shipments = await db.listDocuments(database, shipmentCollection);
   //@ts-ignore

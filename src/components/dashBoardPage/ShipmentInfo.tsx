@@ -14,7 +14,7 @@ import Pill from "../ui/Pill";
 import { Context } from "./DashBoardWrapper";
 import { shipmentHistory } from "@/utils/contants";
 
-function UserDetails({ user, location }: { user: userT; location: locationT }) {
+function UserDetails({ user, location }: { user: userT; location: string }) {
   return (
     <div className="w-full p-16">
       <div className="pb-16">
@@ -44,7 +44,7 @@ function UserDetails({ user, location }: { user: userT; location: locationT }) {
         </div>
         <div className="flex space-x-8 items-center">
           <FaPerson className="text-primary opacity-0" size={20} />
-          <p className="">{`${location.street}, ${location.cityStateCountry}, ${location.zip}`}</p>
+          <p className="">{`${location}`}</p>
         </div>
       </div>
       <div className="pb-16">
@@ -105,11 +105,7 @@ function ShipmentInfo({ info }: { info: shipmentWithHistoryT }) {
                 name: info.shipment.shipperName,
                 email: info.shipment.shipperEmail,
               }}
-              location={{
-                street: info.shipment.originStreet,
-                cityStateCountry: info.shipment.originCityStateCountry,
-                zip: info.shipment.originZip,
-              }}
+              location={info.shipment.origin}
             />
           </div>
           {typeof info.shipment.receiver !== "string" && (
@@ -117,24 +113,17 @@ function ShipmentInfo({ info }: { info: shipmentWithHistoryT }) {
               <h4 className="font-bold text-brown">Receiver Information</h4>
               <UserDetails
                 user={info.shipment.receiver}
-                location={{
-                  street: info.shipment.destinationStreet,
-                  cityStateCountry: info.shipment.destinationCityStateCountry,
-                  zip: info.shipment.destinationZip,
-                }}
+                location={info.shipment.destination}
               />
             </div>
           )}
         </div>
         <h2 className="dashboardHeadings text-center">Shipment Information</h2>
         <div className="flex flex-wrap">
-          <ShipmentData
-            heading="Origin"
-            data={`${info.shipment.originStreet}, ${info.shipment.originCityStateCountry}, ${info.shipment.originZip}`}
-          />
+          <ShipmentData heading="Origin" data={`${info.shipment.origin}`} />
           <ShipmentData
             heading="Destination"
-            data={`${info.shipment.destinationStreet}, ${info.shipment.destinationCityStateCountry}, ${info.shipment.destinationZip}`}
+            data={`${info.shipment.destination}`}
           />
           <ShipmentData heading="Payment" data={info.shipment.paymentMethod} />
           <ShipmentData
@@ -181,7 +170,7 @@ function ShipmentInfo({ info }: { info: shipmentWithHistoryT }) {
                 className={`my-8 ${index % 2 === 1 && "bg-dark-gray/20"}`}
               >
                 <td>{item.date}</td>
-                <td>{`${item.currentStreet}, ${item.currentCityStateCountry}, ${item.currentZip}`}</td>
+                <td>{`${item.currentLocation}`}</td>
                 <td>{item.status}</td>
               </tr>
             ))}

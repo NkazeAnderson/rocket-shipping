@@ -2,10 +2,10 @@
 import React from "react";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 function GetQuote() {
-  const { register } = useForm();
+  const methods = useForm();
   const group = {
     origin: "",
     destination: "",
@@ -24,59 +24,51 @@ function GetQuote() {
       </div>
       <div className="md:w-[50%] p-24">
         <h2>Price Calculator</h2>
-        <form className="space-y-16" action="">
-          <Input
-            placeholder="123 Kings Drive, nashville, TN, 30283"
-            label="Origin"
-            type="text"
-            name="origin"
-            register={register}
-            group={group}
-          />
-          <Input
-            placeholder="123 SunSet City, Miami, FL, 20237"
-            label="Destination"
-            type="text"
-            name="destination"
-            register={register}
-            group={group}
-          />
-          <div className="flex">
-            <div className="w-[50%] pr-8">
-              <Input
-                type="number"
-                label="weight"
-                placeholder="24"
-                name="weight"
-                register={register}
-                group={group}
-              />
-            </div>
-            <div className="w-[50%] pr-8">
-              <Input
-                type="text"
-                label="Quantity"
-                placeholder="1"
-                name="quantity"
-                register={register}
-                group={group}
-              />
-            </div>
-          </div>
-          <div className="w-[50%] pr-8">
+        <FormProvider {...methods}>
+          <form className="space-y-16" action="">
             <Input
-              type="options"
-              label="Is live Pet?"
-              placeholder="No"
-              options={["Yes", "No"]}
-              name="livepet"
-              register={register}
-              group={group}
+              placeholder="123 Kings Drive, nashville, TN, 30283"
+              label="Origin"
+              type="text"
+              name="origin"
             />
-          </div>
+            <Input
+              placeholder="123 SunSet City, Miami, FL, 20237"
+              label="Destination"
+              type="text"
+              name="destination"
+            />
+            <div className="flex">
+              <div className="w-[50%] pr-8">
+                <Input
+                  type="number"
+                  label="weight"
+                  placeholder="24"
+                  name="weight"
+                />
+              </div>
+              <div className="w-[50%] pr-8">
+                <Input
+                  type="text"
+                  label="Quantity"
+                  placeholder="1"
+                  name="quantity"
+                />
+              </div>
+            </div>
+            <div className="w-[50%] pr-8">
+              <Input
+                type="options"
+                label="Is live Pet?"
+                placeholder="No"
+                options={["Yes", "No"]}
+                name="livepet"
+              />
+            </div>
 
-          <Button props={{ text: "Submit" }} />
-        </form>
+            <Button props={{ text: "Submit" }} />
+          </form>
+        </FormProvider>
       </div>
     </div>
   );

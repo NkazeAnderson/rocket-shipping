@@ -6,7 +6,7 @@ import { BiCheck } from "react-icons/bi";
 import AddUserForm from "./AddUserForm";
 import AddPackageForm from "./AddPackageForm";
 import Toggler from "../ui/Toggler";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import EditUserForm from "./EditUserForm";
 import EditPackageForm from "./EditPackageForm";
 import {
@@ -17,9 +17,10 @@ import {
   userCollection,
   users,
 } from "@/utils/contants";
-import { db, getShipments, getUsers } from "@/utils/appwrite";
+import { db, getShipments, getUsers, subscribeToAdmin } from "@/utils/appwrite";
 import { Query } from "appwrite";
-import { shipmentT, userT } from "@/types/types";
+import { shipmentT, userT, withId } from "@/types/types";
+import usePlacesAutocomplete from "use-places-autocomplete";
 
 function Admin() {
   const [addOrEditToggle, setAddOrEditToggle] = useState("add");
@@ -37,7 +38,70 @@ function Admin() {
   const [updatePage, setupdatePage] = useState<boolean>(false);
 
   const group = { searchUser: "" };
-  const { register } = useForm<typeof group>();
+  const methods = useForm<typeof group>();
+
+  function adminCallbackSubscribtion(
+    action: string,
+    payload: Record<string, string>
+  ) {
+    console.log(action);
+
+    // users
+
+    if (
+      action === "create" &&
+      "$collectionId" in payload &&
+      payload.$collectionId === userCollection
+    ) {
+      //@ts-ignore
+      const newUser = payload as withId<userT>;
+      setUsersList((prev) => [newUser, ...prev]);
+    }
+    if (
+      action === "update" &&
+      "$collectionId" in payload &&
+      payload.$collectionId === userCollection
+    ) {
+      //@ts-ignore
+      const newUser = payload as withId<userT>;
+      setUsersList((prev) =>
+        prev.map((value) => {
+          if (value.$id === newUser.$id) {
+            return newUser;
+          }
+          return value;
+        })
+      );
+    }
+
+    // shipments;
+    if (
+      action === "create" &&
+      "$collectionId" in payload &&
+      payload.$collectionId === shipmentCollection
+    ) {
+      //@ts-ignore
+      const newShipment = payload as withId<shipmentT>;
+      setShipmentsList((prev) => [newShipment, ...prev]);
+    }
+    if (
+      action === "update" &&
+      "$collectionId" in payload &&
+      payload.$collectionId === shipmentCollection
+    ) {
+      //@ts-ignore
+      const newShipment = payload as withId<shipmentT>;
+      console.log("updated shipment");
+      setShipmentsList((prev) =>
+        prev.map((value) => {
+          if (value.$id === newShipment.$id) {
+            return newShipment;
+          }
+          return value;
+        })
+      );
+    }
+  }
 
   useEffect(() => {
     getUsers().then((res) => {
@@ -46,6 +110,10 @@ function Admin() {
     getShipments().then((res) => {
       setShipmentsList(res);
     });
+    const unsubscribe = subscribeToAdmin(adminCallbackSubscribtion);
+    return () => {
+      unsubscribe();
+    };
   }, [updatePage]);
 
   return (
@@ -70,76 +138,75 @@ function Admin() {
             setValue={setUserOrPackageToggle}
           />
         </div>
-        {/* search user */}
-        {addOrEditToggle === "edit" && userOrPackageToggle === "user" && (
-          <div className=" w-full ">
-            <div className="mb-8">
-              <Input
-                label="Search"
-                placeholder="Search for a user by name or email"
-                type="search"
-                name="searchUser"
-                register={register}
-                group={group}
-              />
-            </div>
-            {UsersList.map((user, index) => (
-              <div
-                key={user.email}
-                onClick={() => {
-                  setSelectedUser(index);
-                }}
-                className="flex items-center py-[2] border-y-dark-gray border-y hover:cursor-pointer"
-              >
-                <div className="flex-grow">
-                  <span className=" text-12">{`${user.name} - ${user.email}`}</span>
-                </div>
-                <div className="p-8">
-                  {selectedUser === index && (
-                    <BiCheck size={25} className="text-success" />
-                  )}
-                </div>
+        <FormProvider {...methods}>
+          {/* search user */}
+          {addOrEditToggle === "edit" && userOrPackageToggle === "user" && (
+            <div className=" w-full ">
+              <div className="mb-8">
+                <Input
+                  label="Search"
+                  placeholder="Search for a user by name or email"
+                  type="search"
+                  name="searchUser"
+                />
               </div>
-            ))}
-          </div>
-        )}
-        {/* search shipment */}
-        {addOrEditToggle === "edit" && userOrPackageToggle !== "user" && (
-          <div className=" w-full ">
-            <div className="mb-8">
-              <Input
-                label="Search"
-                placeholder="Search for a user by name or email"
-                type="search"
-                name="searchUser"
-                register={register}
-                group={group}
-              />
+              {UsersList.map((user, index) => (
+                <div
+                  key={user.email}
+                  onClick={() => {
+                    setSelectedUser(index);
+                  }}
+                  className="flex items-center py-[2] border-y-dark-gray border-y hover:cursor-pointer"
+                >
+                  <div className="flex-grow">
+                    <span className=" text-12">{`${user.name} - ${user.email}`}</span>
+                  </div>
+                  <div className="p-8">
+                    {selectedUser === index && (
+                      <BiCheck size={25} className="text-success" />
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-            {shipmentsList.map((shipment, index) => (
-              <div
-                key={shipment.$id}
-                onClick={() => {
-                  setSelectedShipment(index);
-                }}
-                className="flex items-center py-[2] border-y-dark-gray border-y hover:cursor-pointer"
-              >
-                <div className="flex-grow">
-                  <span className=" text-12">{`${shipment.shipperName} - ${shipment.product} - ${shipment.destinationCityStateCountry}`}</span>
-                </div>
-                <div className="p-8">
-                  {selectedShipment === index && (
-                    <BiCheck size={25} className="text-success" />
-                  )}
-                </div>
+          )}
+          {/* search shipment */}
+          {addOrEditToggle === "edit" && userOrPackageToggle !== "user" && (
+            <div className=" w-full ">
+              <div className="mb-8">
+                <Input
+                  label="Search"
+                  placeholder="Search for a user by name or email"
+                  type="search"
+                  name="searchUser"
+                />
               </div>
-            ))}
-          </div>
-        )}
+              {shipmentsList.map((shipment, index) => (
+                <div
+                  key={shipment.$id}
+                  onClick={() => {
+                    setSelectedShipment(index);
+                  }}
+                  className="flex items-center py-[2] border-y-dark-gray border-y hover:cursor-pointer"
+                >
+                  <div className="flex-grow">
+                    <span className=" text-12">{`${shipment.shipperName} - ${shipment.product} - ${shipment.destination}`}</span>
+                  </div>
+                  <div className="p-8">
+                    {selectedShipment === index && (
+                      <BiCheck size={25} className="text-success" />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </FormProvider>
 
         <SectionTitle
           text={`${addOrEditToggle} ${userOrPackageToggle}`.toUpperCase()}
         />
+
         {addOrEditToggle === "add" && userOrPackageToggle === "user" ? (
           <AddUserForm />
         ) : addOrEditToggle === "add" && userOrPackageToggle === "package" ? (
