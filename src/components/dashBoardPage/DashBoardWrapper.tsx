@@ -129,21 +129,20 @@ function DashBoardWrapper() {
                   text="notifications"
                   icon={FaBell}
                 />
-                <div className="w-full flex justify-center mt-32">
-                  <span
-                    className={` text-white mx-auto hover:cursor-pointer  right-16 rounded-[100%]`}
-                    onClick={() => {
-                      setSidePanelContent({ id: "user1", subject: "admin" });
-                      setShowSidePanel(true);
-                    }}
-                  >
-                    <FaPlusCircle size={30} />
-                  </span>
-                </div>
+                {user?.isAdmin && (
+                  <div className="w-full flex justify-center mt-32">
+                    <span
+                      className={` text-white mx-auto hover:cursor-pointer  right-16 rounded-[100%]`}
+                      onClick={() => {
+                        setSidePanelContent({ id: "user1", subject: "admin" });
+                        setShowSidePanel(true);
+                      }}
+                    >
+                      <FaPlusCircle size={30} />
+                    </span>
+                  </div>
+                )}
               </div>
-              <p className=" text-center font-bold underline pb-16">
-                <Link href={"/login"}> Logout</Link>
-              </p>
             </div>
           </div>
           <div

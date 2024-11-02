@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import SectionTitle from "../SectionTitle";
 import Input from "../ui/Input";
 import { BiCheck } from "react-icons/bi";
@@ -19,16 +19,14 @@ import {
 } from "@/utils/contants";
 import { db, getShipments, getUsers, subscribeToAdmin } from "@/utils/appwrite";
 import { Query } from "appwrite";
-import { shipmentT, userT, withId } from "@/types/types";
+import { appContextT, shipmentT, userT, withId } from "@/types/types";
 import usePlacesAutocomplete from "use-places-autocomplete";
+import { AppContext } from "../ContextProviders/AppProvider";
 
 function Admin() {
   const [addOrEditToggle, setAddOrEditToggle] = useState("add");
   const [userOrPackageToggle, setUserOrPackageToggle] = useState("user");
-  const [UsersList, setUsersList] = useState<(userT & { $id: string })[]>([]);
-  const [shipmentsList, setShipmentsList] = useState<
-    (shipmentT & { $id: string })[]
-  >([]);
+
   const [selectedUser, setSelectedUser] = useState<number | undefined>(
     undefined
   );
@@ -39,82 +37,14 @@ function Admin() {
 
   const group = { searchUser: "" };
   const methods = useForm<typeof group>();
+  const { shipments, users } = useContext(AppContext) as appContextT;
 
-  function adminCallbackSubscribtion(
-    action: string,
-    payload: Record<string, string>
-  ) {
-    console.log(action);
-
-    // users
-
-    if (
-      action === "create" &&
-      "$collectionId" in payload &&
-      payload.$collectionId === userCollection
-    ) {
-      //@ts-ignore
-      const newUser = payload as withId<userT>;
-      setUsersList((prev) => [newUser, ...prev]);
-    }
-    if (
-      action === "update" &&
-      "$collectionId" in payload &&
-      payload.$collectionId === userCollection
-    ) {
-      //@ts-ignore
-      const newUser = payload as withId<userT>;
-      setUsersList((prev) =>
-        prev.map((value) => {
-          if (value.$id === newUser.$id) {
-            return newUser;
-          }
-          return value;
-        })
-      );
-    }
-
-    // shipments;
-    if (
-      action === "create" &&
-      "$collectionId" in payload &&
-      payload.$collectionId === shipmentCollection
-    ) {
-      //@ts-ignore
-      const newShipment = payload as withId<shipmentT>;
-      setShipmentsList((prev) => [newShipment, ...prev]);
-    }
-    if (
-      action === "update" &&
-      "$collectionId" in payload &&
-      payload.$collectionId === shipmentCollection
-    ) {
-      //@ts-ignore
-      const newShipment = payload as withId<shipmentT>;
-      console.log("updated shipment");
-      setShipmentsList((prev) =>
-        prev.map((value) => {
-          if (value.$id === newShipment.$id) {
-            return newShipment;
-          }
-          return value;
-        })
-      );
-    }
-  }
-
+  const shipmentsList = useMemo(() => {
+    return shipments.map((value) => value.shipment);
+  }, [shipments]);
   useEffect(() => {
-    getUsers().then((res) => {
-      setUsersList(res);
-    });
-    getShipments().then((res) => {
-      setShipmentsList(res);
-    });
-    const unsubscribe = subscribeToAdmin(adminCallbackSubscribtion);
-    return () => {
-      unsubscribe();
-    };
-  }, [updatePage]);
+    selectedShipment && console.log("At admin", shipments[selectedShipment]);
+  }, [selectedShipment]);
 
   return (
     <div className="w-full">
@@ -150,7 +80,7 @@ function Admin() {
                   name="searchUser"
                 />
               </div>
-              {UsersList.map((user, index) => (
+              {users.map((user, index) => (
                 <div
                   key={user.email}
                   onClick={() => {
@@ -210,19 +140,19 @@ function Admin() {
         {addOrEditToggle === "add" && userOrPackageToggle === "user" ? (
           <AddUserForm />
         ) : addOrEditToggle === "add" && userOrPackageToggle === "package" ? (
-          <AddPackageForm users={UsersList} />
+          <AddPackageForm users={users} />
         ) : addOrEditToggle === "edit" &&
           userOrPackageToggle === "user" &&
           selectedUser !== undefined ? (
           <EditUserForm
-            user={UsersList[selectedUser]}
-            id={UsersList[selectedUser].$id}
+            user={users[selectedUser]}
+            id={users[selectedUser].$id}
           />
         ) : (
           selectedShipment !== undefined && (
             <EditPackageForm
-              shipment={shipmentsList[selectedShipment]}
-              users={UsersList}
+              shipmentWithHistory={shipments[selectedShipment]}
+              users={users}
             />
           )
         )}

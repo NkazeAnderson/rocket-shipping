@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import {
   formRegisterT,
   shipmentHistoryT,
   shipmentT,
+  shipmentWithHistoryT,
   userT,
 } from "@/types/types";
 import {
@@ -27,17 +28,21 @@ import { ID, Query } from "appwrite";
 import { db, getHistory, storage } from "@/utils/appwrite";
 import EditShipmentHistoryForm from "./EditShipmentHistoryForm";
 import AddShipmentHistoryForm from "./AddShipmentHistoryForm";
+import { getLatLong } from "@/utils";
 
 function EditPackageForm({
-  shipment,
+  shipmentWithHistory,
   users,
 }: {
-  shipment: shipmentT & { $id: string };
+  shipmentWithHistory: shipmentWithHistoryT;
   users: (userT & { $id: string })[];
 }) {
   const methods = useForm<shipmentT>();
-  const [shipmentHistoryList, setShipmentHistoryList] =
-    useState<(shipmentHistoryT & { $id: string })[]>();
+  const shipment = useMemo(() => {
+    return { ...shipmentWithHistory.shipment };
+  }, [shipmentWithHistory]);
+
+  const shipmentHistoryList = shipmentWithHistory.histories;
   const [editHistory, setEditHistory] = useState<undefined | number>();
   const [addHistory, setAddHistory] = useState<boolean>(false);
 
@@ -65,7 +70,17 @@ function EditPackageForm({
       data.package = packages[Number(data.package)];
       data.paymentMethod = paymentModes[Number(data.paymentMethod)];
       data.action = actions[Number(data.action)];
-      console.log(shipment);
+
+      if (data.origin !== shipment.origin) {
+        const originCords = await getLatLong(data.origin);
+        data.originLat = originCords.lat;
+        data.originLong = originCords.lng;
+      }
+      if (data.destination !== shipment.destination) {
+        const destinationCords = await getLatLong(data.destination);
+        data.destinationLat = destinationCords.lat;
+        data.destinationLong = destinationCords.lng;
+      }
       //@ts-ignore
       data.$collectionId && delete data.$collectionId;
       //@ts-ignore
@@ -89,7 +104,14 @@ function EditPackageForm({
   };
 
   useEffect(() => {
+    console.log("at edit");
+    console.log(users);
+    console.log(shipment.courier);
+
     if (typeof shipment.receiver === "number") {
+      return;
+    }
+    if (!users.length || !shipment) {
       return;
     }
     //@ts-ignore
@@ -101,10 +123,14 @@ function EditPackageForm({
       (item) => item === shipment.paymentMethod
     );
     //@ts-ignore
-    shipment.courier = users.findIndex((item) => item.$id === shipment.courier);
+    shipment.courier = users.findIndex(
+      //@ts-ignore
+      (item) => item.$id === shipment.courier.$id
+    );
     //@ts-ignore
     shipment.receiver = users.findIndex(
-      (item) => item.$id === shipment.receiver
+      //@ts-ignore
+      (item) => item.$id === shipment.receiver.$id
     );
     //@ts-ignore
     shipment.action = actions.findIndex((item) => item === shipment.action);
@@ -112,16 +138,9 @@ function EditPackageForm({
     shipment.pickupDate = shipment.pickupDate.split("T")[0];
     //@ts-ignore
     shipment.deliveryDate = shipment.deliveryDate.split("T")[0];
+
     methods.reset(shipment);
-    getHistory(shipment.$id)
-      .then((res) => {
-        setShipmentHistoryList(res);
-      })
-      .catch((e) => {
-        toast.error("Error fetching history");
-        console.log(e);
-      });
-  }, [shipment]);
+  }, [shipment, users]);
 
   return (
     <>

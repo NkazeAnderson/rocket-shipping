@@ -44,8 +44,6 @@ export function subscribeToAdmin(
       `databases.${database}.collections.${shipmentHistoryCollection}.documents`,
     ],
     (res) => {
-      console.log(res);
-
       const action =
         res.events[0].split(".")[res.events[0].split(".").length - 1];
       callbackFunction(action, res.payload as Record<string, string>);
@@ -54,8 +52,41 @@ export function subscribeToAdmin(
   return unsubscribe;
 }
 
-export async function getShipments(): Promise<(shipmentT & { $id: string })[]> {
-  const shipments = await db.listDocuments(database, shipmentCollection);
+export function subscribeToUser(
+  userId: string,
+  shipmentIds: string[],
+  historyIds: string[],
+  callbackFunction: (action: string, payload: Record<string, string>) => void
+) {
+  const unsubscribe = client.subscribe(
+    [
+      ...shipmentIds.map(
+        (value) =>
+          `databases.${database}.collections.${shipmentCollection}.documents.${value}`
+      ),
+      ...historyIds.map(
+        (value) =>
+          `databases.${database}.collections.${shipmentHistoryCollection}.documents.${value}`
+      ),
+      `databases.${database}.collections.${userCollection}.documents.${userId}`,
+    ],
+    (res) => {
+      const action =
+        res.events[0].split(".")[res.events[0].split(".").length - 1];
+      callbackFunction(action, res.payload as Record<string, string>);
+    }
+  );
+  return unsubscribe;
+}
+
+export async function getShipments(
+  user: withId<userT>
+): Promise<(shipmentT & { $id: string })[]> {
+  const shipments = user.isAdmin
+    ? await db.listDocuments(database, shipmentCollection)
+    : await db.listDocuments(database, shipmentCollection, [
+        Query.equal("receiver", user.$id),
+      ]);
   //@ts-ignore
   return shipments.documents as (shipmentT & { $id: string })[];
 }

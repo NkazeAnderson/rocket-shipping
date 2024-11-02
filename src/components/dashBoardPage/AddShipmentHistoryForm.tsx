@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { database, shipmentHistoryCollection, status } from "@/utils/contants";
 import { db } from "@/utils/appwrite";
 import { ID } from "appwrite";
+import { getLatLong } from "@/utils";
 
 function AddShipmentHistoryForm({
   shipmentId,
@@ -20,6 +21,9 @@ function AddShipmentHistoryForm({
     try {
       data.status = status[Number(data.status)];
       data.shipmentId = shipmentId;
+      const currentCords = await getLatLong(data.currentLocation);
+      data.currentLat = currentCords.lat;
+      data.currentLong = currentCords.lng;
 
       await db.createDocument(
         database,

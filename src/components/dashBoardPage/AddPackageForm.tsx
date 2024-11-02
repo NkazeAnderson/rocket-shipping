@@ -26,13 +26,7 @@ import {
 import { db, storage } from "@/utils/appwrite";
 import { ID } from "appwrite";
 import toast from "react-hot-toast";
-import { getGeocode, getLatLng, HookReturn } from "use-places-autocomplete";
-import PlaceOptions from "./PlaceOptions";
-
-async function getLatLong(description: string) {
-  const [result, ...res] = await getGeocode({ address: description });
-  return getLatLng(result);
-}
+import { getLatLong } from "@/utils";
 
 function AddPackageForm({ users }: { users: withId<userT>[] }) {
   const methods = useForm<shipmentT>();

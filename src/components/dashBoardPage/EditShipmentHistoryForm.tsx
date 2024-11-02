@@ -6,6 +6,7 @@ import Input from "../ui/Input";
 import toast from "react-hot-toast";
 import { database, shipmentHistoryCollection, status } from "@/utils/contants";
 import { db } from "@/utils/appwrite";
+import { getLatLong } from "@/utils";
 
 function EditShipmentHistoryForm({
   history,
@@ -17,8 +18,12 @@ function EditShipmentHistoryForm({
   const methods = useForm<shipmentHistoryT>();
   const onSubmit: SubmitHandler<shipmentHistoryT> = async (data) => {
     try {
-      let imageId = "";
       data.status = status[Number(data.status)];
+      if (data.currentLocation !== history.currentLocation) {
+        const currentCords = await getLatLong(data.currentLocation);
+        data.currentLat = currentCords.lat;
+        data.currentLong = currentCords.lng;
+      }
 
       //@ts-ignore
       data.$collectionId && delete data.$collectionId;

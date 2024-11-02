@@ -42,7 +42,7 @@ function ShipmentMap({ shipment }: { shipment: shipmentWithHistoryT }) {
     setMap(map);
   }
   const customMarkerIcon = {
-    url: "./courier.png",
+    url: (shipment.shipment.image as string) || "./courier.png",
     scaledSize: new google.maps.Size(50, 50),
   };
 
@@ -58,13 +58,15 @@ function ShipmentMap({ shipment }: { shipment: shipmentWithHistoryT }) {
       onUnmount={onUnmount}
     >
       {/* Child components, such as markers, info windows, etc. */}
-      <Marker
-        position={origin}
-        label={{
-          text: "Origin",
-          className: "pb-48 text-success font-semibold",
-        }}
-      />
+      {origin.lat !== current.lat && origin.lng !== current.lng && (
+        <Marker
+          position={origin}
+          label={{
+            text: "Origin",
+            className: "pb-48 text-success font-semibold",
+          }}
+        />
+      )}
       <Marker
         position={destination}
         label={{
