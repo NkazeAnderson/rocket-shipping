@@ -4,14 +4,24 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import MessageCard from "./MessageCard";
 import { FaCamera, FaPaperPlane } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
-import { conversations, messages } from "@/utils/contants";
 import { Context } from "./DashBoardWrapper";
-import { conversationT, dashBoardContextT } from "@/types/types";
+import {
+  appContextT,
+  conversationT,
+  conversationWithMessageT,
+  dashBoardContextT,
+  messageT,
+} from "@/types/types";
+import { AppContext } from "../ContextProviders/AppProvider";
+import { sendMessage, storage } from "@/utils/appwrite";
+import { bucket } from "@/utils/contants";
+import { ID } from "appwrite";
 
 function Messaging() {
   const [message, setMessage] = useState("");
   const [image, setImage] = useState<null | File>(null);
   const imageRef = useRef<HTMLInputElement | null>(null);
+  const { conversations, user } = useContext(AppContext) as appContextT;
   const { sidePanelContent } = useContext(Context) as dashBoardContextT;
   const lastElement = useRef<null | HTMLDivElement>(null);
   const clearNewMessages = () => {
@@ -20,8 +30,8 @@ function Messaging() {
   };
 
   const conversation = conversations.find(
-    (item) => item.id === sidePanelContent?.id
-  ) as conversationT;
+    (item) => item.$id === sidePanelContent?.id
+  ) as conversationWithMessageT;
   useEffect(() => {
     if (image) {
       const blob = URL.createObjectURL(image);
@@ -33,8 +43,38 @@ function Messaging() {
       lastElement.current && lastElement.current.scrollIntoView(false);
     }, 1000);
   }, [sidePanelContent?.id]);
+  if (
+    !conversation ||
+    typeof conversation.member1 === "string" ||
+    typeof conversation.member2 === "string"
+  ) {
+    return null;
+  }
+  async function submit() {
+    const imageID = ID.unique();
+    if (image) {
+      await storage.createFile(bucket, imageID, image);
+    }
+    const messageToSend: messageT | undefined =
+      message && user
+        ? {
+            conversationId: conversation.$id,
+            sender: user.$id,
+            text: message,
+            timeStamp: new Date().getTime(),
+          }
+        : image && user
+        ? {
+            conversationId: conversation.$id,
+            sender: user.$id,
+            image: imageID,
+            timeStamp: new Date().getTime(),
+          }
+        : undefined;
+    messageToSend && (await sendMessage(messageToSend));
+  }
   return (
-    <div className=" w-full">
+    <div className=" w-full flex-1 relative">
       <div className="flex justify-between sticky top-0 items-center bg-black p-8 rounded-b-15 text-white">
         <div className="flex space-x-8">
           <Image
@@ -43,27 +83,29 @@ function Messaging() {
             style={{ objectFit: "cover" }}
             className="rounded-full"
             src={
-              conversation.memberId2.image
-                ? conversation.memberId2.image
+              conversation.member1.$id === user?.$id &&
+              conversation.member2.image
+                ? conversation.member2.image
+                : conversation.member2.$id === user?.$id &&
+                  conversation.member1.image
+                ? conversation.member1.image
                 : "/no-pic.jpg"
             }
             alt=""
           />
           <div>
-            <h5 className="font-bold">{conversation.memberId2.name}</h5>
+            <h5 className="font-bold">{conversation.member2.name}</h5>
             <p>Online</p>
           </div>
         </div>
       </div>
       <div className=" w-full p-16">
-        {messages
-          .filter((item) => item.conversationId === conversation.id)
-          .map((item) => (
-            <MessageCard key={item.id} props={item} />
-          ))}
+        {conversation.messages.map((item) => (
+          <MessageCard key={item.$id} props={item} />
+        ))}
       </div>
       <div ref={lastElement} className=" pb-96"></div>
-      <div className="w-full border-2 border-success sticky bottom-0 rounded-tl-30">
+      <div className="w-full border-2 border-success absolute bottom-0 rounded-tl-30">
         <div className="flex items-center bg-light-gray px-16 py-8 rounded-tl-30">
           <div className="flex-grow">
             {image ? (
@@ -115,7 +157,9 @@ function Messaging() {
             <span
               className="p-24 hover:cursor-pointer"
               onClick={() => {
-                clearNewMessages();
+                submit().then(() => {
+                  clearNewMessages();
+                });
               }}
             >
               <FaPaperPlane className="text-success rotate-12 " size={25} />
@@ -133,7 +177,9 @@ function Messaging() {
             <span
               className="p-24 hover:cursor-pointer"
               onClick={() => {
-                clearNewMessages();
+                submit().then(() => {
+                  clearNewMessages();
+                });
               }}
             >
               <FaPaperPlane className="text-success rotate-12 " size={25} />

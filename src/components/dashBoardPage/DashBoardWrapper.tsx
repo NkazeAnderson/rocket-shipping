@@ -52,7 +52,7 @@ function DashBoardWrapper() {
   const [screenSize, setScreenSize] = useState(0);
   const router = useRouter();
   const wrapper = useRef<null | HTMLDivElement>(null);
-  const { user } = useContext(AppContext) as appContextT;
+  const { user, conversations } = useContext(AppContext) as appContextT;
   useEffect(() => {
     screenSize === 0 && setScreenSize(window.innerWidth);
     window.addEventListener("resize", (e) => {
@@ -122,7 +122,9 @@ function DashBoardWrapper() {
                   showText={showText}
                   text="conversations"
                   icon={FaComments}
-                  count={10}
+                  count={
+                    conversations.length ? conversations.length : undefined
+                  }
                 />
                 <SideIcon
                   showText={showText}

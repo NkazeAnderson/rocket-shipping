@@ -109,23 +109,25 @@ type shipmentHistoryT = {
   shipmentId: string;
 };
 type conversationT = {
-  id: string;
-  memberId1: userT;
-  memberId2: userT;
-  lastmessage: string;
-  ago: string;
-  unread: number;
+  member1: string | withId<userT>;
+  member2: string | withId<userT>;
+  lastMessage?: string | "shipping-img-new";
 };
 
 type messageT = {
-  id: string;
-  isSender?: boolean;
+  sender: string;
   text?: string;
   read?: boolean;
   image?: string;
   conversationId: string;
-  time: string;
-  day: string;
+  timeStamp: number;
+};
+
+type conversationWithMessageT = withId<conversationT> & {
+  messages: withId<messageT>[];
+  lastMessage?: string;
+  unread?: number;
+  ago?: string;
 };
 
 type formRegisterT = UseFormRegister<FieldValues>;
@@ -145,6 +147,10 @@ type appContextT = {
   notifications: withId<notificationT>[];
   setNotifications: React.Dispatch<
     React.SetStateAction<withId<notificationT>[]>
+  >;
+  conversations: conversationWithMessageT[];
+  setConversations: React.Dispatch<
+    React.SetStateAction<conversationWithMessageT[]>
   >;
   placeApi: HookReturn;
 };

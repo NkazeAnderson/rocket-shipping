@@ -35,7 +35,7 @@ function SideIcon({
       </p>
       {count && (
         <span className="absolute top-8 right-8">
-          <Badge count={10} />
+          <Badge count={count} />
         </span>
       )}
     </div>

@@ -3,6 +3,7 @@ import Button from "../ui/Button";
 import Input from "../ui/Input";
 import {
   bucket,
+  conversationCollection,
   database,
   modes,
   packages,
@@ -17,13 +18,14 @@ import {
   useForm,
 } from "react-hook-form";
 import {
+  conversationT,
   packageT,
   shipmentHistoryT,
   shipmentT,
   userT,
   withId,
 } from "@/types/types";
-import { db, storage } from "@/utils/appwrite";
+import { db, getConversationId, storage } from "@/utils/appwrite";
 import { ID } from "appwrite";
 import toast from "react-hot-toast";
 import { getLatLong } from "@/utils";
@@ -61,8 +63,27 @@ function AddPackageForm({ users }: { users: withId<userT>[] }) {
       data.originLong = originCords.lng;
       data.destinationLat = destinationCords.lat;
       data.destinationLong = destinationCords.lng;
-
       const shipmentId = ID.unique();
+      const conversationId = await getConversationId(
+        data.courier,
+        data.receiver
+      );
+      if (conversationId) {
+        data.conversationId = conversationId;
+      } else {
+        const conversation: conversationT = {
+          member1: data.courier,
+          member2: data.receiver,
+        };
+        await db.createDocument(
+          database,
+          conversationCollection,
+          shipmentId,
+          conversation
+        );
+        data.conversationId = shipmentId;
+      }
+
       await db.createDocument(database, shipmentCollection, shipmentId, data);
       const shipmentHistory: shipmentHistoryT = {
         currentLocation: data.origin,
@@ -138,7 +159,9 @@ function AddPackageForm({ users }: { users: withId<userT>[] }) {
           label="Courier"
           placeholder="Select Receiver"
           type="options"
-          options={users.map((user, index) => `${user.name} - ${user.email}`)}
+          options={users
+            .filter((value) => value.isAdmin)
+            .map((user, index) => `${user.name} - ${user.email}`)}
           name="courier"
           required
         />

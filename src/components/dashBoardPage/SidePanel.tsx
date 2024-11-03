@@ -40,12 +40,7 @@ function SidePanel() {
             >
               <FaXmark size={20} />
             </span>
-            <div
-              className="min-h-full min-w-full flex flex-col"
-              onLoad={(e) => {
-                console.log("width", e.currentTarget.clientWidth);
-              }}
-            >
+            <div className="min-h-full min-w-full flex flex-col">
               {sidePanelContent?.subject === "shipment" &&
                 !sidePanelContent?.maps && <ShipmentInfo info={shipment} />}
               {sidePanelContent?.subject === "shipment" &&

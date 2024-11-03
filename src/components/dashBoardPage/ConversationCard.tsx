@@ -1,22 +1,34 @@
 "use client";
-import { conversationT, dashBoardContextT, subjectT } from "@/types/types";
+import {
+  appContextT,
+  conversationT,
+  conversationWithMessageT,
+  dashBoardContextT,
+  subjectT,
+} from "@/types/types";
 import Image from "next/image";
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { Context } from "./DashBoardWrapper";
 import Badge from "../ui/Badge";
 import { BiImage } from "react-icons/bi";
+import { AppContext } from "../ContextProviders/AppProvider";
 
-function ConversationCard({ props }: { props: conversationT }) {
+function ConversationCard({ props }: { props: conversationWithMessageT }) {
   const subject: subjectT = "conversation";
   const { setShowSidePanel, setSidePanelContent } = useContext(
     Context
   ) as dashBoardContextT;
+  const { conversations } = useContext(AppContext) as appContextT;
+
+  if (typeof props.member2 === "string" || !props.lastMessage) {
+    return null;
+  }
   return (
     <div
       onClick={() => {
         setShowSidePanel((prev) => !prev);
-        setSidePanelContent({ id: props.id, subject });
+        setSidePanelContent({ id: props.$id, subject });
       }}
       className="dashboardCardBG md:flex justify-between items-center bg-black p-8 rounded-15 text-white hover:cursor-pointer border border-success mb-24"
     >
@@ -28,23 +40,21 @@ function ConversationCard({ props }: { props: conversationT }) {
               fill
               style={{ objectFit: "cover" }}
               className="rounded-full"
-              src={
-                props.memberId2.image ? props.memberId2.image : "/no-pic.jpg"
-              }
+              src={props.member2.image ? props.member2.image : "/no-pic.jpg"}
               alt=""
             />
           </div>
         </div>
         {/* text */}
         <div className="flex-grow">
-          <h5 className="font-bold capitalize">{props.memberId2.name}</h5>
+          <h5 className="font-bold capitalize">{props.member2.name}</h5>
           <div className="flex items-center space-x-8">
             <span className="p-[4px] rounded-[100%] bg-success animate-ping"></span>
             <span>Online</span>
           </div>
           <p>
-            {props.lastmessage ? (
-              props.lastmessage
+            {props.lastMessage && props.lastMessage !== "shipping-img-new" ? (
+              props.lastMessage
             ) : (
               <span className=" text-sm italic">
                 <BiImage size={25} className=" inline" />
@@ -60,7 +70,7 @@ function ConversationCard({ props }: { props: conversationT }) {
           <span className=" font-thin text-[12] text-nowrap">{props.ago}</span>
           <FaCheckCircle size={10} />
         </div>
-        <Badge count={props.unread} />
+        {props.unread && <Badge count={props.unread} />}
       </div>
     </div>
   );

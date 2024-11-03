@@ -139,82 +139,6 @@ export const shipmentHistory: shipmentHistoryT[] = [
   },
 ];
 export const actions: actionsT[] = ["Crate change", "Insurance", "None"];
-export const conversations: conversationT[] = [
-  {
-    id: "Cv-1",
-    lastmessage:
-      "Hello My dear friend, How are you doing?. Hope all good, I wish to remind you about our deals",
-    unread: 1,
-    memberId1: users[2],
-    memberId2: users[0],
-    ago: "2 mins",
-  },
-  {
-    id: "Cv-2",
-    lastmessage: "",
-    unread: 10,
-    memberId1: users[2],
-    memberId2: users[1],
-    ago: "10 mins",
-  },
-];
-
-export const messages: messageT[] = [
-  {
-    id: "Ms-1",
-    isSender: false,
-    time: " 10:00 am",
-    day: "Yesterday",
-    read: false,
-    conversationId: "Cv-1",
-    text: "Hello My dear friend, How are you doing?. Hope all good, I wish to remind you about our deals",
-  },
-  {
-    id: "Ms-2",
-    isSender: false,
-    time: "11:00 am",
-    day: "Yesterday",
-    read: false,
-    conversationId: "Cv-1",
-    text: "Hello there my friend",
-  },
-  {
-    id: "Ms-3",
-    isSender: true,
-    time: " 12:00 pm",
-    day: "Yesterday",
-    read: false,
-    conversationId: "Cv-1",
-    image: "/image-placeholder.jpg",
-  },
-  {
-    id: "Ms-4",
-    isSender: true,
-    time: " 12:00 pm",
-    day: "Yesterday",
-    read: true,
-    conversationId: "Cv-1",
-    text: "Hi",
-  },
-  {
-    id: "Ms-5",
-    isSender: true,
-    time: " 12:00 pm",
-    day: "Yesterday",
-    read: true,
-    conversationId: "Cv-2",
-    text: "Hi",
-  },
-  {
-    id: "Ms-5",
-    isSender: true,
-    time: " 12:00 pm",
-    day: "Yesterday",
-    read: true,
-    conversationId: "Cv-2",
-    image: "/image-placeholder.jpg",
-  },
-];
 
 export const ourValues: { image: string; title: string; text: string }[] = [
   {
@@ -271,5 +195,7 @@ export const bucket = "671bbd68001407857b37";
 export const userCollection = "66a76bc00017ba31b41d";
 export const shipmentCollection = "66a76de00030d63f37e0";
 export const shipmentHistoryCollection = "671ca238002e6cd68770";
+export const conversationCollection = "672701ec00298c0187f1";
+export const messageCollection = "672701fc0018283d308f";
 export const profilePicPlaceholder =
   "https://cloud.appwrite.io/v1/storage/buckets/671bbd68001407857b37/files/67210bf6001ce8f34c2c/view?project=6674479b00230f8c4e57&project=6674479b00230f8c4e57";

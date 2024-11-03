@@ -194,7 +194,9 @@ function EditPackageForm({
             label="Courier"
             placeholder="Select Receiver"
             type="options"
-            options={users.map((user, index) => `${user.name} - ${user.email}`)}
+            options={users
+              .filter((value) => value.isAdmin)
+              .map((user, index) => `${user.name} - ${user.email}`)}
             name="courier"
             required
           />

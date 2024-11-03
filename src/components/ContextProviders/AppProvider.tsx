@@ -2,6 +2,8 @@
 import { logIn } from "@/actions";
 import {
   appContextT,
+  conversationT,
+  conversationWithMessageT,
   notificationT,
   shipmentHistoryT,
   shipmentWithHistoryT,
@@ -9,17 +11,16 @@ import {
   withId,
 } from "@/types/types";
 import {
-  db,
-  getHistory,
-  getImageUrl,
+  getConversations,
+  getLastMessage,
   getMyInfo,
   getShipments,
-  getUserById,
   getUsers,
   subscribeToAdmin,
   subscribeToUser,
 } from "@/utils/appwrite";
 import {
+  conversationCollection,
   shipmentCollection,
   shipmentHistoryCollection,
   userCollection,
@@ -36,6 +37,9 @@ function AppProvider({ children }: { children: React.ReactNode }) {
   const [notifications, setNotifications] = useState<withId<notificationT>[]>(
     []
   );
+  const [conversations, setConversations] = useState<
+    conversationWithMessageT[]
+  >([]);
 
   const placeApi = usePlacesAutocomplete({
     requestOptions: {
@@ -75,6 +79,35 @@ function AppProvider({ children }: { children: React.ReactNode }) {
             return value;
           })
         );
+      }
+      // conversations
+
+      if (
+        action === "create" &&
+        "$collectionId" in payload &&
+        payload.$collectionId === conversationCollection
+      ) {
+        //@ts-ignore
+        const newUser = payload as withId<conversationT>;
+      }
+      if (
+        action === "update" &&
+        "$collectionId" in payload &&
+        payload.$collectionId === conversationCollection
+      ) {
+        //@ts-ignore
+        const newConversationData = payload as withId<conversationT>;
+        getLastMessage(newConversationData.$id).then((res) => {
+          const conversationMap = conversations.map((item) => {
+            if (item.$id === newConversationData.$id) {
+              item.lastMessage = newConversationData.lastMessage;
+              item.messages.push(res);
+              return item;
+            }
+            return item;
+          });
+          setConversations(conversationMap);
+        });
       }
 
       // shipments;
@@ -194,38 +227,23 @@ function AppProvider({ children }: { children: React.ReactNode }) {
   }, [shipments]);
 
   useEffect(() => {
-    const shipmentsList: shipmentWithHistoryT[] = [];
     user &&
       getShipments(user).then(async (res) => {
-        for (let shipment of res) {
-          const histories = await getHistory(shipment.$id);
-          if (
-            typeof shipment.courier === "string" &&
-            typeof shipment.receiver === "string"
-          ) {
-            shipment.courier = await getUserById(shipment.courier);
-            shipment.receiver = await getUserById(shipment.receiver);
-            shipment.courier.image = shipment.courier.image
-              ? getImageUrl(shipment.courier.image)
-              : undefined;
-            shipment.receiver.image = shipment.receiver.image
-              ? getImageUrl(shipment.receiver.image)
-              : undefined;
-          }
-          shipment.image =
-            shipment.image && typeof shipment.image === "string"
-              ? getImageUrl(shipment.image)
-              : undefined;
-          shipmentsList.push({ shipment, histories });
-        }
-        setShipments(shipmentsList);
-
-        console.log("Shipments in provider:", shipmentsList[0]);
+        setShipments(res);
       });
     user?.isAdmin &&
       getUsers().then((res) => {
         setUsers(res);
       });
+
+    user &&
+      getConversations(user)
+        .then((res) => {
+          setConversations(res);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
 
     !user &&
       getMyInfo()
@@ -251,6 +269,8 @@ function AppProvider({ children }: { children: React.ReactNode }) {
         placeApi,
         setUsers,
         users,
+        conversations,
+        setConversations,
       }}
     >
       {children}
