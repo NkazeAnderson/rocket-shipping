@@ -234,7 +234,6 @@ export async function getHistory(shipmentId: string) {
 
 export async function getMyInfo() {
   const data = await account.get();
-  console.log("data", data);
 
   const users = await db.listDocuments(database, userCollection, [
     Query.equal("email", data.email),

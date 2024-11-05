@@ -25,6 +25,7 @@ import {
   shipmentHistoryCollection,
   userCollection,
 } from "@/utils/contants";
+import { useRouter } from "next/navigation";
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import usePlacesAutocomplete from "use-places-autocomplete";
 export const AppContext = createContext<appContextT | undefined>(undefined);
@@ -40,6 +41,8 @@ function AppProvider({ children }: { children: React.ReactNode }) {
   const [conversations, setConversations] = useState<
     conversationWithMessageT[]
   >([]);
+
+  const router = useRouter();
 
   const placeApi = usePlacesAutocomplete({
     requestOptions: {
@@ -253,7 +256,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
         })
         .catch((e) => {
           setShipments([]);
-          console.log(e);
+          router.back();
         });
   }, [user]);
 
