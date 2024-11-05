@@ -256,7 +256,10 @@ function AppProvider({ children }: { children: React.ReactNode }) {
         })
         .catch((e) => {
           setShipments([]);
-          router.back();
+          console.log(e);
+          console.log("Getm info error");
+
+          router.replace("/auth/login");
         });
   }, [user]);
 

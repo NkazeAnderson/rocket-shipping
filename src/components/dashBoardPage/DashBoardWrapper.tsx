@@ -99,66 +99,79 @@ function DashBoardWrapper() {
         className="w-full h-full flex flex-nowrap overflow-y-hidden overflow-x-hidden relative"
         ref={wrapper}
       >
-        <div className="w-full lg:w-[50%] flex items-stretch h-full">
-          <div className="bg-success text-white pb-32 pt-24 dashboardSideBarShadow">
-            <div
-              className="w-full flex justify-center py-16"
-              onClick={() => {
-                setShowText(!showText);
-              }}
-            >
-              {!showText ? <FaChevronRight /> : <FaChevronLeft />}
-            </div>
+        {user ? (
+          <>
+            <div className="w-full lg:w-[50%] flex items-stretch h-full">
+              <div className="bg-success text-white pb-32 pt-24 dashboardSideBarShadow">
+                <div
+                  className="w-full flex justify-center py-16"
+                  onClick={() => {
+                    setShowText(!showText);
+                  }}
+                >
+                  {!showText ? <FaChevronRight /> : <FaChevronLeft />}
+                </div>
 
-            <div className=" flex flex-col justify-between h-full">
-              <div className="w-full">
-                <SideIcon showText={showText} text="home" icon={FaHome} />
-                <SideIcon
-                  showText={showText}
-                  text="shipments"
-                  icon={FaTruckFront}
-                />
-                <SideIcon
-                  showText={showText}
-                  text="conversations"
-                  icon={FaComments}
-                  count={
-                    conversations.length ? conversations.length : undefined
-                  }
-                />
-                <SideIcon
-                  showText={showText}
-                  text="notifications"
-                  icon={FaBell}
-                />
-                {user?.isAdmin && (
-                  <div className="w-full flex justify-center mt-32">
-                    <span
-                      className={` text-white mx-auto hover:cursor-pointer  right-16 rounded-[100%]`}
-                      onClick={() => {
-                        setSidePanelContent({ id: "user1", subject: "admin" });
-                        setShowSidePanel(true);
-                      }}
-                    >
-                      <FaPlusCircle size={30} />
-                    </span>
+                <div className=" flex flex-col justify-between h-full">
+                  <div className="w-full">
+                    <SideIcon showText={showText} text="home" icon={FaHome} />
+                    <SideIcon
+                      showText={showText}
+                      text="shipments"
+                      icon={FaTruckFront}
+                    />
+                    <SideIcon
+                      showText={showText}
+                      text="conversations"
+                      icon={FaComments}
+                      count={
+                        conversations.length ? conversations.length : undefined
+                      }
+                    />
+                    <SideIcon
+                      showText={showText}
+                      text="notifications"
+                      icon={FaBell}
+                    />
+                    {user?.isAdmin && (
+                      <div className="w-full flex justify-center mt-32">
+                        <span
+                          className={` text-white mx-auto hover:cursor-pointer  right-16 rounded-[100%]`}
+                          onClick={() => {
+                            setSidePanelContent({
+                              id: "user1",
+                              subject: "admin",
+                            });
+                            setShowSidePanel(true);
+                          }}
+                        >
+                          <FaPlusCircle size={30} />
+                        </span>
+                      </div>
+                    )}
                   </div>
+                </div>
+              </div>
+              <div
+                className={` dashboardBg flex-grow p-8 ${
+                  screenSize > 500 && showText ? "md:px-40" : "md:px-96"
+                }  h-full overflow-y-scroll bg-primary/10`}
+              >
+                {activeTab.toLowerCase() === "home" && <Home />}
+                {activeTab.toLowerCase() === "conversations" && (
+                  <Conversations />
                 )}
+                {activeTab.toLowerCase() === "notifications" && (
+                  <Notifications />
+                )}
+                {activeTab.toLowerCase() === "shipments" && <Shipments />}
               </div>
             </div>
-          </div>
-          <div
-            className={` dashboardBg flex-grow p-8 ${
-              screenSize > 500 && showText ? "md:px-40" : "md:px-96"
-            }  h-full overflow-y-scroll bg-primary/10`}
-          >
-            {activeTab.toLowerCase() === "home" && <Home />}
-            {activeTab.toLowerCase() === "conversations" && <Conversations />}
-            {activeTab.toLowerCase() === "notifications" && <Notifications />}
-            {activeTab.toLowerCase() === "shipments" && <Shipments />}
-          </div>
-        </div>
-        <SidePanel />
+            <SidePanel />
+          </>
+        ) : (
+          <div className="w-full h-full bg-success"></div>
+        )}
       </div>
     </Context.Provider>
   );
