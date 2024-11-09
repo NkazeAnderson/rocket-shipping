@@ -25,7 +25,7 @@ import {
   shipmentHistoryCollection,
   userCollection,
 } from "@/utils/contants";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import usePlacesAutocomplete from "use-places-autocomplete";
 export const AppContext = createContext<appContextT | undefined>(undefined);
@@ -43,6 +43,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
   >([]);
 
   const router = useRouter();
+  const path = usePathname();
 
   const placeApi = usePlacesAutocomplete({
     requestOptions: {
@@ -257,9 +258,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
         .catch((e) => {
           setShipments([]);
           console.log(e);
-          console.log("Getm info error");
-
-          router.replace("/auth/login");
+          path === "/dashboard" && router.replace("/auth/login");
         });
   }, [user]);
 

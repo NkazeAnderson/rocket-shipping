@@ -54,7 +54,7 @@ function AboutUs() {
               className="rounded-full"
               width={100}
               height={100}
-              src={"/reviewer1.png"}
+              src={"/courier.png"}
               alt="value"
             />
             <h4>Alex Moshtinburg</h4>

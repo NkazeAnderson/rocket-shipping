@@ -27,7 +27,7 @@ function ReviewCard({ review }: { review: reviewT }) {
             <h5> {review.rating}.0</h5>
             <div className="flex items-center">
               {stars.map((_) => (
-                <FaStar size={24} />
+                <FaStar key={_} size={24} />
               ))}
             </div>
           </div>

@@ -28,7 +28,7 @@ function AuthButton({
         <div className="md:flex md:space-x-8 space-y-8 md:space-y-0 items-center text-primary">
           <div className="flex space-x-8 items-center">
             <BsPersonCheck size={25} />
-            <p className=" italic font-semibold text-[20px] text-primary">
+            <p className=" italic font-semibold text-[14px] text-primary">
               {userEmail && userEmail}
             </p>
           </div>

@@ -27,6 +27,12 @@ function GetQuote() {
         <FormProvider {...methods}>
           <form className="space-y-16" action="">
             <Input
+              placeholder="johndoe@gmail.com"
+              type="email"
+              name="email"
+              label="Your email"
+            />
+            <Input
               placeholder="123 Kings Drive, nashville, TN, 30283"
               label="Origin"
               type="text"
@@ -55,15 +61,6 @@ function GetQuote() {
                   name="quantity"
                 />
               </div>
-            </div>
-            <div className="w-[50%] pr-8">
-              <Input
-                type="options"
-                label="Is live Pet?"
-                placeholder="No"
-                options={["Yes", "No"]}
-                name="livepet"
-              />
             </div>
 
             <Button props={{ text: "Submit" }} />

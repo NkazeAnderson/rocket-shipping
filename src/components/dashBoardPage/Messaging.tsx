@@ -16,9 +16,11 @@ import { AppContext } from "../ContextProviders/AppProvider";
 import { sendMessage, storage } from "@/utils/appwrite";
 import { bucket } from "@/utils/contants";
 import { ID } from "appwrite";
+import toast from "react-hot-toast";
 
 function Messaging() {
   const [message, setMessage] = useState("");
+  const [pending, setPending] = useState(false);
   const [image, setImage] = useState<null | File>(null);
   const imageRef = useRef<HTMLInputElement | null>(null);
   const { conversations, user } = useContext(AppContext) as appContextT;
@@ -42,7 +44,7 @@ function Messaging() {
     setTimeout(() => {
       lastElement.current && lastElement.current.scrollIntoView(false);
     }, 1000);
-  }, [sidePanelContent?.id]);
+  }, [sidePanelContent?.id, conversations]);
   if (
     !conversation ||
     typeof conversation.member1 === "string" ||
@@ -51,27 +53,35 @@ function Messaging() {
     return null;
   }
   async function submit() {
-    const imageID = ID.unique();
-    if (image) {
-      await storage.createFile(bucket, imageID, image);
+    try {
+      setPending(true);
+      const imageID = ID.unique();
+
+      if (image) {
+        await storage.createFile(bucket, imageID, image);
+      }
+      const messageToSend: messageT | undefined =
+        message && user
+          ? {
+              conversationId: conversation.$id,
+              sender: user.$id,
+              text: message,
+              timeStamp: new Date().getTime(),
+            }
+          : image && user
+          ? {
+              conversationId: conversation.$id,
+              sender: user.$id,
+              image: imageID,
+              timeStamp: new Date().getTime(),
+            }
+          : undefined;
+      messageToSend && (await sendMessage(messageToSend));
+      setPending(false);
+    } catch (error) {
+      setPending(false);
+      toast.error("Error sending message");
     }
-    const messageToSend: messageT | undefined =
-      message && user
-        ? {
-            conversationId: conversation.$id,
-            sender: user.$id,
-            text: message,
-            timeStamp: new Date().getTime(),
-          }
-        : image && user
-        ? {
-            conversationId: conversation.$id,
-            sender: user.$id,
-            image: imageID,
-            timeStamp: new Date().getTime(),
-          }
-        : undefined;
-    messageToSend && (await sendMessage(messageToSend));
   }
   return (
     <div className=" w-full flex-1 relative">
@@ -99,13 +109,13 @@ function Messaging() {
           </div>
         </div>
       </div>
-      <div className=" w-full p-16">
+      <div className=" w-full p-16 overflow-y-auto">
         {conversation.messages.map((item) => (
           <MessageCard key={item.$id} props={item} />
         ))}
       </div>
       <div ref={lastElement} className=" pb-96"></div>
-      <div className="w-full border-2 border-success absolute bottom-0 rounded-tl-30">
+      <div className="w-full border-2 border-success fixed bottom-0 rounded-tl-30">
         <div className="flex items-center bg-light-gray px-16 py-8 rounded-tl-30">
           <div className="flex-grow">
             {image ? (
@@ -157,12 +167,18 @@ function Messaging() {
             <span
               className="p-24 hover:cursor-pointer"
               onClick={() => {
-                submit().then(() => {
-                  clearNewMessages();
-                });
+                !pending &&
+                  submit().then(() => {
+                    clearNewMessages();
+                  });
               }}
             >
-              <FaPaperPlane className="text-success rotate-12 " size={25} />
+              <FaPaperPlane
+                className={`text-success rotate-12 ${
+                  pending && "animate-pulse"
+                }`}
+                size={25}
+              />
             </span>
           ) : !image ? (
             <span
@@ -177,12 +193,18 @@ function Messaging() {
             <span
               className="p-24 hover:cursor-pointer"
               onClick={() => {
-                submit().then(() => {
-                  clearNewMessages();
-                });
+                !pending &&
+                  submit().then(() => {
+                    clearNewMessages();
+                  });
               }}
             >
-              <FaPaperPlane className="text-success rotate-12 " size={25} />
+              <FaPaperPlane
+                className={`text-success rotate-12 ${
+                  pending && "animate-pulse"
+                }`}
+                size={25}
+              />
             </span>
           )}
         </div>

@@ -147,10 +147,12 @@ export async function getLastMessage(conversationId: string) {
   if (lastMessage.image) {
     lastMessage.image = getImageUrl(lastMessage.image);
   }
+  console.log("Last message:", lastMessage);
   return lastMessage;
 }
 
 export async function sendMessage(message: messageT) {
+  await db.createDocument(database, messageCollection, ID.unique(), message);
   await db.updateDocument(
     database,
     conversationCollection,
@@ -164,7 +166,6 @@ export async function sendMessage(message: messageT) {
           : "shipping-img-new",
     }
   );
-  await db.createDocument(database, messageCollection, ID.unique(), message);
 }
 
 export function subscribeToUser(
