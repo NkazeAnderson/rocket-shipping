@@ -2,6 +2,7 @@ import React from "react";
 import SectionTitle from "../SectionTitle";
 import ServiceCard from "./ServiceCard";
 import ServiceWrapper from "./ServiceWrapper";
+import { services } from "@/utils/contants";
 
 function Services() {
   return (
@@ -18,12 +19,9 @@ function Services() {
           </p>
         </div>
         <div className=" grid grid-cols-1 md:grid-cols-3 gap-48 p-24 md:p-48 lg:p-96 ">
-          <ServiceCard />
-          <ServiceCard />
-          <ServiceCard />
-          <ServiceCard />
-          <ServiceCard />
-          <ServiceCard />
+          {services.map((item) => (
+            <ServiceCard key={item.name} service={item} />
+          ))}
         </div>
       </div>
     </ServiceWrapper>

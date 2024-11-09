@@ -1,6 +1,7 @@
 import React from "react";
 import SectionTitle from "../SectionTitle";
 import CertCard from "./CertCard";
+import { certs } from "@/utils/contants";
 
 function WhyUs() {
   return (
@@ -13,9 +14,9 @@ function WhyUs() {
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 py-24">
-        <CertCard />
-        <CertCard />
-        <CertCard />
+        {certs.map((item) => (
+          <CertCard key={item.name} cert={item} />
+        ))}
       </div>
     </div>
   );

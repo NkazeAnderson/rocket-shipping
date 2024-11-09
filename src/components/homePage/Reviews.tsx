@@ -2,6 +2,7 @@ import React from "react";
 import SectionTitle from "../SectionTitle";
 import ReviewCard from "../ui/ReviewCard";
 import ReviewsWrapper from "./ReviewsWrapper";
+import { reviews } from "@/utils/contants";
 
 function Reviews() {
   return (
@@ -11,10 +12,9 @@ function Reviews() {
       </div>
       <SectionTitle text="What our clients are saying" />
       <ReviewsWrapper>
-        <ReviewCard />
-        <ReviewCard />
-        <ReviewCard />
-        <ReviewCard />
+        {reviews.map((item, index) => (
+          <ReviewCard key={index} review={item} />
+        ))}
       </ReviewsWrapper>
     </div>
   );

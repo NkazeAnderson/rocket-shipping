@@ -38,7 +38,16 @@ function Gallery() {
           width={300}
           height={200}
           style={{ objectFit: "contain" }}
-          src={"/gallery3.png"}
+          src={"/gallery4.jpg"}
+          alt="gallery"
+        />
+
+        <Image
+          className="galleryImg"
+          width={300}
+          height={200}
+          style={{ objectFit: "contain" }}
+          src={"/gallery5.jpg"}
           alt="gallery"
         />
         <Image
@@ -46,7 +55,7 @@ function Gallery() {
           width={300}
           height={200}
           style={{ objectFit: "contain" }}
-          src={"/gallery3.png"}
+          src={"/gallery6.jpg"}
           alt="gallery"
         />
         <Image
@@ -54,7 +63,7 @@ function Gallery() {
           width={300}
           height={200}
           style={{ objectFit: "contain" }}
-          src={"/gallery3.png"}
+          src={"/gallery8.jpg"}
           alt="gallery"
         />
         <Image
@@ -62,7 +71,7 @@ function Gallery() {
           width={300}
           height={200}
           style={{ objectFit: "contain" }}
-          src={"/gallery3.png"}
+          src={"/gallery9.jpg"}
           alt="gallery"
         />
       </div>

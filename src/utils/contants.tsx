@@ -12,6 +12,9 @@ import {
   paymentMethodT,
   packageT,
   actionsT,
+  serviceT,
+  certT,
+  reviewT,
 } from "@/types/types";
 
 export const navLinks: navLinkT[] = [
@@ -174,6 +177,129 @@ export const aboutPartners: { image: string; text: string }[] = [
   { image: "/etsy.webp", text: "Etsy" },
   { image: "/manomano.webp", text: "ManoMano" },
   { image: "/Rakuten.webp", text: "Rakuten" },
+];
+
+export const services: serviceT[] = [
+  {
+    name: "Tracking",
+    description:
+      "Proactive shipment tracking that delights your customers, reduces WISMO tickets, and optimizes your delivery performance.",
+    features: [
+      "Branded tracking page",
+      "Shipment visibility dashboard",
+      "Exception report",
+    ],
+  },
+  {
+    name: "Returns",
+    description:
+      "Returns automation that delivers a positive returns and exchange experience, optimizes return costs, and retains more revenue.",
+    features: [
+      "Branded returns page",
+      "Exchange for other items",
+      "Rule-based automation",
+    ],
+  },
+  {
+    name: "Warranty",
+    description:
+      "Warranty automation that eliminates manual processes, enhances the experience, and unlocks product insights.",
+    features: [
+      "Branded warranty page",
+      "Product recall",
+      "Omnichannel warranty claims",
+    ],
+  },
+  {
+    name: "Protection",
+    description:
+      "World-class shipping protection that captures lost revenue, drives customer satisfaction, and optimizes claims operations.",
+    features: [
+      "High claim-success rate",
+      "Protection at cart or checkout",
+      "Claim management portal",
+    ],
+  },
+  {
+    name: "EDD",
+    description:
+      "AI-powered delivery date estimates that drive conversion, set customers’ expectations, and offer peace of mind.",
+    features: [
+      "Street-level prediction",
+      "On-time performance dashboard",
+      "EDD on checkout page",
+    ],
+  },
+  {
+    name: "Shipping",
+    description:
+      "Shipping management platform that facilitates fulfillment, reduces costs, and simplifies shipment management for all your carriers.",
+    features: [
+      "Label generation",
+      "Real-time rate calculation",
+      "Automated shipping workflow",
+    ],
+  },
+];
+
+export const certs: certT[] = [
+  {
+    image: "/cert1.png",
+    name: "SOC 2 compliance",
+    description:
+      "Certified to meet SOC 2 standards for worry-free data security.",
+  },
+  {
+    image: "/cert2.png",
+    name: "ISO 27001 certification",
+    description:
+      "Compliant with the world’s most rigorous standards for information security and privacy.",
+  },
+  {
+    image: "/cert3.png",
+    name: "GDPR compliance",
+    description: "GDPR certified to protect data and privacy in Europe.",
+  },
+];
+
+export const reviews: reviewT[] = [
+  {
+    name: "Anthony A.",
+    image: "/reviewer1.png",
+    rating: 5,
+    text: "My package arrived ahead of schedule! The tracking system was easy to use, and the customer service representative was very helpful when I had a question. Highly recommend!",
+  },
+
+  {
+    name: "Miriam K.",
+    image: "/reviewer2.jpg",
+    rating: 5,
+    text: "I've used this shipping company several times now, and I'm always impressed. Their prices are competitive, and their service is top-notch. I'll definitely use them again.",
+  },
+  {
+    name: "Bilton H.",
+    image: "/reviewer3.jpg",
+    rating: 4,
+    text: "I had a great experience with this shipping company. They were very responsive and kept me updated throughout the entire process. I'll definitely be using them again in the future.",
+  },
+  {
+    name: "Kennedy W.",
+    image: "/reviewer4.jpg",
+    rating: 5,
+    text: "The customer service at this shipping company is outstanding. They went above and beyond to help me with a shipping issue, and I'm so grateful for their assistance.",
+  },
+  {
+    name: "Alexander U.",
+    image: "/reviewer5.jpg",
+    rating: 5,
+    text: "I was very impressed with the speed and efficiency of this shipping company. My package arrived on time and in perfect condition. I'll definitely be using them again for all my shipping needs.",
+  },
+  {
+    name: "Thomas J.",
+    image: "/reviewer6.jpg",
+    rating: 4,
+    text: "I was pleasantly surprised by how smooth the entire shipping process was. The packaging was secure, and my item arrived in perfect condition. Great job!",
+  },
 ];
 
 export const companyInfo: {

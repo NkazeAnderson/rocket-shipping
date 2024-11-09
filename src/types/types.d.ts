@@ -25,6 +25,25 @@ type dashBoardContextT = {
   >;
 };
 
+type serviceT = {
+  description: string;
+  features: string[];
+  name: string;
+};
+
+type certT = {
+  image: string;
+  name: string;
+  description: string;
+};
+
+type reviewT = {
+  image: string;
+  name: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  text: string;
+};
+
 type notificationT = {
   id: string;
   title: string;
