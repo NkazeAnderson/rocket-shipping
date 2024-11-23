@@ -141,7 +141,20 @@ export const shipmentHistory: shipmentHistoryT[] = [
     shipmentId: "Sh-1",
   },
 ];
-export const actions: actionsT[] = ["Crate change", "Insurance", "None"];
+export const actions: actionsT[] = [
+  "Crate change",
+  "Insurance",
+  "None",
+  "Clearance",
+  "Accommodation",
+  "Change of state",
+  "City permit",
+  "Crate fee",
+  "Delivery fee",
+  "Smoke test",
+  "Insurance renewal",
+  "Step up Insurance",
+];
 
 export const ourValues: { image: string; title: string; text: string }[] = [
   {

@@ -21,17 +21,17 @@ function Footer() {
         </div>
         <div className="flex-1 px-8 space-y-8">
           <h4 className="font-bold">Contact us</h4>
-          <p>
+          {/* <p>
             <strong className="pr-8">Phone:</strong>
             <a href={`tel:${companyInfo.phone}`}>{companyInfo.phone}</a>
-          </p>
+          </p> */}
           <p>
             <strong className="pr-8">Email:</strong>
             <a href={`mailto:${companyInfo.email}`}>{companyInfo.email}</a>
           </p>
-          <p>
+          {/* <p>
             <strong className="pr-8">Address:</strong> {companyInfo.address}
-          </p>
+          </p> */}
         </div>
         <div className="flex-1 px-8 space-y-8">
           <h4 className="font-bold">Quick Links</h4>

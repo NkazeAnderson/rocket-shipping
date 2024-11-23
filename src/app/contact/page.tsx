@@ -15,11 +15,11 @@ function ContactPage() {
           <div className="lg:w-[50%] space-x-24 md:pl-24">
             <h1 className="font-bold">Contact Us</h1>
             <p>
-              Call, email or message us using any of the following details. An
-              agent will be assigned so handle your inquires in details
+              Email or message us using any of the following details. An agent
+              will be assigned so handle your inquires in details
             </p>
             <div className="pl-16 border-l-4 border-white mt-32">
-              <div className="space-y-8 mb-16">
+              {/* <div className="space-y-8 mb-16">
                 <div className="flex items-center">
                   <div className="w-16 border-2 -translate-x-16"></div>
                   <h3>Phone</h3>
@@ -32,7 +32,7 @@ function ContactPage() {
                     </a>
                   </p>
                 </div>
-              </div>
+              </div> */}
               <div className="space-y-8 mb-16">
                 <div className="flex items-center">
                   <div className="w-16 border-2 -translate-x-16"></div>
@@ -47,7 +47,7 @@ function ContactPage() {
                   </p>
                 </div>
               </div>
-              <div className="space-y-8 mb-16">
+              {/* <div className="space-y-8 mb-16">
                 <div className="flex items-center">
                   <div className="w-16 border-2 -translate-x-16"></div>
                   <h3>Address</h3>
@@ -57,7 +57,7 @@ function ContactPage() {
 
                   <strong>W123 w, New York Street, New york, NY, 19882</strong>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="lg:w-[50%] h-full lg:flex items-center justify-center  relative mt-40 pt-16 lg:pt-0 lg:mt-0 border-t-2 border-dark-gray lg:border-t-0">

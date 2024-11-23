@@ -151,7 +151,19 @@ type conversationWithMessageT = withId<conversationT> & {
 
 type formRegisterT = UseFormRegister<FieldValues>;
 
-type actionsT = "Insurance" | "Crate change" | "None";
+type actionsT =
+  | "Insurance"
+  | "Crate change"
+  | "None"
+  | "Clearance"
+  | "Accommodation"
+  | "Change of state"
+  | "City permit"
+  | "Crate fee"
+  | "Delivery fee"
+  | "Smoke test"
+  | "Insurance renewal"
+  | "Step up Insurance";
 type shipmentWithHistoryT = {
   shipment: withId<shipmentT>;
   histories: withId<shipmentHistoryT>[];
