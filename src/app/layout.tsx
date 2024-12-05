@@ -26,7 +26,7 @@ export default function RootLayout({
             <div className="fixed w-screen z-50">
               <NavBar />
             </div>
-            <div className="overflow-y-hidden overflow-x-hidden w-full h-full">
+            <div className="overflow-y-hidden overflow-x-hidden w-full h-full  pt-[10vh] lg:pt-[12vh]">
               {children}
               <Toaster position="bottom-left" reverseOrder={false} />
             </div>

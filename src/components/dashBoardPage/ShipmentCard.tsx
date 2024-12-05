@@ -25,7 +25,7 @@ function ShipmentCard({ props }: { props: shipmentWithHistoryT }) {
         <div className="bg-black flex w-full rounded-t-15 py-8 px-16 border-b border-white items-center justify-between space-x-8">
           <div>
             <FaBraille />{" "}
-            <h5 className="font-bold">#{props.shipment.$id.slice(0, 7)}</h5>
+            <h5 className="font-bold">#{props.shipment.$id ? props.shipment.$id.slice(0, 7): "New Shipment"}</h5>
           </div>
           <Pill
             text={props.histories[props.histories.length - 1].status}

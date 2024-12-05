@@ -16,12 +16,7 @@ export async function signUp(prevState: unknown, data: FormData) {
     return "Invalid Data";
   }
 }
-export async function logIn(email: string) {
-  cookies().set("loggedIn", "true");
-  cookies().set("userEmail", email);
-  revalidatePath("/dashboard");
-  return "ok";
-}
+
 export async function logOut() {
   // account.createEmailPasswordSession(email, access);
   cookies().delete("loggedIn");

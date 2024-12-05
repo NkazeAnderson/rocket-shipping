@@ -4,25 +4,24 @@ import Input from "../ui/Input";
 import { FormProvider, useForm } from "react-hook-form";
 import Link from "next/link";
 import Button from "../ui/Button";
-import { FaShareFromSquare } from "react-icons/fa6";
-import { logIn } from "@/actions";
 import { appContextT, loginFormT } from "@/types/types";
-import { account, getMyInfo } from "@/utils/appwrite";
+import { getMyInfo, logIn } from "@/utils/appwrite";
 import { useRouter } from "next/navigation";
-import { FaPlane, FaPlaneArrival } from "react-icons/fa";
-import { getCookie } from "@/utils/frontendCookies";
+import { FaPlane } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { AppContext } from "../ContextProviders/AppProvider";
+import useUser from "../../../hooks/useUser";
 
 function Loginform() {
   const methods = useForm<loginFormT>();
   const [pending, setPending] = useState(false);
-  const { setUser, user } = useContext(AppContext) as appContextT;
+ const {user, authenticateUser, isAuthenticated}= useUser()
   const router = useRouter();
 
   useEffect(() => {
-    user && router.push("/dashboard");
-  }, [user]);
+    isAuthenticated && !user && toast.success("Loading user info")
+ user && router.push("/dashboard");
+  }, [user, isAuthenticated]);
 
   return (
     <FormProvider {...methods}>
@@ -32,13 +31,9 @@ function Loginform() {
           if (data.email && data.access) {
             setPending(true);
             try {
-              await account.createEmailPasswordSession(data.email, data.access);
-              const myInfo = await getMyInfo();
-              setUser(myInfo);
-              const loggedIn = await logIn(data.email);
+              await authenticateUser(data.email, data.access)
               toast.success("Successfully logged in");
-              loggedIn === "ok" && router.push("/dashboard");
-            } catch (error) {
+            } catch (error) {     
               toast.error("Failed logging in");
               console.log(error);
             }
@@ -46,15 +41,7 @@ function Loginform() {
           }
         })}
       >
-        <div
-          onClick={() => {
-            console.log("Pressed");
-
-            toast.success("Ok");
-          }}
-        >
-          Press
-        </div>
+       
         <Input name="email" placeholder="email" label="Email" type="email" />
         <Input
           name="access"

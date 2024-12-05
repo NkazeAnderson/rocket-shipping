@@ -1,5 +1,4 @@
 "use client";
-import { logIn } from "@/actions";
 import {
   appContextT,
   conversationT,
@@ -28,11 +27,12 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import usePlacesAutocomplete from "use-places-autocomplete";
+import useUser from "../../../hooks/useUser";
 export const AppContext = createContext<appContextT | undefined>(undefined);
 function InitializePlaces() {}
 function AppProvider({ children }: { children: React.ReactNode }) {
   const [shipments, setShipments] = useState<shipmentWithHistoryT[]>([]);
-  const [user, setUser] = useState<withId<userT> | undefined>(undefined);
+  const {user} = useUser()
   const [users, setUsers] = useState<withId<userT>[]>([]);
   const [subscribed, setSubscribed] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<withId<notificationT>[]>(
@@ -249,17 +249,6 @@ function AppProvider({ children }: { children: React.ReactNode }) {
           console.log(e);
         });
 
-    !user &&
-      getMyInfo()
-        .then((res) => {
-          logIn(res.email);
-          setUser(res);
-        })
-        .catch((e) => {
-          setShipments([]);
-          console.log(e);
-          path === "/dashboard" && router.replace("/auth/login");
-        });
   }, [user]);
 
   return (
@@ -268,7 +257,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
         shipments,
         setShipments,
         user,
-        setUser,
+      //  setUser,
         notifications,
         setNotifications,
         placeApi,

@@ -172,7 +172,7 @@ type appContextT = {
   shipments: shipmentWithHistory[];
   setShipments: React.Dispatch<React.SetStateAction<shipmentWithHistoryT[]>>;
   user: withId<userT> | undefined;
-  setUser: React.Dispatch<React.SetStateAction<withId<userT> | undefined>>;
+ // setUser: React.Dispatch<React.SetStateAction<withId<userT> | undefined>>;
   users: withId<userT>[];
   setUsers: React.Dispatch<React.SetStateAction<withId<userT>[]>>;
   notifications: withId<notificationT>[];

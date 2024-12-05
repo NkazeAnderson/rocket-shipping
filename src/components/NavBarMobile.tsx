@@ -1,25 +1,16 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FaShareSquare } from "react-icons/fa";
 import { FaBars, FaDeleteLeft } from "react-icons/fa6";
 import Logo from "./ui/Logo";
 import NavLinks from "./NavLinks";
-import Button from "./ui/Button";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import Link from "next/link";
 import AuthButton from "./AuthButton";
 
 gsap.registerPlugin(useGSAP);
 
-function NavBarMobile({
-  loggedIn,
-  userEmail,
-}: {
-  loggedIn: boolean;
-  userEmail?: string;
-}) {
+function NavBarMobile() {
   const [opened, setOpened] = useState(false);
   const path = usePathname();
   useEffect(() => {
@@ -66,7 +57,7 @@ function NavBarMobile({
         } w-full h-full  flex-col items-center justify-between pt-24`}
       >
         <NavLinks />
-        <AuthButton loggedIn={loggedIn} userEmail={userEmail} />
+        <AuthButton  />
       </div>
     </nav>
   );

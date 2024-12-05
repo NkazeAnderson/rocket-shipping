@@ -14,9 +14,11 @@ import {
   shipmentHistoryT,
   shipmentT,
   shipmentWithHistoryT,
-  userT,
   withId,
 } from "@/types/types";
+
+import {userSchema, userT} from "@/types/schemas"
+import { getFromLocalStore, saveToLocalStore } from ".";
 
 const client = new Client();
 client
@@ -233,16 +235,34 @@ export async function getHistory(shipmentId: string) {
   return historyRef.documents as (shipmentHistoryT & { $id: string })[];
 }
 
-export async function getMyInfo() {
-  const data = await account.get();
 
-  const users = await db.listDocuments(database, userCollection, [
+export async function getMyInfo():Promise<userT> {
+  const data = await account.get();
+  const request =  db.listDocuments(database, userCollection, [
     Query.equal("email", data.email),
-  ]);
-  //@ts-ignore
-  const user = users.documents[0] as withId<userT>;
+  ])
+  const userInfo = getFromLocalStore("myInfo") || (await request).documents[0]
+  request.then(user=>{
+    saveToLocalStore("myInfo", user.documents[0])
+  });
+  const user = userSchema.parse(userInfo)
   if (user.image) {
     user.image = getImageUrl(user.image);
   }
   return user;
+}
+
+export async function getAuthStatus(): Promise<boolean> {
+  try {
+    await account.getSession("current")
+    return true
+  } catch (error) {
+    return false
+  }
+}
+export async function logIn(email:string, password:string) {
+  await account.createEmailPasswordSession(email, password);
+}
+export async function logOut() {
+  await account.deleteSession("current")
 }
