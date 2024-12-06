@@ -1,3 +1,4 @@
+import { userT } from "@/types/schemas";
 import {
   conversationT,
   locationT,
@@ -6,7 +7,6 @@ import {
   notificationT,
   shipmentHistoryT,
   shipmentT,
-  userT,
   statusT,
   modeT,
   paymentMethodT,
@@ -32,6 +32,8 @@ export const partners: string[] = [
   "/partner6.png",
 ];
 
+export const defaultAccess = "RS-0658389854"
+
 export const notifications: notificationT[] = [
   {
     id: "Nt-1",
@@ -51,25 +53,6 @@ export const notifications: notificationT[] = [
   },
 ];
 
-export const users: userT[] = [
-  {
-    name: "John Doe",
-    email: "johnDoe@gmail.com",
-    phone: "625526666",
-  },
-  {
-    name: "Mary Jane",
-    email: "maryjane@gmail.com",
-    phone: "625546666",
-  },
-  {
-    name: "Anthony Johnson",
-    email: "AnthonyJohson@gmail.com",
-    phone: "625546866",
-    image: "/courier.png",
-    isAdmin: true,
-  },
-];
 export const locations: locationT[] = [
   {
     street: "1872 West Bright E",

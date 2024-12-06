@@ -1,44 +1,42 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
-import { formRegisterT, signUpFormT, userT } from "@/types/types";
 import {
   FieldValues,
   FormProvider,
   SubmitHandler,
   useForm,
 } from "react-hook-form";
-import { bucket, database, userCollection } from "@/utils/contants";
-import { account, db, storage } from "@/utils/appwrite";
-import { AppwriteException, ID, Query } from "appwrite";
+import { defaultAccess,  } from "@/utils/contants";
+import { addNewFile, addNewUserToAccountandDb, CheckIfUserWithEmailExist, db, storage } from "@/utils/appwrite";
+import { AppwriteException} from "appwrite";
 import toast from "react-hot-toast";
+import { userT } from "@/types/schemas";
 
 function AddUserForm() {
-  const methods = useForm<userT>();
-  const onSubmit: SubmitHandler<userT> = async (data) => {
+  const methods = useForm<userT>({defaultValues:{
+    access: defaultAccess
+  }});
+  const onSubmit: SubmitHandler<userT> = useCallback( async (data) => {
     if (data.access && data.email && data.name) {
       try {
-        const user = await db.listDocuments(database, userCollection, [
-          Query.equal("email", data.email.trim()),
-        ]);
-        if (user.total === 0) {
-          const id = ID.unique();
-          //@ts-ignore
-
-          const image = data.image?.length
-            ? //@ts-ignore
-              await storage.createFile(bucket, id, data.image[0])
+        const userExist =await CheckIfUserWithEmailExist(data.email.trim())
+        if (!userExist) {
+        
+          const image = data.imageToUpload?.length
+            ? 
+              await addNewFile(data.imageToUpload[0])
             : undefined;
-
-          await db.createDocument(database, userCollection, id, {
-            name: data.name,
-            email: data.email,
-            phone: data.phone,
-            image: image ? image.$id : undefined,
-          });
-          await account.create(id, data.email, data.access, data.name);
+          if (image) {
+            data.image = image
+            delete data.imageToUpload
+          }
+          await addNewUserToAccountandDb(data)
           methods.reset();
           toast.success("Account created");
+        }
+        else {
+          toast.error("User already exist");
         }
       } catch (error) {
         if (
@@ -52,7 +50,8 @@ function AddUserForm() {
         }
       }
     }
-  };
+  }, []) 
+ ;
 
   return (
     <FormProvider {...methods}>
@@ -71,16 +70,10 @@ function AddUserForm() {
           name={"phone"}
         />
         <Input
-          label="Access Key"
-          placeholder="Access Key"
-          type="text"
-          name={"access"}
-        />
-        <Input
           label="Picture"
           placeholder="Profile Pic"
           type="file"
-          name={"image"}
+          name={"imageToUpload"}
         />
         <div className="w-full flex justify-center">
           <Button

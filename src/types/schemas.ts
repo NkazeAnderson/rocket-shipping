@@ -61,4 +61,4 @@ export const conversationSchema = z.object({
         lastMessage: z.string().or(z.literal("shipping-img-new")) .optional()
 })
 
-export type userT = z.infer<typeof userSchema>
+export type userT = z.infer<typeof userSchema> & {imageToUpload?:FileList}

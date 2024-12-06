@@ -54,14 +54,14 @@ type notificationT = {
   conversationId?: string;
 };
 
-type userT = {
-  name: string;
-  email: string;
-  phone?: string;
-  access?: string;
-  image?: string;
-  isAdmin?: boolean;
-};
+// type userT = {
+//   name: string;
+//   email: string;
+//   phone?: string;
+//   access?: string;
+//   image?: string;
+//   isAdmin?: boolean;
+// };
 type signUpFormT = Required<Pick<userT, "name" | "email" | "access">>;
 type loginFormT = Required<Pick<userT, "email" | "access">>;
 type locationT = {

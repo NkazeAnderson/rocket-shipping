@@ -19,6 +19,7 @@ import {
 
 import {userSchema, userT} from "@/types/schemas"
 import { getFromLocalStore, saveToLocalStore } from ".";
+import { getUserById } from "./appwrite";
 
 const client = new Client();
 client
@@ -34,18 +35,7 @@ export async function getUsers() {
   //@ts-ignore
   return users.documents as (userT & { $id: string })[];
 }
-export async function getUserById(id: string) {
-  //@ts-ignore
-  const user = (await db.getDocument(
-    database,
-    userCollection,
-    id
-  )) as withId<userT>;
-  if (user.image) {
-    user.image = getImageUrl(user.image);
-  }
-  return user;
-}
+
 
 export function getImageUrl(id: string) {
   return storage.getFilePreview(bucket, id).href;
@@ -236,33 +226,5 @@ export async function getHistory(shipmentId: string) {
 }
 
 
-export async function getMyInfo():Promise<userT> {
-  const data = await account.get();
-  const request =  db.listDocuments(database, userCollection, [
-    Query.equal("email", data.email),
-  ])
-  const userInfo = getFromLocalStore("myInfo") || (await request).documents[0]
-  request.then(user=>{
-    saveToLocalStore("myInfo", user.documents[0])
-  });
-  const user = userSchema.parse(userInfo)
-  if (user.image) {
-    user.image = getImageUrl(user.image);
-  }
-  return user;
-}
-
-export async function getAuthStatus(): Promise<boolean> {
-  try {
-    await account.getSession("current")
-    return true
-  } catch (error) {
-    return false
-  }
-}
-export async function logIn(email:string, password:string) {
-  await account.createEmailPasswordSession(email, password);
-}
-export async function logOut() {
-  await account.deleteSession("current")
-}
+export * from "./appwrite/user"
+export * from "./appwrite/storage"

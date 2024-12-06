@@ -1,14 +1,12 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
 import {
-  Control,
   FieldValues,
   Path,
   PathValue,
   useFormContext,
   UseFormRegister,
 } from "react-hook-form";
-import PlaceOptions from "../dashBoardPage/PlaceOptions";
 import { AppContext } from "../ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
 import { Suggestion } from "use-places-autocomplete";
