@@ -3,26 +3,17 @@ import React, { useContext } from "react";
 import { FaXmark } from "react-icons/fa6";
 import { Context } from "./DashBoardWrapper";
 import {
-  appContextT,
   dashBoardContextT,
-  shipmentT,
-  shipmentWithHistoryT,
-  subjectT,
 } from "@/types/types";
 import ShipmentInfo from "./ShipmentInfo";
 import Messaging from "./Messaging";
 import Admin from "./Admin";
-import { AppContext } from "../ContextProviders/AppProvider";
 import ShipmentMap from "./ShipmentMap";
 
 function SidePanel() {
   const { setShowSidePanel, sidePanelContent } = useContext(
     Context
   ) as dashBoardContextT;
-  const { shipments } = useContext(AppContext) as appContextT;
-  const shipment = shipments.find(
-    (_) => _.shipment.$id === sidePanelContent?.id
-  ) as shipmentWithHistoryT;
 
   return (
     <div
@@ -42,9 +33,9 @@ function SidePanel() {
             </span>
             <div className="min-h-full min-w-full flex flex-col">
               {sidePanelContent?.subject === "shipment" &&
-                !sidePanelContent?.maps && <ShipmentInfo info={shipment} />}
+                !sidePanelContent?.maps && <ShipmentInfo />}
               {sidePanelContent?.subject === "shipment" &&
-                sidePanelContent?.maps && <ShipmentMap shipment={shipment} />}
+                sidePanelContent?.maps && <ShipmentMap />}
               {sidePanelContent?.subject === "conversation" && <Messaging />}
               {sidePanelContent?.subject === "admin" && <Admin />}
             </div>

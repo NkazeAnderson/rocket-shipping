@@ -2,54 +2,32 @@ import React from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import {
-  bucket,
-  conversationCollection,
-  database,
   modes,
   packages,
   paymentModes,
-  shipmentCollection,
-  shipmentHistoryCollection,
 } from "@/utils/contants";
 import {
-  FieldValues,
   FormProvider,
   SubmitHandler,
   useForm,
 } from "react-hook-form";
-import {
-  conversationT,
-  packageT,
-  shipmentHistoryT,
-  shipmentT,
-  userT,
-  withId,
-} from "@/types/types";
-import { db, getConversationId, storage } from "@/utils/appwrite";
-import { ID } from "appwrite";
+
+import { addConversation, addNewFile, addShipment, addShipmentHistory, db, getConversationId, storage } from "@/utils/appwrite";
 import toast from "react-hot-toast";
 import { getLatLong } from "@/utils";
+import { conversationT, shipmentHistoryT, shipmentSchema, shipmentT, userT } from "@/types/schemas";
 
-function AddPackageForm({ users }: { users: withId<userT>[] }) {
+function AddPackageForm({ users }: { users: userT[] }) {
   const methods = useForm<shipmentT>();
   const onSubmit: SubmitHandler<shipmentT> = async (data) => {
     try {
-      let imageId = "";
       data.courier = users[Number(data.courier)].$id;
       data.receiver = users[Number(data.receiver)].$id;
-      console.log(data.image);
-
       if (
-        data.image &&
-        typeof data.image !== "string" &&
-        typeof data.image !== "undefined" &&
-        data.image.length
+        data.extras?.imageToUpload?.length
       ) {
-        imageId = ID.unique();
-        await storage.createFile(bucket, imageId, data.image[0]);
+       const imageId = await addNewFile(data.extras.imageToUpload[0])
         data.image = imageId;
-      } else {
-        delete data.image;
       }
       data.quantity = Number(data.quantity);
       data.weight = Number(data.weight);
@@ -63,42 +41,22 @@ function AddPackageForm({ users }: { users: withId<userT>[] }) {
       data.originLong = originCords.lng;
       data.destinationLat = destinationCords.lat;
       data.destinationLong = destinationCords.lng;
-      const shipmentId = ID.unique();
-      const conversationId = await getConversationId(
-        data.courier,
-        data.receiver
-      );
-      if (conversationId) {
-        data.conversationId = conversationId;
-      } else {
-        const conversation: conversationT = {
-          member1: data.courier,
-          member2: data.receiver,
-        };
-        await db.createDocument(
-          database,
-          conversationCollection,
-          shipmentId,
-          conversation
-        );
-        data.conversationId = shipmentId;
-      }
-
-      await db.createDocument(database, shipmentCollection, shipmentId, data);
-      const shipmentHistory: shipmentHistoryT = {
-        currentLocation: data.origin,
-        currentLat: data.originLat,
-        currentLong: data.originLong,
-        status: "Registered",
-        date: data.pickupDate,
-        shipmentId,
-      };
-      await db.createDocument(
-        database,
-        shipmentHistoryCollection,
-        ID.unique(),
-        shipmentHistory
-      );
+  
+      // let conversationId = await getConversationId(
+      //   data.courier,
+      //   data.receiver
+      // );
+      // if (!conversationId) {
+      //   const conversation: conversationT = {
+      //     member1: data.courier,
+      //     member2: data.receiver,
+      //   };
+      //  conversationId = await addConversation(conversation)
+      // }
+      // data.conversationId = conversationId;
+     
+      await addShipment(data)
+      
       methods.reset();
       toast.success("Successfully added package");
     } catch (error) {
@@ -236,7 +194,7 @@ function AddPackageForm({ users }: { users: withId<userT>[] }) {
           name="weight"
           required
         />
-        <Input label="Image" placeholder="image" type="file" name="image" />
+        <Input label="Image" placeholder="image" type="file" name="extras.imageToUpload" />
 
         <div className="w-full flex justify-center">
           <Button

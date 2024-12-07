@@ -1,35 +1,29 @@
 import React, { useEffect } from "react";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
-import { userT } from "@/types/types";
 import {
-  FieldValues,
   FormProvider,
   SubmitHandler,
   useForm,
 } from "react-hook-form";
-import { account, db, storage } from "@/utils/appwrite";
-import { bucket, database, userCollection } from "@/utils/contants";
-import { AppwriteException, ID, Query } from "appwrite";
+import {  addNewFile,UpdateUser } from "@/utils/appwrite";
+import { AppwriteException } from "appwrite";
 import toast from "react-hot-toast";
+import { userT } from "@/types/schemas";
 
-function EditUserForm({ user, id }: { user: userT; id: string }) {
+function EditUserForm({ user}: { user: userT;}) {
   const methods = useForm<userT>();
   const onSubmit: SubmitHandler<userT> = async (data) => {
     try {
-      const image =
-        data.image && Array.isArray(data.image) && data.image.length
-          ? //@ts-ignore
-            await storage.createFile(bucket, ID.unique(), data.image[0])
-          : undefined;
-
-      await db.updateDocument(database, userCollection, id, {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        image: image ? image.$id : data.image,
-      });
-
+      const image = data.extras?.imageToUpload?.length
+      ? 
+        await addNewFile(data.extras?.imageToUpload[0])
+      : undefined;
+    if (image) {
+      data.image = image
+    }
+       
+     await UpdateUser(data.$id, data)
       methods.reset();
       toast.success("User info updated");
     } catch (error) {
@@ -70,7 +64,7 @@ function EditUserForm({ user, id }: { user: userT; id: string }) {
           label="Picture"
           placeholder="Profile Pic"
           type="file"
-          name={"image"}
+          name={"extras.imageToUpload"}
         />
         <div className="w-full flex justify-center">
           <Button

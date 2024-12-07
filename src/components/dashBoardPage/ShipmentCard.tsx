@@ -7,17 +7,19 @@ import { FaMap } from "react-icons/fa";
 import { Context } from "./DashBoardWrapper";
 import {
   dashBoardContextT,
-  shipmentT,
-  shipmentWithHistoryT,
   subjectT,
 } from "@/types/types";
 import { profilePicPlaceholder } from "@/utils/contants";
+import { shipmentT } from "@/types/schemas";
 
-function ShipmentCard({ props }: { props: shipmentWithHistoryT }) {
+function ShipmentCard({ shipment }: { shipment: shipmentT }) {
   const subject: subjectT = "shipment";
   const { setShowSidePanel, setSidePanelContent } = useContext(
     Context
   ) as dashBoardContextT;
+
+  const shipmentStatus = shipment?.extras?.histories?.length ? shipment.extras.histories[0].status : undefined
+  const courierInfo = shipment?.extras?.courierInfo
 
   return (
     <div className="dashboardCardBG w-full rounded-15 text-white border border-success mb-24">
@@ -25,34 +27,34 @@ function ShipmentCard({ props }: { props: shipmentWithHistoryT }) {
         <div className="bg-black flex w-full rounded-t-15 py-8 px-16 border-b border-white items-center justify-between space-x-8">
           <div>
             <FaBraille />{" "}
-            <h5 className="font-bold">#{props.shipment.$id ? props.shipment.$id.slice(0, 7): "New Shipment"}</h5>
+            <h5 className="font-bold">#{shipment.$id ? shipment.$id.slice(0, 7): "New Shipment"}</h5>
           </div>
-          <Pill
-            text={props.histories[props.histories.length - 1].status}
+         {shipmentStatus && <Pill
+            text={shipmentStatus}
             isprimary={false}
-          />
+          />}
         </div>
       </div>
       <div className=" px-48  rounded-15 py-8 space-y-8">
         <p>
           <strong>Product:</strong>
-          <span className="ml-8"> {props.shipment.product}</span>
+          <span className="ml-8"> {shipment.product}</span>
         </p>
         <p>
           <strong>Sender:</strong>
-          <span className="ml-8">{props.shipment.shipperName}</span>
+          <span className="ml-8">{shipment.shipperName}</span>
         </p>
         <p>
           <strong>Destination:</strong>
-          <span className="ml-8">{props.shipment.destination}</span>
+          <span className="ml-8">{shipment.destination}</span>
         </p>
         <p>
           <strong>Mode:</strong>
-          <span className="ml-8">{props.shipment.mode}</span>
+          <span className="ml-8">{shipment.mode}</span>
         </p>
         <p>
           <strong>Package:</strong>
-          <span className="ml-8">{props.shipment.package}</span>
+          <span className="ml-8">{shipment.package}</span>
         </p>
 
         <div className="flex items center justify-between py-16">
@@ -61,7 +63,7 @@ function ShipmentCard({ props }: { props: shipmentWithHistoryT }) {
               className=" hover:cursor-pointer"
               onClick={() => {
                 setShowSidePanel((prev) => !prev);
-                setSidePanelContent({ id: props?.shipment.$id, subject });
+                setSidePanelContent({ id: shipment.$id, subject });
               }}
             >
               <Pill text="Info" isprimary icon={FaFileLines} />
@@ -73,7 +75,7 @@ function ShipmentCard({ props }: { props: shipmentWithHistoryT }) {
               onClick={() => {
                 setShowSidePanel((prev) => !prev);
                 setSidePanelContent({
-                  id: props.shipment?.$id,
+                  id: shipment?.$id,
                   maps: true,
                   subject,
                 });
@@ -84,7 +86,7 @@ function ShipmentCard({ props }: { props: shipmentWithHistoryT }) {
           </div>
         </div>
       </div>
-      {typeof props.shipment.courier !== "string" && (
+      {courierInfo && (
         <div className="flex justify-between items-center bg-black p-8 rounded-b-15">
           <div className="flex space-x-8">
             <Image
@@ -92,11 +94,11 @@ function ShipmentCard({ props }: { props: shipmentWithHistoryT }) {
               height={100}
               style={{ objectFit: "cover" }}
               className="rounded-full"
-              src={props.shipment.courier.image || profilePicPlaceholder}
+              src={courierInfo.image || profilePicPlaceholder}
               alt="courier  image"
             />
             <div>
-              <h5 className="font-bold">{props.shipment.courier.name}</h5>
+              <h5 className="font-bold">{courierInfo.name}</h5>
               <p>Courier</p>
             </div>
           </div>
@@ -105,7 +107,7 @@ function ShipmentCard({ props }: { props: shipmentWithHistoryT }) {
             onClick={() => {
               setShowSidePanel((prev) => !prev);
               setSidePanelContent({
-                id: props.shipment.conversationId as string,
+                id: shipment.conversationId as string,
                 subject: "conversation",
               });
             }}
@@ -115,6 +117,7 @@ function ShipmentCard({ props }: { props: shipmentWithHistoryT }) {
         </div>
       )}
     </div>
+ 
   );
 }
 

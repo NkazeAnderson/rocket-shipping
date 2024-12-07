@@ -1,19 +1,28 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
-import { shipmentHistoryT, shipmentWithHistoryT } from "@/types/types";
+import { appContextT, dashBoardContextT, shipmentWithHistoryT } from "@/types/types";
+import { AppContext } from "../ContextProviders/AppProvider";
+import { Context } from "./DashBoardWrapper";
 
-function ShipmentMap({ shipment }: { shipment: shipmentWithHistoryT }) {
+function ShipmentMap() {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GMAPSAPIKEY as string,
   });
   const [map, setMap] = React.useState<google.maps.Map | null>(null);
-  const lastHistory = shipment.histories[shipment.histories.length - 1];
+  const { shipments } = useContext(AppContext) as appContextT;
+  const { sidePanelContent } = useContext(Context) as dashBoardContextT;
+  const shipment = shipments.find(
+    (_) => _.$id === sidePanelContent?.id
+  ) 
+  const lastHistory = shipment?.extras?.histories?shipment?.extras?.histories[0] : undefined;
   if (
-    !shipment.shipment.originLat ||
-    !shipment.shipment.originLong ||
-    !shipment.shipment.destinationLat ||
-    !shipment.shipment.destinationLong ||
+    !shipment||
+    !lastHistory||
+    !shipment.originLat ||
+    !shipment.originLong ||
+    !shipment.destinationLat ||
+    !shipment.destinationLong ||
     !lastHistory.currentLat ||
     !lastHistory.currentLong
   ) {
@@ -21,8 +30,8 @@ function ShipmentMap({ shipment }: { shipment: shipmentWithHistoryT }) {
   }
 
   const origin = {
-    lat: shipment.shipment.originLat,
-    lng: shipment.shipment.originLong,
+    lat: shipment.originLat,
+    lng: shipment.originLong,
   };
   const current = {
     lat: lastHistory.currentLat,
@@ -30,8 +39,8 @@ function ShipmentMap({ shipment }: { shipment: shipmentWithHistoryT }) {
   };
 
   const destination = {
-    lat: shipment.shipment.destinationLat,
-    lng: shipment.shipment.destinationLong,
+    lat: shipment.destinationLat,
+    lng: shipment.destinationLong,
   };
   function onLoad(map: google.maps.Map) {
     // This is just an example of getting and using the map instance!!! don't just blindly copy!
@@ -42,7 +51,7 @@ function ShipmentMap({ shipment }: { shipment: shipmentWithHistoryT }) {
     setMap(map);
   }
   const customMarkerIcon = {
-    url: (shipment.shipment.image as string) || "./courier.png",
+    url: (shipment.image as string) || "./courier.png",
     scaledSize: new google.maps.Size(50, 50),
   };
 

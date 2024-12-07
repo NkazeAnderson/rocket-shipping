@@ -9,19 +9,9 @@ import Toggler from "../ui/Toggler";
 import { FormProvider, useForm } from "react-hook-form";
 import EditUserForm from "./EditUserForm";
 import EditPackageForm from "./EditPackageForm";
-import {
-  database,
-  packages,
-  shipmentCollection,
-  shipments,
-  userCollection,
-  users,
-} from "@/utils/contants";
-import { db, getShipments, getUsers, subscribeToAdmin } from "@/utils/appwrite";
-import { Query } from "appwrite";
-import { appContextT, shipmentT, userT, withId } from "@/types/types";
-import usePlacesAutocomplete from "use-places-autocomplete";
 import { AppContext } from "../ContextProviders/AppProvider";
+import { appContextT } from "@/types/types";
+import useUser from "../../../hooks/useUser";
 
 function Admin() {
   const [addOrEditToggle, setAddOrEditToggle] = useState("add");
@@ -33,15 +23,10 @@ function Admin() {
   const [selectedShipment, setSelectedShipment] = useState<number | undefined>(
     undefined
   );
-  const [updatePage, setupdatePage] = useState<boolean>(false);
-
   const group = { searchUser: "" };
   const methods = useForm<typeof group>();
-  const { shipments, users } = useContext(AppContext) as appContextT;
-
-  const shipmentsList = useMemo(() => {
-    return shipments.map((value) => value.shipment);
-  }, [shipments]);
+  const { shipments} = useContext(AppContext) as appContextT;
+  const {users} = useUser()
   useEffect(() => {
     selectedShipment && console.log("At admin", shipments[selectedShipment]);
   }, [selectedShipment]);
@@ -111,7 +96,7 @@ function Admin() {
                   name="searchUser"
                 />
               </div>
-              {shipmentsList.map((shipment, index) => (
+              {shipments.map((shipment, index) => (
                 <div
                   key={shipment.$id}
                   onClick={() => {
@@ -146,12 +131,11 @@ function Admin() {
           selectedUser !== undefined ? (
           <EditUserForm
             user={users[selectedUser]}
-            id={users[selectedUser].$id}
           />
         ) : (
           selectedShipment !== undefined && (
             <EditPackageForm
-              shipmentWithHistory={shipments[selectedShipment]}
+              shipment={shipments[selectedShipment]}
               users={users}
             />
           )

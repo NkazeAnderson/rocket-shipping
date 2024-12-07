@@ -2,7 +2,14 @@ import { userSchema, userT } from "@/types/schemas";
 import { account, db, getImageUrl } from "../appwrite";
 import { database, defaultAccess, userCollection } from "../contants";
 import { ID, Query } from "appwrite";
-import { getFromLocalStore, saveToLocalStore } from "..";
+import { getFromLocalStore, saveToLocalStore, stripOutAppwriteMetaData } from "..";
+
+function prepareUserForDb(user:userT) {
+  user.access &&  delete user.access
+    user.extras && delete user.extras
+    stripOutAppwriteMetaData(user)
+    return userSchema.omit({$id:true}).parse(user)
+}
 
 export async function getMyInfo():Promise<userT> {
     const data = await account.get();
@@ -41,9 +48,15 @@ export async function getMyInfo():Promise<userT> {
       userCollection,
       id
     )
-    const user = userSchema.parse(userInfo)
+    const user:userT = userSchema.parse(userInfo)
     if (user.image) {
-      user.image = getImageUrl(user.image);
+      const imageUrl = getImageUrl(user.image)
+      if (user.extras){
+        user.extras.imageUrl = imageUrl
+      }
+      else {
+        user.extras = {imageUrl}
+      }
     }
     return user;
   }
@@ -62,7 +75,12 @@ export async function getMyInfo():Promise<userT> {
         user.access = defaultAccess
     }
     const id = ID.unique()
-    await db.createDocument(database, userCollection, id, user);
     await account.create(id, user.email, user.access, user.name);
+    
+    await db.createDocument(database, userCollection, id, prepareUserForDb(user)  );
     return id
+  }
+
+  export async function UpdateUser(id:string, user:userT){ 
+    await db.updateDocument(database, userCollection, id, prepareUserForDb(user));
   }

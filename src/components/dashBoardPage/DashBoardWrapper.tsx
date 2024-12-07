@@ -58,7 +58,6 @@ function DashBoardWrapper() {
     window.addEventListener("resize", (e) => {
       setScreenSize(window.innerWidth);
     });
-    !user && router.back();
   }, [screenSize]);
 
   useGSAP(() => {

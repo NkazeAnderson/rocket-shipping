@@ -1,9 +1,10 @@
 import { userT } from "@/types/schemas";
-import { getAuthStatus, getMyInfo, logIn, logOut } from "@/utils/appwrite";
+import { getAuthStatus, getMyInfo, getUsers, logIn, logOut } from "@/utils/appwrite";
 import { useEffect, useState } from "react";
 
 export default function useUser(){
     const [user, setUser] = useState<userT|undefined>(undefined)
+    const [users, setUsers] = useState<userT[]>([])
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
 
     async function authenticateUser(email: string, password:string) {  
@@ -36,8 +37,16 @@ export default function useUser(){
     }).catch(e=>console.log(e)
     ) :  setUser(undefined)
     },[isAuthenticated])
+
+    useEffect(()=>{
+        if (user && user.isAdmin) {
+            getUsers().then((res) => {
+                setUsers(res);
+              })
+        }
+    },[user])
     return {
-        user, isAuthenticated, deAuthenticateUser, authenticateUser
+        user, isAuthenticated, deAuthenticateUser, authenticateUser, users
     }
 }
 

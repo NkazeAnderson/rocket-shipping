@@ -2,68 +2,47 @@ import React, { useEffect, useMemo, useState } from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import {
-  formRegisterT,
-  shipmentHistoryT,
-  shipmentT,
-  shipmentWithHistoryT,
-  userT,
-} from "@/types/types";
-import {
   actions,
-  bucket,
-  database,
   modes,
   packages,
   paymentModes,
-  shipmentCollection,
 } from "@/utils/contants";
 import {
-  FieldValues,
   FormProvider,
   SubmitHandler,
   useForm,
 } from "react-hook-form";
 import toast from "react-hot-toast";
-import { ID, Query } from "appwrite";
-import { db, getHistory, storage } from "@/utils/appwrite";
+import { addNewFile, updateShipment } from "@/utils/appwrite";
 import EditShipmentHistoryForm from "./EditShipmentHistoryForm";
 import AddShipmentHistoryForm from "./AddShipmentHistoryForm";
-import { getLatLong } from "@/utils";
+import { getLatLong, stripOutAppwriteMetaData } from "@/utils";
+import { shipmentSchema, shipmentT, userT } from "@/types/schemas";
 
 function EditPackageForm({
-  shipmentWithHistory,
+  shipment,
   users,
 }: {
-  shipmentWithHistory: shipmentWithHistoryT;
+  shipment: shipmentT;
   users: (userT & { $id: string })[];
 }) {
   const methods = useForm<shipmentT>();
-  const shipment = useMemo(() => {
-    return { ...shipmentWithHistory.shipment };
-  }, [shipmentWithHistory]);
-
-  const shipmentHistoryList = shipmentWithHistory.histories;
+  const shipmentHistoryList = shipment.extras?.histories;
   const [editHistory, setEditHistory] = useState<undefined | number>();
   const [addHistory, setAddHistory] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<shipmentT> = async (data) => {
     try {
-      let imageId = "";
       data.courier = users[Number(data.courier)].$id;
       data.receiver = users[Number(data.receiver)].$id;
 
       if (
-        data.image &&
-        typeof data.image !== "string" &&
-        typeof data.image !== "undefined" &&
-        data.image.length
+        data.extras?.imageToUpload?.length
       ) {
-        imageId = ID.unique();
-        await storage.createFile(bucket, imageId, data.image[0]);
+       const imageId = await addNewFile(data.extras.imageToUpload[0])
         data.image = imageId;
-      } else {
-        delete data.image;
       }
+      
       data.quantity = Number(data.quantity);
       data.weight = Number(data.weight);
       data.mode = modes[Number(data.mode)];
@@ -81,20 +60,10 @@ function EditPackageForm({
         data.destinationLat = destinationCords.lat;
         data.destinationLong = destinationCords.lng;
       }
-      //@ts-ignore
-      data.$collectionId && delete data.$collectionId;
-      //@ts-ignore
-      data.$createdAt && delete data.$createdAt;
-      //@ts-ignore
-      data.$databaseId && delete data.$databaseId;
-      //@ts-ignore
-      data.$permissions && delete data.$permissions;
-      //@ts-ignore
-      data.$updatedAt && delete data.$updatedAt;
-      //@ts-ignore
-      data.$id && delete data.$id;
-
-      await db.updateDocument(database, shipmentCollection, shipment.$id, data);
+      const shipmentId = shipment.$id
+      data = stripOutAppwriteMetaData(data)
+      const newShipment = shipmentSchema.omit({$id:true}).parse(data)
+      await updateShipment(shipmentId, newShipment);
       methods.reset();
       toast.success("Successfully editted shipment");
     } catch (error) {
@@ -104,9 +73,6 @@ function EditPackageForm({
   };
 
   useEffect(() => {
-    console.log("at edit");
-    console.log(users);
-    console.log(shipment.courier);
 
     if (typeof shipment.receiver === "number") {
       return;
@@ -278,7 +244,7 @@ function EditPackageForm({
             options={actions}
             name="action"
           />
-          <Input label="Image" placeholder="image" type="file" name="image" />
+          <Input label="Image" placeholder="image" type="file" name="extra.imageToUpload" />
 
           <div className="w-full flex justify-center">
             <Button

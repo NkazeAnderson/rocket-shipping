@@ -20,7 +20,7 @@ function Home() {
           <h2 className="dashboardHeadings ">Shipments</h2>
           <div className="py-16">
             {shipments.map((shipment, index) => (
-              <ShipmentCard key={`ss${index}`} props={shipment} />
+              <ShipmentCard key={`ss${index}`} shipment={shipment} />
             ))}
             <ViewMore value="shipments" />
           </div>

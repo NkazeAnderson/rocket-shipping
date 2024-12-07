@@ -1,11 +1,9 @@
 "use client";
 import {
+  appContextT,
   dashBoardContextT,
   locationT,
-  shipmentHistoryT,
-  shipmentT,
   shipmentWithHistoryT,
-  userT,
 } from "@/types/types";
 import React, { useContext, useEffect, useRef } from "react";
 import { FaLandmark, FaPhone } from "react-icons/fa";
@@ -13,6 +11,8 @@ import { FaLocationPin, FaMessage, FaPerson } from "react-icons/fa6";
 import Pill from "../ui/Pill";
 import { Context } from "./DashBoardWrapper";
 import { shipmentHistory } from "@/utils/contants";
+import { userT } from "@/types/schemas";
+import { AppContext } from "../ContextProviders/AppProvider";
 
 function UserDetails({ user, location }: { user: userT; location: string }) {
   return (
@@ -70,7 +70,7 @@ function ShipmentData({ heading, data }: { heading: string; data: string }) {
   );
 }
 
-function ShipmentInfo({ info }: { info: shipmentWithHistoryT }) {
+function ShipmentInfo() {
   const { sidePanelContent } = useContext(Context) as dashBoardContextT;
   const firstElement = useRef<null | HTMLDivElement>(null);
   useEffect(() => {
@@ -78,20 +78,32 @@ function ShipmentInfo({ info }: { info: shipmentWithHistoryT }) {
       firstElement.current && firstElement.current.scrollIntoView(false);
     }, 1000);
   }, [sidePanelContent?.id]);
+  const { shipments } = useContext(AppContext) as appContextT;
+  const shipment = shipments.find(
+    (_) => _.$id === sidePanelContent?.id
+  ) 
+  const shipmentStatus = shipment?.extras?.histories?.length ? shipment.extras.histories[0].status : undefined
+  const courierInfo = shipment?.extras?.courierInfo
+  const receiverInfo = shipment?.extras?.receiverInfo
+  const histories = shipment?.extras?.histories
+  
+  if (!shipment) {
+    return <p className="py-32"> Select a shipment</p>
+  }
   return (
     <>
       <div ref={firstElement} className="p-16 rounded-15 w-full bg-black">
         <h3 className=" text-white font-bold">
-          Shipment No: {info.shipment.$id}
+          Shipment No: {shipment.$id}
         </h3>
       </div>
       <div className="flex justify-start w-full p-16 items-center sticky top-0  bg-black/70 text-white space-x-16">
         <h4 className="font-bold">Status:</h4>
         <div className="w-fit animate-pulse ease-linear duration-[4000]">
-          <Pill
-            text={info.histories[info.histories.length - 1].status}
+         {shipmentStatus && <Pill
+            text={shipmentStatus}
             isprimary
-          />
+          />}
         </div>
       </div>
       <div className="p-16">
@@ -102,56 +114,57 @@ function ShipmentInfo({ info }: { info: shipmentWithHistoryT }) {
             <h4 className="font-bold text-brown">Sender Information</h4>
             <UserDetails
               user={{
-                name: info.shipment.shipperName,
-                email: info.shipment.shipperEmail,
+                $id:"",
+                name: shipment.shipperName,
+                email: shipment.shipperEmail,
               }}
-              location={info.shipment.origin}
+              location={shipment.origin}
             />
           </div>
-          {typeof info.shipment.receiver !== "string" && (
+          {receiverInfo && (
             <div className="lg:w-1/2">
               <h4 className="font-bold text-brown">Receiver Information</h4>
               <UserDetails
-                user={info.shipment.receiver}
-                location={info.shipment.destination}
+                user={receiverInfo}
+                location={shipment.destination}
               />
             </div>
           )}
         </div>
         <h2 className="dashboardHeadings text-center">Shipment Information</h2>
         <div className="flex flex-wrap">
-          <ShipmentData heading="Origin" data={`${info.shipment.origin}`} />
+          <ShipmentData heading="Origin" data={`${shipment.origin}`} />
           <ShipmentData
             heading="Destination"
-            data={`${info.shipment.destination}`}
+            data={`${shipment.destination}`}
           />
-          <ShipmentData heading="Payment" data={info.shipment.paymentMethod} />
+          <ShipmentData heading="Payment" data={shipment.paymentMethod} />
           <ShipmentData
             heading="Status"
-            data={info.histories[info.histories.length - 1].status}
+            data={shipmentStatus || "Registered"}
           />
-          <ShipmentData heading="Mode" data={info.shipment.mode} />
+          <ShipmentData heading="Mode" data={shipment.mode} />
           <ShipmentData
             heading="Quantity"
-            data={info.shipment.quantity.toString()}
+            data={shipment.quantity.toString()}
           />
           <ShipmentData
             heading="Weight"
-            data={info.shipment.weight.toString()}
+            data={shipment.weight.toString()}
           />
-          <ShipmentData heading="Product" data={info.shipment.product} />
-          <ShipmentData heading="Package" data={info.shipment.package} />
+          <ShipmentData heading="Product" data={shipment.product} />
+          <ShipmentData heading="Package" data={shipment.package} />
           <ShipmentData
             heading="Pickup Date"
-            data={info.shipment.pickupDate.split("T")[0]}
+            data={shipment.pickupDate.split("T")[0]}
           />
           <ShipmentData
             heading="Delivery Date"
-            data={info.shipment.deliveryDate.split("T")[0]}
+            data={shipment.deliveryDate.split("T")[0]}
           />
-          <ShipmentData heading="ETA" data={info.shipment.eta} />
-          {typeof info.shipment.courier !== "string" && (
-            <ShipmentData heading="Handler" data={info.shipment.courier.name} />
+          <ShipmentData heading="ETA" data={shipment.eta} />
+          {courierInfo && (
+            <ShipmentData heading="Handler" data={courierInfo.name} />
           )}
         </div>
         <h2 className="dashboardHeadings text-center">Shipment History</h2>
@@ -164,7 +177,7 @@ function ShipmentInfo({ info }: { info: shipmentWithHistoryT }) {
             </tr>
           </thead>
           <tbody>
-            {info.histories.map((item, index) => (
+            {histories?.map((item, index) => (
               <tr
                 key={item.$id}
                 className={`my-8 ${index % 2 === 1 && "bg-dark-gray/20"}`}

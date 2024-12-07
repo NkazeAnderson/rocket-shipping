@@ -1,7 +1,5 @@
 import React, { useContext } from "react";
-import ConversationCard from "./ConversationCard";
 import ShipmentCard from "./ShipmentCard";
-import { locations, shipments, users } from "@/utils/contants";
 import { AppContext } from "../ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
 
@@ -12,7 +10,7 @@ function Shipments() {
       <h2 className="dashboardHeadings ">Shipments</h2>
       <div className="py-24">
         {shipments.map((shipment, index) => (
-          <ShipmentCard key={`ss${index}`} props={shipment} />
+          <ShipmentCard key={`ss${index}`} shipment={shipment} />
         ))}
       </div>
     </>

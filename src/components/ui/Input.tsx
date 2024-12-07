@@ -36,7 +36,7 @@ function Input<T extends FieldValues>({
   options?: string[];
   disabled?: boolean;
 }) {
-  const [active, setActive] = useState(false);
+  const [focused, setFocused] = useState(false);
   const { placeApi } = useContext(AppContext) as appContextT;
   const {
     ready,
@@ -48,7 +48,7 @@ function Input<T extends FieldValues>({
   const methods = useFormContext<T>();
   const queryText = methods.watch(name);
   useEffect(() => {
-    ready && active && setValue(queryText);
+    ready && focused && location && setValue(queryText);
   }, [ready, queryText]);
 
   const handleSelect =
@@ -60,7 +60,7 @@ function Input<T extends FieldValues>({
       console.log(description);
 
       methods.setValue(name, description as PathValue<T, Path<T>>);
-      setActive(false);
+      setFocused(false);
       setValue("", false);
 
       clearSuggestions();
@@ -113,10 +113,10 @@ function Input<T extends FieldValues>({
             disabled={disabled}
             {...methods.register(name)}
             onFocus={() => {
-              setActive(true);
+              setFocused(true);
             }}
           />
-          {ready && active && location && data && (
+          {ready && focused && location && data && (
             <div>
               <p>Select A place</p>
               <ul>

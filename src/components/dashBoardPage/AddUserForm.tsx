@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
 import {
-  FieldValues,
   FormProvider,
   SubmitHandler,
   useForm,
@@ -11,7 +10,7 @@ import { defaultAccess,  } from "@/utils/contants";
 import { addNewFile, addNewUserToAccountandDb, CheckIfUserWithEmailExist, db, storage } from "@/utils/appwrite";
 import { AppwriteException} from "appwrite";
 import toast from "react-hot-toast";
-import { userT } from "@/types/schemas";
+import { userSchema, userT } from "@/types/schemas";
 
 function AddUserForm() {
   const methods = useForm<userT>({defaultValues:{
@@ -23,14 +22,14 @@ function AddUserForm() {
         const userExist =await CheckIfUserWithEmailExist(data.email.trim())
         if (!userExist) {
         
-          const image = data.imageToUpload?.length
+          const image = data.extras?.imageToUpload?.length
             ? 
-              await addNewFile(data.imageToUpload[0])
+              await addNewFile(data.extras.imageToUpload[0])
             : undefined;
           if (image) {
             data.image = image
-            delete data.imageToUpload
           }
+          
           await addNewUserToAccountandDb(data)
           methods.reset();
           toast.success("Account created");
@@ -73,7 +72,7 @@ function AddUserForm() {
           label="Picture"
           placeholder="Profile Pic"
           type="file"
-          name={"imageToUpload"}
+          name={"extras.imageToUpload"}
         />
         <div className="w-full flex justify-center">
           <Button

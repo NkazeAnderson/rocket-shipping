@@ -8,18 +8,10 @@ import {
   shipmentHistoryCollection,
   userCollection,
 } from "./contants";
-import {
-  conversationWithMessageT,
-  messageT,
-  shipmentHistoryT,
-  shipmentT,
-  shipmentWithHistoryT,
-  withId,
-} from "@/types/types";
 
 import {userSchema, userT} from "@/types/schemas"
-import { getFromLocalStore, saveToLocalStore } from ".";
 import { getUserById } from "./appwrite";
+import {getImageUrl} from "./appwrite/storage"
 
 const client = new Client();
 client
@@ -32,14 +24,10 @@ export const db = new Databases(client);
 
 export async function getUsers() {
   const users = await db.listDocuments(database, userCollection);
-  //@ts-ignore
-  return users.documents as (userT & { $id: string })[];
+  return userSchema.array().parse(users.documents) 
 }
 
 
-export function getImageUrl(id: string) {
-  return storage.getFilePreview(bucket, id).href;
-}
 
 export function subscribeToAdmin(
   callbackFunction: (action: string, payload: Record<string, string>) => void
@@ -60,105 +48,7 @@ export function subscribeToAdmin(
   return unsubscribe;
 }
 
-export async function getConversationId(member1: string, member2: string) {
-  const conversationRef = await db.listDocuments(
-    database,
-    conversationCollection,
-    [
-      Query.or([
-        Query.and([
-          Query.equal("member1", member1),
-          Query.equal("member2", member2),
-        ]),
-        Query.and([
-          Query.equal("member1", member2),
-          Query.equal("member2", member1),
-        ]),
-      ]),
-    ]
-  );
-  if (conversationRef.documents.length) {
-    return conversationRef.documents[0].$id;
-  }
-  return undefined;
-}
 
-export async function getConversations(user: withId<userT>) {
-  console.log(user);
-
-  const conversationRef = await db.listDocuments(
-    database,
-    conversationCollection,
-    [
-      Query.or([
-        Query.equal("member1", user.$id),
-        Query.equal("member2", user.$id),
-      ]),
-    ]
-  );
-
-  const conversations: conversationWithMessageT[] = [];
-  for (const conversation of conversationRef.documents) {
-    const messagesRef = await db.listDocuments(database, messageCollection, [
-      Query.equal("conversationId", conversation.$id),
-    ]);
-    if ("member1" in conversation && "member2" in conversation) {
-      if (conversation.member1 === user.$id) {
-        conversation.member1 = user;
-        conversation.member2 = await getUserById(conversation.member2);
-      } else {
-        conversation.member2 = user;
-        conversation.member1 = await getUserById(conversation.member1);
-      }
-    }
-    //@ts-ignore
-    conversations.push({
-      ...conversation,
-      //@ts-ignore
-      messages: messagesRef.documents.map((value) => {
-        if (value.image) {
-          value.image = getImageUrl(value.image);
-          return value;
-        }
-        return value;
-      }),
-    });
-  }
-  return conversations;
-}
-
-export async function getLastMessage(conversationId: string) {
-  const messageRef = await db.listDocuments(database, messageCollection, [
-    Query.equal("conversationId", conversationId),
-    Query.orderDesc("timeStamp"),
-    Query.limit(1),
-  ]);
-  //@ts-ignore
-  const lastMessage = messageRef.documents[0] as withId<messageT>;
-
-  if (lastMessage.image) {
-    lastMessage.image = getImageUrl(lastMessage.image);
-  }
-  console.log("Last message:", lastMessage);
-  return lastMessage;
-}
-
-export async function sendMessage(message: messageT) {
-  await db.createDocument(database, messageCollection, ID.unique(), message);
-  await db.updateDocument(
-    database,
-    conversationCollection,
-    message.conversationId,
-    {
-      lastMessage:
-        message.text && message.text.length < 29
-          ? message.text
-          : message.text && message.text.length > 29
-          ? message.text.slice(0, 28)
-          : "shipping-img-new",
-    }
-  );
-}
 
 export function subscribeToUser(
   userId: string,
@@ -187,44 +77,8 @@ export function subscribeToUser(
   return unsubscribe;
 }
 
-export async function getShipments(user: withId<userT>) {
-  const shipmentsList: shipmentWithHistoryT[] = [];
-  const shipments = user.isAdmin
-    ? await db.listDocuments(database, shipmentCollection)
-    : await db.listDocuments(database, shipmentCollection, [
-        Query.equal("receiver", user.$id),
-      ]);
-  for (let shipment of shipments.documents) {
-    const histories = await getHistory(shipment.$id);
-    if (
-      typeof shipment.courier === "string" &&
-      typeof shipment.receiver === "string"
-    ) {
-      shipment.courier = await getUserById(shipment.courier);
-      shipment.receiver = await getUserById(shipment.receiver);
-    }
-
-    if (shipment.image && typeof shipment.image === "string") {
-      shipment.image = getImageUrl(shipment.image);
-    }
-
-    //@ts-ignore
-    shipmentsList.push({ shipment, histories });
-  }
-
-  return shipmentsList;
-}
-
-export async function getHistory(shipmentId: string) {
-  const historyRef = await db.listDocuments(
-    database,
-    shipmentHistoryCollection,
-    [Query.equal("shipmentId", shipmentId)]
-  );
-  //@ts-ignore
-  return historyRef.documents as (shipmentHistoryT & { $id: string })[];
-}
-
 
 export * from "./appwrite/user"
 export * from "./appwrite/storage"
+export * from "./appwrite/shipments"
+export * from "./appwrite/conversations"
