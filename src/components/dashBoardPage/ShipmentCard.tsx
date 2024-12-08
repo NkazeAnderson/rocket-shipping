@@ -6,20 +6,29 @@ import Image from "next/image";
 import { FaMap } from "react-icons/fa";
 import { Context } from "./DashBoardWrapper";
 import {
+  appContextT,
   dashBoardContextT,
   subjectT,
 } from "@/types/types";
 import { profilePicPlaceholder } from "@/utils/contants";
 import { shipmentT } from "@/types/schemas";
+import { AppContext } from "../ContextProviders/AppProvider";
+import useUser from "../../../hooks/useUser";
 
 function ShipmentCard({ shipment }: { shipment: shipmentT }) {
   const subject: subjectT = "shipment";
   const { setShowSidePanel, setSidePanelContent } = useContext(
     Context
   ) as dashBoardContextT;
+  const {conversations} = useContext(AppContext) as appContextT
+  const {user} = useUser()
+  const conversation = conversations.find(
+    (item) => item.member1 === user?.$id || item.member2 === user?.$id
+  )
 
   const shipmentStatus = shipment?.extras?.histories?.length ? shipment.extras.histories[0].status : undefined
   const courierInfo = shipment?.extras?.courierInfo
+
 
   return (
     <div className="dashboardCardBG w-full rounded-15 text-white border border-success mb-24">
@@ -107,7 +116,7 @@ function ShipmentCard({ shipment }: { shipment: shipmentT }) {
             onClick={() => {
               setShowSidePanel((prev) => !prev);
               setSidePanelContent({
-                id: shipment.conversationId as string,
+                id: conversation?.$id ? conversation.$id : user && user.$id===shipment.courier ?  shipment.receiver : shipment.courier,
                 subject: "conversation",
               });
             }}

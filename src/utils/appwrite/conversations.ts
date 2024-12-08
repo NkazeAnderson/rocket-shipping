@@ -1,15 +1,25 @@
 import { ID, Query } from "appwrite";
 import { conversationCollection, database, messageCollection } from "../contants";
-import { db, getImageUrl } from "../appwrite";
-import { conversationSchema, conversationT, messageT } from "@/types/schemas";
+import { db, getImageUrl, getUserById } from "../appwrite";
+import { conversationSchema, conversationT, messageSchema, messageT } from "@/types/schemas";
+import { stripOutAppwriteMetaData } from "..";
 
+function prepareConversationForDb(conversation:conversationT) {
+  conversation.extras && delete conversation.extras
+  return stripOutAppwriteMetaData(conversationSchema.omit({$id:true}).parse(conversation))
+}
+
+function prepareMessageForDb(message:messageT){
+  message.extras && delete message.extras
+  return stripOutAppwriteMetaData(messageSchema.omit({$id:true}).parse(message))
+}
 export async function addConversation(conversation: conversationT) {
     const id = ID.unique()
     await db.createDocument(
         database,
         conversationCollection,
         id,
-        conversation
+        prepareConversationForDb(conversation) 
       )
     return id
 }
@@ -37,7 +47,10 @@ export async function getConversationId(member1: string, member2: string) {
         return undefined;
     }
   }
-  
+  export async function getMessages(shipmentId:string) {
+    const messagesRef =  await db.listDocuments(database, messageCollection, [Query.equal("shipmentId", shipmentId)])
+    return messageSchema.array().parse(messagesRef.documents)
+  }
   export async function getConversations(userId: string) {
 
     const conversationRef = await db.listDocuments(
@@ -50,68 +63,39 @@ export async function getConversationId(member1: string, member2: string) {
         ]),
       ]
     );
-  
-    // const conversations: conversationWithMessageT[] = [];
-    // for (const conversation of conversationRef.documents) {
-    //   const messagesRef = await db.listDocuments(database, messageCollection, [
-    //     Query.equal("conversationId", conversation.$id),
-    //   ]);
-    //   if ("member1" in conversation && "member2" in conversation) {
-    //     if (conversation.member1 === user.$id) {
-    //       conversation.member1 = user;
-    //       conversation.member2 = await getUserById(conversation.member2);
-    //     } else {
-    //       conversation.member2 = user;
-    //       conversation.member1 = await getUserById(conversation.member1);
-    //     }
-    //   }
-    //   //@ts-ignore
-    //   conversations.push({
-    //     ...conversation,
-    //     //@ts-ignore
-    //     messages: messagesRef.documents.map((value) => {
-    //       if (value.image) {
-    //         value.image = getImageUrl(value.image);
-    //         return value;
-    //       }
-    //       return value;
-    //     }),
-    //   });
-    // }
-
     const conversations = conversationSchema.array().parse(conversationRef.documents)
+    
+    for(let conversationIndex in conversations) {
+      const index= Number(conversationIndex)
+      const conversation:conversationT = conversations[index]
+      const extras:conversationT["extras"] = {
+        messages: await getMessages(conversation.$id),
+        member1Info: await getUserById(conversation.member1),
+        member2Info:await getUserById(conversation.member2),
+      }
+      conversation.extras = extras
+    }
     return conversations;
   }
   
-  export async function getLastMessage(conversationId: string) {
-    const messageRef = await db.listDocuments(database, messageCollection, [
-      Query.equal("conversationId", conversationId),
-      Query.orderDesc("timeStamp"),
-      Query.limit(1),
-    ]);
-    //@ts-ignore
-    const lastMessage = messageRef.documents[0] as withId<messageT>;
+  export async function getMessage(messageId: string) {
+    const messageRef = await db.getDocument(database, messageCollection, messageId);
+    const message:messageT = messageSchema.parse(messageRef)
+    message.extras = {imageUrl: message.image ? getImageUrl(message.image): undefined}
+    return message
   
-    if (lastMessage.image) {
-      lastMessage.image = getImageUrl(lastMessage.image);
-    }
-    console.log("Last message:", lastMessage);
-    return lastMessage;
   }
   
   export async function sendMessage(message: messageT) {
-    await db.createDocument(database, messageCollection, ID.unique(), message);
+    const id = ID.unique()
+    await db.createDocument(database, messageCollection, id , prepareMessageForDb(message));
+    const conversation: Partial<conversationT> ={
+      lastMessageId: id
+    }
     await db.updateDocument(
       database,
       conversationCollection,
       message.conversationId,
-      {
-        lastMessage:
-          message.text && message.text.length < 29
-            ? message.text
-            : message.text && message.text.length > 29
-            ? message.text.slice(0, 28)
-            : "shipping-img-new",
-      }
+      conversation
     );
   }

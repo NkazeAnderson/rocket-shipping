@@ -1,42 +1,55 @@
 "use client";
 import Image from "next/image";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import MessageCard from "./MessageCard";
 import { FaCamera, FaPaperPlane } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import { Context } from "./DashBoardWrapper";
 import {
   appContextT,
-  conversationWithMessageT,
   dashBoardContextT,
-  messageT,
 } from "@/types/types";
 import { AppContext } from "../ContextProviders/AppProvider";
-import { sendMessage, storage } from "@/utils/appwrite";
+import { addConversation, addNewFile, sendMessage, storage } from "@/utils/appwrite";
 import { bucket } from "@/utils/contants";
 import { ID } from "appwrite";
 import toast from "react-hot-toast";
+import useUser from "../../../hooks/useUser";
+import { messageT } from "@/types/schemas";
 
 function Messaging() {
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
   const [image, setImage] = useState<null | File>(null);
   const imageRef = useRef<HTMLInputElement | null>(null);
-  const { conversations, user } = useContext(AppContext) as appContextT;
+  const { conversations} = useContext(AppContext) as appContextT;
   const { sidePanelContent } = useContext(Context) as dashBoardContextT;
+  const {user} = useUser()
   const lastElement = useRef<null | HTMLDivElement>(null);
   const clearNewMessages = () => {
     setMessage("");
     setImage(null);
   };
 
-  const conversation = conversations.find(
+  let conversation = conversations.find(
     (item) => item.$id === sidePanelContent?.id
-  ) 
+  )
+  
+  const otherMember= useMemo(()=>{
+    if (!user || !conversation?.extras) {
+      return undefined
+    }
+    if (user.$id === conversation.member1) {
+      return conversation.extras.member2Info
+    }
+    else{
+      return conversation.extras.member1Info
+    }
+  }, [conversation])
+
   useEffect(() => {
     if (image) {
       const blob = URL.createObjectURL(image);
-      console.log(blob);
     }
   }, [image]);
   useEffect(() => {
@@ -44,44 +57,49 @@ function Messaging() {
       lastElement.current && lastElement.current.scrollIntoView(false);
     }, 1000);
   }, [sidePanelContent?.id, conversations]);
-  if (
-    !conversation ||
-    typeof conversation.member1 === "string" ||
-    typeof conversation.member2 === "string"
-  ) {
-    return null;
-  }
   async function submit() {
+    setPending(true);
     try {
-      setPending(true);
-      const imageID = ID.unique();
-
-      if (image) {
-        await storage.createFile(bucket, imageID, image);
+    
+      if (!conversation && user && sidePanelContent && sidePanelContent.subject === "conversation") {
+        conversation = {
+          member1:sidePanelContent.id,
+          member2:user.$id,
+          $id:""
+        }
+        const id =await addConversation(conversation)
+        conversation.$id = id
       }
-      const messageToSend: messageT | undefined =
-        message && user
-          ? {
-              conversationId: conversation.$id,
-              sender: user.$id,
-              text: message,
-              timeStamp: new Date().getTime(),
-            }
-          : image && user
-          ? {
-              conversationId: conversation.$id,
-              sender: user.$id,
-              image: imageID,
-              timeStamp: new Date().getTime(),
-            }
-          : undefined;
-      messageToSend && (await sendMessage(messageToSend));
+
+      if (!user || !conversation) {
+        throw new Error("User and Conversation required")
+      }
+      
+      const messageToSend: messageT = {
+        $id: "",
+        conversationId:conversation.$id,
+        timeStamp: new Date().getTime(),
+        sender:user.$id
+       }
+
+       if (message) {
+        messageToSend.text = message
+       }
+       if (image) {
+        const id = await addNewFile(image);
+        messageToSend.image = id
+       }
+      await sendMessage(messageToSend);
       setPending(false);
     } catch (error) {
+      console.log(error);
+      
       setPending(false);
       toast.error("Error sending message");
     }
   }
+
+ 
   return (
     <div className=" w-full flex-1 relative">
       <div className="flex justify-between sticky top-0 items-center bg-black p-8 rounded-b-15 text-white">
@@ -92,25 +110,21 @@ function Messaging() {
             style={{ objectFit: "cover" }}
             className="rounded-full"
             src={
-              conversation.member1.$id === user?.$id &&
-              conversation.member2.image
-                ? conversation.member2.image
-                : conversation.member2.$id === user?.$id &&
-                  conversation.member1.image
-                ? conversation.member1.image
+              otherMember?.extras?.imageUrl
+                ? otherMember.extras.imageUrl
                 : "/no-pic.jpg"
             }
             alt=""
           />
           <div>
-            <h5 className="font-bold">{conversation.member2.name}</h5>
+            <h5 className="font-bold">{otherMember?.name || "User"}</h5>
             <p>Online</p>
           </div>
         </div>
       </div>
       <div className=" w-full p-16 overflow-y-auto">
-        {conversation.messages.map((item) => (
-          <MessageCard key={item.$id} props={item} />
+        {conversation?.extras?.messages.map((item) => (
+          <MessageCard key={item.$id} message={item} />
         ))}
       </div>
       <div ref={lastElement} className=" pb-96"></div>
@@ -161,6 +175,7 @@ function Messaging() {
               }}
             />
           </div>
+            <div className={pending ? `animate-ping` : ""}>
 
           {message ? (
             <span
@@ -206,6 +221,7 @@ function Messaging() {
               />
             </span>
           )}
+            </div>
         </div>
       </div>
     </div>

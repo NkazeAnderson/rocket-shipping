@@ -8,7 +8,6 @@ import {
 } from "@/types/types";
 import {
   getConversations,
-  getLastMessage,
   getMyInfo,
   getShipments,
   getUsers,
@@ -25,7 +24,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import usePlacesAutocomplete from "use-places-autocomplete";
 import useUser from "../../../hooks/useUser";
-import { shipmentT, userT } from "@/types/schemas";
+import { conversationT, shipmentT, userT } from "@/types/schemas";
 export const AppContext = createContext<appContextT | undefined>(undefined);
 function InitializePlaces() {}
 function AppProvider({ children }: { children: React.ReactNode }) {
@@ -36,7 +35,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     []
   );
   const [conversations, setConversations] = useState<
-    conversationWithMessageT[]
+    conversationT[]
   >([]);
 
   const router = useRouter();
@@ -232,14 +231,14 @@ function AppProvider({ children }: { children: React.ReactNode }) {
       getShipments(user).then(async (res) => {
         setShipments(res);
       });
-    // user &&
-    //   getConversations(user)
-    //     .then((res) => {
-    //       setConversations(res);
-    //     })
-    //     .catch((e) => {
-    //       console.log(e);
-    //     });
+    user &&
+      getConversations(user.$id)
+        .then((res) => {
+          setConversations(res);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
 
   }, [user]);
 
