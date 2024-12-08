@@ -27,9 +27,6 @@ function Admin() {
   const methods = useForm<typeof group>();
   const { shipments} = useContext(AppContext) as appContextT;
   const {users} = useUser()
-  useEffect(() => {
-    selectedShipment && console.log("At admin", shipments[selectedShipment]);
-  }, [selectedShipment]);
 
   return (
     <div className="w-full">
@@ -135,8 +132,7 @@ function Admin() {
         ) : (
           selectedShipment !== undefined && (
             <EditPackageForm
-              shipment={shipments[selectedShipment]}
-              users={users}
+              selectedIndex={selectedShipment}
             />
           )
         )}

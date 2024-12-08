@@ -66,8 +66,20 @@ export const conversationSchema = z.object({
   lastMessage: z.string().or(z.literal("shipping-img-new")) .or(z.null()).optional()
 })
 
+export const messageSchema = z.object(
+  {
+    sender: z.string(),
+    text: z.string().or(z.null()).optional(),
+    read: z.boolean().or(z.null()).optional(),
+    image: z.string().or(z.null()).optional(),
+    conversationId: z.string(),
+    timeStamp: z.number(),
+  }
+) 
+
 type imageExtras= {imageToUpload?:FileList, imageUrl?:string}
 export type userT = z.infer<typeof userSchema> & {extras?:imageExtras}
 export type shipmentHistoryT = z.infer<typeof shipmentHistorySchema>
 export type shipmentT = z.infer<typeof shipmentSchema> & { extras? : { courierInfo?: userT, receiverInfo?:userT, histories?:shipmentHistoryT[]}&imageExtras}
-export type conversationT = z.infer<typeof conversationSchema> & {myMemberShip?:1|2}
+export type messageT = z.infer<typeof messageSchema>
+export type conversationT = z.infer<typeof conversationSchema> & {extras: {myMemberShip?:1|2 , messages?:messageT[]} } 

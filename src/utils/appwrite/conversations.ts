@@ -1,7 +1,7 @@
 import { ID, Query } from "appwrite";
 import { conversationCollection, database, messageCollection } from "../contants";
 import { db, getImageUrl } from "../appwrite";
-import { conversationSchema, conversationT } from "@/types/schemas";
+import { conversationSchema, conversationT, messageT } from "@/types/schemas";
 
 export async function addConversation(conversation: conversationT) {
     const id = ID.unique()
@@ -99,19 +99,19 @@ export async function getConversationId(member1: string, member2: string) {
     return lastMessage;
   }
   
-//   export async function sendMessage(message: messageT) {
-//     await db.createDocument(database, messageCollection, ID.unique(), message);
-//     await db.updateDocument(
-//       database,
-//       conversationCollection,
-//       message.conversationId,
-//       {
-//         lastMessage:
-//           message.text && message.text.length < 29
-//             ? message.text
-//             : message.text && message.text.length > 29
-//             ? message.text.slice(0, 28)
-//             : "shipping-img-new",
-//       }
-//     );
-//   }
+  export async function sendMessage(message: messageT) {
+    await db.createDocument(database, messageCollection, ID.unique(), message);
+    await db.updateDocument(
+      database,
+      conversationCollection,
+      message.conversationId,
+      {
+        lastMessage:
+          message.text && message.text.length < 29
+            ? message.text
+            : message.text && message.text.length > 29
+            ? message.text.slice(0, 28)
+            : "shipping-img-new",
+      }
+    );
+  }

@@ -1,7 +1,6 @@
 "use client";
 import {
   appContextT,
-  conversationT,
   conversationWithMessageT,
   dashBoardContextT,
   subjectT,

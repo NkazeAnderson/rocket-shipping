@@ -17,26 +17,11 @@ function AddUserForm() {
     access: defaultAccess
   }});
   const onSubmit: SubmitHandler<userT> = useCallback( async (data) => {
-    if (data.access && data.email && data.name) {
+    if (data.email && data.name) {
       try {
-        const userExist =await CheckIfUserWithEmailExist(data.email.trim())
-        if (!userExist) {
-        
-          const image = data.extras?.imageToUpload?.length
-            ? 
-              await addNewFile(data.extras.imageToUpload[0])
-            : undefined;
-          if (image) {
-            data.image = image
-          }
-          
           await addNewUserToAccountandDb(data)
           methods.reset();
-          toast.success("Account created");
-        }
-        else {
-          toast.error("User already exist");
-        }
+          toast.success("Account created");   
       } catch (error) {
         if (
           error instanceof AppwriteException &&

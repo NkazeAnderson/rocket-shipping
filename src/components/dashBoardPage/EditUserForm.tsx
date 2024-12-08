@@ -14,16 +14,8 @@ import { userT } from "@/types/schemas";
 function EditUserForm({ user}: { user: userT;}) {
   const methods = useForm<userT>();
   const onSubmit: SubmitHandler<userT> = async (data) => {
-    try {
-      const image = data.extras?.imageToUpload?.length
-      ? 
-        await addNewFile(data.extras?.imageToUpload[0])
-      : undefined;
-    if (image) {
-      data.image = image
-    }
-       
-     await UpdateUser(data.$id, data)
+    try {   
+     await UpdateUser(data)
       methods.reset();
       toast.success("User info updated");
     } catch (error) {

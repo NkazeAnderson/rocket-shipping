@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import {
@@ -13,57 +13,33 @@ import {
   useForm,
 } from "react-hook-form";
 import toast from "react-hot-toast";
-import { addNewFile, updateShipment } from "@/utils/appwrite";
+import { updateShipment } from "@/utils/appwrite";
 import EditShipmentHistoryForm from "./EditShipmentHistoryForm";
 import AddShipmentHistoryForm from "./AddShipmentHistoryForm";
-import { getLatLong, stripOutAppwriteMetaData } from "@/utils";
-import { shipmentSchema, shipmentT, userT } from "@/types/schemas";
+import { shipmentT, userT } from "@/types/schemas";
+import useUser from "../../../hooks/useUser";
+import { AppContext } from "../ContextProviders/AppProvider";
+import { appContextT } from "@/types/types";
 
 function EditPackageForm({
-  shipment,
-  users,
+  selectedIndex,
 }: {
-  shipment: shipmentT;
-  users: (userT & { $id: string })[];
+  selectedIndex: number;
 }) {
-  const methods = useForm<shipmentT>();
+  const {users}= useUser()
+  const {shipments} = useContext(AppContext) as appContextT
+  const shipment = shipments[selectedIndex]
+  shipment.pickupDate = shipment.pickupDate.split("T")[0];
+  shipment.deliveryDate = shipment.deliveryDate.split("T")[0];
+
+  const methods = useForm<shipmentT>({defaultValues:shipment});
   const shipmentHistoryList = shipment.extras?.histories;
   const [editHistory, setEditHistory] = useState<undefined | number>();
   const [addHistory, setAddHistory] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<shipmentT> = async (data) => {
     try {
-      data.courier = users[Number(data.courier)].$id;
-      data.receiver = users[Number(data.receiver)].$id;
-
-      if (
-        data.extras?.imageToUpload?.length
-      ) {
-       const imageId = await addNewFile(data.extras.imageToUpload[0])
-        data.image = imageId;
-      }
-      
-      data.quantity = Number(data.quantity);
-      data.weight = Number(data.weight);
-      data.mode = modes[Number(data.mode)];
-      data.package = packages[Number(data.package)];
-      data.paymentMethod = paymentModes[Number(data.paymentMethod)];
-      data.action = actions[Number(data.action)];
-
-      if (data.origin !== shipment.origin) {
-        const originCords = await getLatLong(data.origin);
-        data.originLat = originCords.lat;
-        data.originLong = originCords.lng;
-      }
-      if (data.destination !== shipment.destination) {
-        const destinationCords = await getLatLong(data.destination);
-        data.destinationLat = destinationCords.lat;
-        data.destinationLong = destinationCords.lng;
-      }
-      const shipmentId = shipment.$id
-      data = stripOutAppwriteMetaData(data)
-      const newShipment = shipmentSchema.omit({$id:true}).parse(data)
-      await updateShipment(shipmentId, newShipment);
+      await updateShipment(data, shipment);
       methods.reset();
       toast.success("Successfully editted shipment");
     } catch (error) {
@@ -72,42 +48,6 @@ function EditPackageForm({
     }
   };
 
-  useEffect(() => {
-
-    if (typeof shipment.receiver === "number") {
-      return;
-    }
-    if (!users.length || !shipment) {
-      return;
-    }
-    //@ts-ignore
-    shipment.mode = modes.findIndex((item) => item === shipment.mode);
-    //@ts-ignore
-    shipment.package = packages.findIndex((item) => item === shipment.package);
-    //@ts-ignore
-    shipment.paymentMethod = paymentModes.findIndex(
-      (item) => item === shipment.paymentMethod
-    );
-    //@ts-ignore
-    shipment.courier = users.findIndex(
-      //@ts-ignore
-      (item) => item.$id === shipment.courier.$id
-    );
-    //@ts-ignore
-    shipment.receiver = users.findIndex(
-      //@ts-ignore
-      (item) => item.$id === shipment.receiver.$id
-    );
-    //@ts-ignore
-    shipment.action = actions.findIndex((item) => item === shipment.action);
-    //@ts-ignore
-    shipment.pickupDate = shipment.pickupDate.split("T")[0];
-    //@ts-ignore
-    shipment.deliveryDate = shipment.deliveryDate.split("T")[0];
-
-    methods.reset(shipment);
-  }, [shipment, users]);
-
   return (
     <>
       <FormProvider {...methods}>
@@ -115,6 +55,7 @@ function EditPackageForm({
           onSubmit={methods.handleSubmit(onSubmit)}
           className="space-y-8"
           action=""
+          key={selectedIndex}
         >
           <Input
             label="Shipper's Name"
@@ -143,8 +84,10 @@ function EditPackageForm({
             label="Receiver"
             placeholder="Select Receiver"
             type="options"
-            options={users.map((user) => `${user.name} - ${user.email}`)}
+            options={users}
             name="receiver"
+            optionsDisplayKeys={["name", "email"]}
+            defaultValue={shipment.receiver}
             required
           />
           <Input
@@ -160,9 +103,9 @@ function EditPackageForm({
             label="Courier"
             placeholder="Select Receiver"
             type="options"
-            options={users
-              .filter((value) => value.isAdmin)
-              .map((user, index) => `${user.name} - ${user.email}`)}
+            options={users}
+            optionsDisplayKeys={["name", "email"]}
+            defaultValue={shipment.courier}
             name="courier"
             required
           />

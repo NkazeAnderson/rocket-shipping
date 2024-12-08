@@ -15,33 +15,13 @@ import {
 import { addConversation, addNewFile, addShipment, addShipmentHistory, db, getConversationId, storage } from "@/utils/appwrite";
 import toast from "react-hot-toast";
 import { getLatLong } from "@/utils";
-import { conversationT, shipmentHistoryT, shipmentSchema, shipmentT, userT } from "@/types/schemas";
+import { shipmentT, userT } from "@/types/schemas";
 
 function AddPackageForm({ users }: { users: userT[] }) {
   const methods = useForm<shipmentT>();
   const onSubmit: SubmitHandler<shipmentT> = async (data) => {
     try {
-      data.courier = users[Number(data.courier)].$id;
-      data.receiver = users[Number(data.receiver)].$id;
-      if (
-        data.extras?.imageToUpload?.length
-      ) {
-       const imageId = await addNewFile(data.extras.imageToUpload[0])
-        data.image = imageId;
-      }
-      data.quantity = Number(data.quantity);
-      data.weight = Number(data.weight);
-      data.mode = modes[Number(data.mode)];
-      data.package = packages[Number(data.package)];
-      data.paymentMethod = paymentModes[Number(data.paymentMethod)];
-      data.action = "None";
-      const originCords = await getLatLong(data.origin);
-      const destinationCords = await getLatLong(data.destination);
-      data.originLat = originCords.lat;
-      data.originLong = originCords.lng;
-      data.destinationLat = destinationCords.lat;
-      data.destinationLong = destinationCords.lng;
-  
+      
       // let conversationId = await getConversationId(
       //   data.courier,
       //   data.receiver

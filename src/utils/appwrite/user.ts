@@ -1,5 +1,5 @@
 import { userSchema, userT } from "@/types/schemas";
-import { account, db, getImageUrl } from "../appwrite";
+import { account, addNewFile, db, getImageUrl } from "../appwrite";
 import { database, defaultAccess, userCollection } from "../contants";
 import { ID, Query } from "appwrite";
 import { getFromLocalStore, saveToLocalStore, stripOutAppwriteMetaData } from "..";
@@ -71,6 +71,17 @@ export async function getMyInfo():Promise<userT> {
   }
 
   export async function addNewUserToAccountandDb(user:userT){
+    const userExist =await CheckIfUserWithEmailExist(user.email.trim())
+    if (userExist) {
+      throw new Error("user already exist")
+    }      
+      const image = user.extras?.imageToUpload?.length
+        ? 
+          await addNewFile(user.extras.imageToUpload[0])
+        : undefined;
+      if (image) {
+        user.image = image
+      }
     if (!user.access) {
         user.access = defaultAccess
     }
@@ -81,6 +92,13 @@ export async function getMyInfo():Promise<userT> {
     return id
   }
 
-  export async function UpdateUser(id:string, user:userT){ 
-    await db.updateDocument(database, userCollection, id, prepareUserForDb(user));
+  export async function UpdateUser(user:userT){ 
+    const image = user.extras?.imageToUpload?.length
+    ? 
+      await addNewFile(user.extras?.imageToUpload[0])
+    : undefined;
+  if (image) {
+    user.image = image
+  }
+    await db.updateDocument(database, userCollection, user.$id, prepareUserForDb(user));
   }

@@ -11,7 +11,7 @@ import { AppContext } from "../ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
 import { Suggestion } from "use-places-autocomplete";
 
-function Input<T extends FieldValues>({
+function Input<T extends FieldValues, U extends {$id:string} & Record<string, any>>({
   label,
   placeholder,
   type,
@@ -23,6 +23,7 @@ function Input<T extends FieldValues>({
   defaultValue,
   disabled,
   location,
+  optionsDisplayKeys
 }: {
   label: string;
   placeholder: string;
@@ -33,7 +34,8 @@ function Input<T extends FieldValues>({
   defaultValue?: string | number | readonly string[] | undefined;
   required?: boolean;
   location?: boolean;
-  options?: string[];
+  options?: string[] | U[];
+  optionsDisplayKeys?: (keyof U)[]
   disabled?: boolean;
 }) {
   const [focused, setFocused] = useState(false);
@@ -47,6 +49,14 @@ function Input<T extends FieldValues>({
   } = placeApi;
   const methods = useFormContext<T>();
   const queryText = methods.watch(name);
+  const currentValue = methods.getValues()[name]
+  
+  options && options.forEach(value => 
+    {
+     
+  }
+  )
+ 
   useEffect(() => {
     ready && focused && location && setValue(queryText);
   }, [ready, queryText]);
@@ -72,7 +82,7 @@ function Input<T extends FieldValues>({
       // });
     };
   return (
-    <div className="w-full">
+    <div className="w-full" >
       <label htmlFor={label}>
         <p className="font-bold pb-8">
           {label}{" "}
@@ -89,15 +99,33 @@ function Input<T extends FieldValues>({
           defaultValue={defaultValue}
           disabled={disabled}
         >
-          {options.map((item, index) => (
+          {options.map((item, index) => {
+             let optionText = ""
+             const isSelect = typeof item === "string" && currentValue == item ? true : typeof item !== "string" && currentValue == item.$id
+             const optionValue = typeof item === "string" ? item : item.$id
+             
+             if (typeof item === "string"){
+               optionText= item
+               
+              }
+              else{
+               if (optionsDisplayKeys) {
+                 for(let key of optionsDisplayKeys) {
+                  optionText = optionText ?  `${optionText} - ${item[key]}`: item[key]
+                 }
+               }
+             }
+
+            
+            return(
             <option
               key={index}
-              value={index}
-              selected={index === defaultValue ? true : undefined}
+              value={optionValue}
+              selected={isSelect }
             >
-              {item}
+              {optionText}
             </option>
-          ))}
+          )})}
         </select>
       ) : (
         <>

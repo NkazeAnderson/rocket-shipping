@@ -7,7 +7,6 @@ import { FaXmark } from "react-icons/fa6";
 import { Context } from "./DashBoardWrapper";
 import {
   appContextT,
-  conversationT,
   conversationWithMessageT,
   dashBoardContextT,
   messageT,
@@ -33,7 +32,7 @@ function Messaging() {
 
   const conversation = conversations.find(
     (item) => item.$id === sidePanelContent?.id
-  ) as conversationWithMessageT;
+  ) 
   useEffect(() => {
     if (image) {
       const blob = URL.createObjectURL(image);

@@ -1,6 +1,6 @@
 import { IconType } from "react-icons";
 import { HookReturn } from "use-places-autocomplete";
-import { shipmentHistoryT, shipmentT } from "./schemas";
+import { conversationT, shipmentHistoryT, shipmentT } from "./schemas";
 type navLinkT = { text: string; icon: string; path: string };
 type button = {
   text: string;
@@ -180,9 +180,9 @@ type appContextT = {
   setNotifications: React.Dispatch<
     React.SetStateAction<withId<notificationT>[]>
   >;
-  conversations: conversationWithMessageT[];
+  conversations: conversationT[];
   setConversations: React.Dispatch<
-    React.SetStateAction<conversationWithMessageT[]>
+    React.SetStateAction<conversationT[]>
   >;
   placeApi: HookReturn;
 };

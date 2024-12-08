@@ -1,49 +1,24 @@
-import { shipmentHistoryT } from "@/types/types";
 import React, { useEffect } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import toast from "react-hot-toast";
 import { database, shipmentHistoryCollection, status } from "@/utils/contants";
-import { db } from "@/utils/appwrite";
+import { db, updateShipmentHistory } from "@/utils/appwrite";
 import { getLatLong } from "@/utils";
+import { shipmentHistoryT } from "@/types/schemas";
 
 function EditShipmentHistoryForm({
   history,
   hide,
 }: {
-  history: shipmentHistoryT & { $id: string };
+  history: shipmentHistoryT;
   hide: () => void;
 }) {
-  const methods = useForm<shipmentHistoryT>();
+  const methods = useForm<shipmentHistoryT>({defaultValues: history});
   const onSubmit: SubmitHandler<shipmentHistoryT> = async (data) => {
     try {
-      data.status = status[Number(data.status)];
-      if (data.currentLocation !== history.currentLocation) {
-        const currentCords = await getLatLong(data.currentLocation);
-        data.currentLat = currentCords.lat;
-        data.currentLong = currentCords.lng;
-      }
-
-      //@ts-ignore
-      data.$collectionId && delete data.$collectionId;
-      //@ts-ignore
-      data.$createdAt && delete data.$createdAt;
-      //@ts-ignore
-      data.$databaseId && delete data.$databaseId;
-      //@ts-ignore
-      data.$permissions && delete data.$permissions;
-      //@ts-ignore
-      data.$updatedAt && delete data.$updatedAt;
-      //@ts-ignore
-      data.$id && delete data.$id;
-
-      await db.updateDocument(
-        database,
-        shipmentHistoryCollection,
-        history.$id,
-        data
-      );
+      await updateShipmentHistory(data, history)
       methods.reset();
       toast.success("Successfully editted shipment");
       hide();
@@ -53,15 +28,6 @@ function EditShipmentHistoryForm({
     }
   };
 
-  useEffect(() => {
-    if (typeof history.status === "number") {
-      return;
-    }
-    const data = { ...history };
-    //@ts-ignore
-    data.status = status.findIndex((item) => item === data.status);
-    methods.reset(data);
-  }, [history]);
 
   return (
     <FormProvider {...methods}>

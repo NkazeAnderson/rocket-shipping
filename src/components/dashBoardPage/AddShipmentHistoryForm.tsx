@@ -1,13 +1,11 @@
-import { shipmentHistoryT } from "@/types/types";
-import React, { useEffect } from "react";
+import React from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import toast from "react-hot-toast";
-import { database, shipmentHistoryCollection, status } from "@/utils/contants";
-import { db } from "@/utils/appwrite";
-import { ID } from "appwrite";
-import { getLatLong } from "@/utils";
+import { addShipmentHistory, db } from "@/utils/appwrite";
+
+import { shipmentHistoryT } from "@/types/schemas";
 
 function AddShipmentHistoryForm({
   shipmentId,
@@ -19,18 +17,7 @@ function AddShipmentHistoryForm({
   const methods = useForm<shipmentHistoryT>();
   const onSubmit: SubmitHandler<shipmentHistoryT> = async (data) => {
     try {
-      data.status = status[Number(data.status)];
-      data.shipmentId = shipmentId;
-      const currentCords = await getLatLong(data.currentLocation);
-      data.currentLat = currentCords.lat;
-      data.currentLong = currentCords.lng;
-
-      await db.createDocument(
-        database,
-        shipmentHistoryCollection,
-        ID.unique(),
-        data
-      );
+      await addShipmentHistory(shipmentId, data)
       methods.reset();
       toast.success("Successfully added history shipment");
       hide();
