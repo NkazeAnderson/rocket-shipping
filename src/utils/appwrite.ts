@@ -1,4 +1,4 @@
-import { Client, Account, Databases, Storage, Query, ID } from "appwrite";
+import { Client, Account, Databases, Storage, Query, ID, RealtimeResponseEvent } from "appwrite";
 import {
   bucket,
   conversationCollection,
@@ -9,9 +9,10 @@ import {
   userCollection,
 } from "./contants";
 
-import {userSchema, userT} from "@/types/schemas"
+import {shipmentT, userSchema, userT} from "@/types/schemas"
 import { getUserById } from "./appwrite";
 import {getImageUrl} from "./appwrite/storage"
+import { RealTimeSubscriptionCallbackPayload, RealTimeSubscriptionPayload } from "@/types/types";
 
 const client = new Client();
 client
@@ -30,7 +31,7 @@ export async function getUsers() {
 
 
 export function subscribeToAdmin(
-  callbackFunction: (action: string, payload: Record<string, string>) => void
+  callbackFunction: (payload: RealTimeSubscriptionCallbackPayload) => void
 ) {
   const unsubscribe = client.subscribe(
     [
@@ -40,38 +41,81 @@ export function subscribeToAdmin(
       `databases.${database}.collections.${conversationCollection}.documents`,
     ],
     (res) => {
-      const action =
-        res.events[0].split(".")[res.events[0].split(".").length - 1];
-      callbackFunction(action, res.payload as Record<string, string>);
+      const callbackPayload = handleSubscription(res)
+        
+     callbackPayload &&  callbackFunction(callbackPayload);
     }
   );
   return unsubscribe;
+}
+
+const  handleSubscription = (res:RealtimeResponseEvent<unknown>, ) => {
+  console.log("Real time data loading");
+  
+  const action =
+    res.events[0].split(".")[res.events[0].split(".").length - 1];
+  const payload = res.payload as RealTimeSubscriptionPayload
+  let callbackPayload: RealTimeSubscriptionCallbackPayload|undefined = undefined
+  if (payload.$collectionId === userCollection) {
+    const user = userSchema.parse(payload)
+    switch (action) {
+      case "create":
+        callbackPayload = {
+          action,
+          target:"user",
+          data:user
+        }
+        break;
+      case "update":
+        callbackPayload = {
+          action,
+          target:"user",
+          data:user
+        }
+        break;
+    
+      default:
+        break;
+    }
+   
+  }
+    
+ return callbackPayload
+
 }
 
 
 
 export function subscribeToUser(
   userId: string,
-  shipmentIds: string[],
-  historyIds: string[],
-  callbackFunction: (action: string, payload: Record<string, string>) => void
+  shipments: shipmentT[],
+  callbackFunction: (payload:RealTimeSubscriptionCallbackPayload) => void
 ) {
+  const shipmentsIds:string[] = []
+  const shipmertHististoriesIds:string[] = []
+  shipments.forEach(shipment=>{
+    shipmentsIds.push(shipment.$id),
+    shipment.extras?.histories?.forEach(history=>{
+      shipmertHististoriesIds.push(history.$id)
+    })
+  })
   const unsubscribe = client.subscribe(
     [
-      ...shipmentIds.map(
+      ...shipmentsIds.map(
         (value) =>
           `databases.${database}.collections.${shipmentCollection}.documents.${value}`
       ),
-      ...historyIds.map(
+      ...shipmertHististoriesIds.map(
         (value) =>
           `databases.${database}.collections.${shipmentHistoryCollection}.documents.${value}`
       ),
       `databases.${database}.collections.${userCollection}.documents.${userId}`,
     ],
     (res) => {
-      const action =
-        res.events[0].split(".")[res.events[0].split(".").length - 1];
-      callbackFunction(action, res.payload as Record<string, string>);
+      const callbackPayload = handleSubscription(res)
+        
+     callbackPayload &&  callbackFunction(callbackPayload);
+
     }
   );
   return unsubscribe;

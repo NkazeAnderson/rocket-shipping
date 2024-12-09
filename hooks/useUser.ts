@@ -25,6 +25,17 @@ export default function useUser(){
        } 
     }
     
+    function addNewUser(user:userT) {
+        setUsers(prev=>[user, ...prev])
+    }
+    function editUser(user:userT) {
+        setUsers(prev=>prev.map(item=>{
+            if (item.$id === user.$id) {
+                return user
+            }
+            return item
+        }))
+    }
     useEffect(()=>{
         !isAuthenticated && getAuthStatus().then(res=>{
             res && setIsAuthenticated(true)
@@ -46,7 +57,7 @@ export default function useUser(){
         }
     },[user])
     return {
-        user, isAuthenticated, deAuthenticateUser, authenticateUser, users
+        user, isAuthenticated, users, deAuthenticateUser, authenticateUser, addNewUser, editUser
     }
 }
 

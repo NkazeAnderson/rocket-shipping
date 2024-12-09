@@ -11,7 +11,7 @@ export const actionSchema = z.enum(["Insurance","Crate change","None","Clearance
 export const userSchema = z.object({
   $id:z.string(),
   name: z.string(),
-  email: z.string(),
+  email: z.string().email(),
   phone:  z.string().or(z.null()).optional(),
   access:  z.string().or(z.null()).optional(),
   image:  z.string().or(z.null()).optional(),
@@ -26,7 +26,7 @@ export const  locationSchema = z.object( {
 export const shipmentSchema = z.object({
   $id:z.string(),
   shipperName: z.string(),
-  shipperEmail: z.string(),
+  shipperEmail: z.string().email(),
   origin: z.string(),
   originLat: z.number().or(z.null()).optional(),
   originLong: z.number().or(z.null()).optional(),

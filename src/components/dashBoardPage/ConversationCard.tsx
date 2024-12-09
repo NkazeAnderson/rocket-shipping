@@ -1,7 +1,6 @@
 "use client";
 import {
   appContextT,
-  conversationWithMessageT,
   dashBoardContextT,
   subjectT,
 } from "@/types/types";

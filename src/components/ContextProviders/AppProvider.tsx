@@ -1,9 +1,8 @@
 "use client";
 import {
   appContextT,
-  conversationWithMessageT,
   notificationT,
-  shipmentWithHistoryT,
+  RealTimeSubscriptionCallbackPayload,
   withId,
 } from "@/types/types";
 import {
@@ -29,7 +28,7 @@ export const AppContext = createContext<appContextT | undefined>(undefined);
 function InitializePlaces() {}
 function AppProvider({ children }: { children: React.ReactNode }) {
   const [shipments, setShipments] = useState<shipmentT[]>([]);
-  const {user, users} = useUser()
+  const {user, users, addNewUser, editUser} = useUser()
   const [subscribed, setSubscribed] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<withId<notificationT>[]>(
     []
@@ -51,180 +50,187 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     placeApi.init();
   });
 
-  // const callbackSubscribtion = useCallback(
-  //   function callback(action: string, payload: Record<string, string>) {
-  //     // users
+  const callbackSubscribtion = useCallback(
+    function callback(payload: RealTimeSubscriptionCallbackPayload) {
+      // users
+      const {target}= payload
+      switch (target) {
+        case "user":
+          const {action}= payload
+          switch (action) {
+            case "create":
+              addNewUser(payload.data)
+              break;
+            case "update":
+              editUser(payload.data)
+              break;
+          
+            default:
+              break;
+          }
+          break;
+      
+        default:
+          break;
+      }
 
-  //     if (
-  //       action === "create" &&
-  //       "$collectionId" in payload &&
-  //       payload.$collectionId === userCollection
-  //     ) {
-  //       //@ts-ignore
-  //       const newUser = payload as withId<userT>;
-  //       // setUsers((prev) => [newUser, ...prev]);
-  //     }
-  //     if (
-  //       action === "update" &&
-  //       "$collectionId" in payload &&
-  //       payload.$collectionId === userCollection
-  //     ) {
-  //       //@ts-ignore
-  //       const newUser = payload as withId<userT>;
-  //       // setUsers((prev) =>
-  //       //   prev.map((value) => {
-  //       //     if (value.$id === newUser.$id) {
-  //       //       return newUser;
-  //       //     }
-  //       //     return value;
-  //       //   })
-  //       // );
-  //     }
-  //     // conversations
 
-  //     if (
-  //       action === "create" &&
-  //       "$collectionId" in payload &&
-  //       payload.$collectionId === conversationCollection
-  //     ) {
-  //       //@ts-ignore
-  //       const newUser = payload as withId<conversationT>;
-  //     }
-  //     if (
-  //       action === "update" &&
-  //       "$collectionId" in payload &&
-  //       payload.$collectionId === conversationCollection
-  //     ) {
-  //       //@ts-ignore
-  //       const newConversationData = payload as withId<conversationT>;
-  //       getLastMessage(newConversationData.$id).then((res) => {
-  //         const conversationMap = conversations.map((item) => {
-  //           if (item.$id === newConversationData.$id) {
-  //             item.lastMessage = newConversationData.lastMessage;
-  //             item.messages.push(res);
-  //             return item;
-  //           }
-  //           return item;
-  //         });
-  //         setConversations(conversationMap);
-  //       });
-  //     }
+      // if (
+      //   action === "update" &&
+      //   "$collectionId" in payload &&
+      //   payload.$collectionId === userCollection
+      // ) {
+      //   //@ts-ignore
+      //   const newUser = payload as withId<userT>;
+      //   // setUsers((prev) =>
+      //   //   prev.map((value) => {
+      //   //     if (value.$id === newUser.$id) {
+      //   //       return newUser;
+      //   //     }
+      //   //     return value;
+      //   //   })
+      //   // );
+      // }
+      // conversations
 
-  //     // shipments;
-  //     if (
-  //       action === "create" &&
-  //       "$collectionId" in payload &&
-  //       payload.$collectionId === shipmentCollection
-  //     ) {
-  //       //@ts-ignore
-  //       const newShipment = payload as withId<shipmentT>;
-  //       setShipments((prev) => [newShipment, ...prev]);
-  //     }
-  //     if (
-  //       action === "update" &&
-  //       "$collectionId" in payload &&
-  //       payload.$collectionId === shipmentCollection
-  //     ) {
-  //       //@ts-ignore
-  //       const newShipment = payload as withId<shipmentT>;
-  //       console.log("updated shipment");
-  //       setShipments((prev) =>
-  //         prev.map((value) => {
-  //           if (value.shipment.$id === newShipment.$id) {
-  //             value.shipment = newShipment;
-  //             return value;
-  //           }
-  //           return value;
-  //         })
-  //       );
-  //     }
-  //     // shipment history;
-  //     if (
-  //       action === "create" &&
-  //       "$collectionId" in payload &&
-  //       payload.$collectionId === shipmentHistoryCollection
-  //     ) {
-  //       //@ts-ignore
-  //       const newHistory = payload as withId<shipmentHistoryT>;
-  //       const shipmentWithHistory = shipments.find((item) => {
-  //         return item.shipment.$id === newHistory.shipmentId;
-  //       });
-  //       if (shipmentWithHistory) {
-  //         const histories = [newHistory, ...shipmentWithHistory.histories];
-  //         shipmentWithHistory.histories = histories;
-  //         setShipments((prev) =>
-  //           prev.map((value) => {
-  //             if (value.shipment.$id === shipmentWithHistory.shipment.$id) {
-  //               return shipmentWithHistory;
-  //             }
-  //             return value;
-  //           })
-  //         );
-  //       }
-  //     }
-  //     if (
-  //       action === "update" &&
-  //       "$collectionId" in payload &&
-  //       payload.$collectionId === shipmentHistoryCollection
-  //     ) {
-  //       //@ts-ignore
-  //       const newHistory = payload as withId<shipmentHistoryT>;
-  //       console.log(payload);
+      // if (
+      //   action === "create" &&
+      //   "$collectionId" in payload &&
+      //   payload.$collectionId === conversationCollection
+      // ) {
+      //   //@ts-ignore
+      //   const newUser = payload as withId<conversationT>;
+      // }
+      // if (
+      //   action === "update" &&
+      //   "$collectionId" in payload &&
+      //   payload.$collectionId === conversationCollection
+      // ) {
+      //   //@ts-ignore
+      //   const newConversationData = payload as withId<conversationT>;
+      //   getLastMessage(newConversationData.$id).then((res) => {
+      //     const conversationMap = conversations.map((item) => {
+      //       if (item.$id === newConversationData.$id) {
+      //         item.lastMessage = newConversationData.lastMessage;
+      //         item.messages.push(res);
+      //         return item;
+      //       }
+      //       return item;
+      //     });
+      //     setConversations(conversationMap);
+      //   });
+      // }
 
-  //       const shipmentWithHistory = shipments.find((item) => {
-  //         return item.shipment.$id === newHistory.shipmentId;
-  //       });
-  //       console.log("Shipmentwith histpry", shipmentWithHistory);
-  //       console.log("Shipmentwith histpry", shipments);
+      // // shipments;
+      // if (
+      //   action === "create" &&
+      //   "$collectionId" in payload &&
+      //   payload.$collectionId === shipmentCollection
+      // ) {
+      //   //@ts-ignore
+      //   const newShipment = payload as withId<shipmentT>;
+      //   setShipments((prev) => [newShipment, ...prev]);
+      // }
+      // if (
+      //   action === "update" &&
+      //   "$collectionId" in payload &&
+      //   payload.$collectionId === shipmentCollection
+      // ) {
+      //   //@ts-ignore
+      //   const newShipment = payload as withId<shipmentT>;
+      //   console.log("updated shipment");
+      //   setShipments((prev) =>
+      //     prev.map((value) => {
+      //       if (value.shipment.$id === newShipment.$id) {
+      //         value.shipment = newShipment;
+      //         return value;
+      //       }
+      //       return value;
+      //     })
+      //   );
+      // }
+      // // shipment history;
+      // if (
+      //   action === "create" &&
+      //   "$collectionId" in payload &&
+      //   payload.$collectionId === shipmentHistoryCollection
+      // ) {
+      //   //@ts-ignore
+      //   const newHistory = payload as withId<shipmentHistoryT>;
+      //   const shipmentWithHistory = shipments.find((item) => {
+      //     return item.shipment.$id === newHistory.shipmentId;
+      //   });
+      //   if (shipmentWithHistory) {
+      //     const histories = [newHistory, ...shipmentWithHistory.histories];
+      //     shipmentWithHistory.histories = histories;
+      //     setShipments((prev) =>
+      //       prev.map((value) => {
+      //         if (value.shipment.$id === shipmentWithHistory.shipment.$id) {
+      //           return shipmentWithHistory;
+      //         }
+      //         return value;
+      //       })
+      //     );
+      //   }
+      // }
+      // if (
+      //   action === "update" &&
+      //   "$collectionId" in payload &&
+      //   payload.$collectionId === shipmentHistoryCollection
+      // ) {
+      //   //@ts-ignore
+      //   const newHistory = payload as withId<shipmentHistoryT>;
+      //   console.log(payload);
 
-  //       if (shipmentWithHistory) {
-  //         const histories = shipmentWithHistory.histories.map((value) => {
-  //           if (value.$id === newHistory.$id) {
-  //             return newHistory;
-  //           } else {
-  //             return value;
-  //           }
-  //         });
-  //         shipmentWithHistory.histories = histories;
-  //         setShipments((prev) =>
-  //           prev.map((value) => {
-  //             if (value.shipment.$id === shipmentWithHistory.shipment.$id) {
-  //               return shipmentWithHistory;
-  //             }
-  //             return value;
-  //           })
-  //         );
-  //       }
-  //     }
-  //   },
-  //   [shipments, users]
-  // );
+      //   const shipmentWithHistory = shipments.find((item) => {
+      //     return item.shipment.$id === newHistory.shipmentId;
+      //   });
+      //   console.log("Shipmentwith histpry", shipmentWithHistory);
+      //   console.log("Shipmentwith histpry", shipments);
 
-  // useEffect(() => {
-  //   let unsubscribe: () => void = () => {};
-  //   if (user && shipments.length && !subscribed) {
-  //     if (!user.isAdmin) {
-  //       const historyIds: string[] = [];
-  //       shipments.forEach((value) => {
-  //         value.histories.forEach((item) => historyIds.push(item.$id));
-  //       });
-  //       unsubscribe = subscribeToUser(
-  //         user.$id,
-  //         shipments.map((value) => value.shipment.$id),
-  //         historyIds,
-  //         callbackSubscribtion
-  //       );
-  //     } else {
-  //       unsubscribe = subscribeToAdmin(callbackSubscribtion);
-  //     }
-  //     setSubscribed(true);
-  //   }
-  //   return () => {
-  //     console.log("Unsubscribing");
+      //   if (shipmentWithHistory) {
+      //     const histories = shipmentWithHistory.histories.map((value) => {
+      //       if (value.$id === newHistory.$id) {
+      //         return newHistory;
+      //       } else {
+      //         return value;
+      //       }
+      //     });
+      //     shipmentWithHistory.histories = histories;
+      //     setShipments((prev) =>
+      //       prev.map((value) => {
+      //         if (value.shipment.$id === shipmentWithHistory.shipment.$id) {
+      //           return shipmentWithHistory;
+      //         }
+      //         return value;
+      //       })
+      //     );
+      //   }
+      // }
+    },
+    [shipments, users]
+  );
 
-  //     subscribed && unsubscribe();
-  //   };
-  // }, [shipments]);
+  useEffect(() => {
+    let unsubscribe: () => void = () => {};
+    if (user && shipments.length && !subscribed) {
+      if (!user.isAdmin) {
+        unsubscribe = subscribeToUser(
+          user.$id,
+          shipments,
+          callbackSubscribtion
+        );
+      } else {
+        unsubscribe = subscribeToAdmin(callbackSubscribtion);
+      }
+      setSubscribed(true);
+    }
+    return () => {
+      console.log("Unsubscribing");
+
+      subscribed && unsubscribe();
+    };
+  }, [shipments]);
 
   useEffect(() => {
     user &&
