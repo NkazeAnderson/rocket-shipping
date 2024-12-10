@@ -22,12 +22,11 @@
     "react-hook-form": "^7.52.1",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.2.1",
+    "sharp": "^0.33.5",
     "use-places-autocomplete": "^4.0.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@anatine/zod-mock": "^3.13.4",
-    "@faker-js/faker": "^9.3.0",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@types/css-mediaquery": "^0.1.4",
