@@ -9,11 +9,12 @@ import {
   userCollection,
 } from "./contants";
 
-import {shipmentHistorySchema, shipmentHistoryT, shipmentSchema, shipmentT, userSchema, userT} from "@/types/schemas"
+import {conversationSchema, conversationT, shipmentHistorySchema, shipmentHistoryT, shipmentSchema, shipmentT, userSchema, userT} from "@/types/schemas"
 import { getUserById } from "./appwrite";
 import {getImageUrl} from "./appwrite/storage"
 import { RealTimeSubscriptionCallbackPayload, RealTimeSubscriptionPayload } from "@/types/types";
 import { getShipmentExtras } from "./appwrite/shipments";
+import { getMessage } from "./appwrite";
 
 const client = new Client();
 client
@@ -124,6 +125,31 @@ const  handleSubscription = async (res:RealtimeResponseEvent<unknown>, ) => {
           action,
           target:"shipmentHistory",
           data:shipmentHistory
+        }
+        break;
+    
+      default:
+        break;
+    }
+   
+  }
+  if (payload.$collectionId === conversationCollection) {
+    const conversation:conversationT = conversationSchema.parse(payload)
+    switch (action) {
+      case "create":
+        callbackPayload = {
+          action,
+          target:"conversation",
+          data:conversation
+        }
+        break;
+      case "update":
+        if (conversation.lastMessageId){
+          callbackPayload = {
+            action: "create",
+            target:"message",
+            data: await getMessage(conversation.lastMessageId)
+          }
         }
         break;
     

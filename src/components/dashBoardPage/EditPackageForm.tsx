@@ -23,7 +23,9 @@ function EditPackageForm({ selectedIndex }: { selectedIndex: number }) {
   shipment.deliveryDate = shipment.deliveryDate.split("T")[0];
 
   const methods = useForm<shipmentT>({ defaultValues: shipment });
-  const shipmentHistoryList = shipment.extras?.histories;
+  const shipmentHistoryList = useMemo(() => {
+    return shipment.extras?.histories;
+  }, [shipments]);
   const [editHistory, setEditHistory] = useState<undefined | number>();
   const [addHistory, setAddHistory] = useState<boolean>(false);
 

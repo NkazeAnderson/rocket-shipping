@@ -54,7 +54,7 @@ function DashBoardWrapper() {
   const wrapper = useRef<null | HTMLDivElement>(null);
   const {
     userMethods: { user },
-    conversations,
+    conversationsMethods: { conversations },
   } = useContext(AppContext) as appContextT;
   useEffect(() => {
     screenSize === 0 && setScreenSize(window.innerWidth);

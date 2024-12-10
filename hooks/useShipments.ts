@@ -31,6 +31,11 @@ export default function useShipments() {
     }
     function editShipmentHistory(shipmentHistory:shipmentHistoryT){
         const shipment = shipments.find(item=>item.$id===shipmentHistory.shipmentId)
+        console.log("edit history");
+        console.log(shipment);
+        console.log(shipmentHistory);
+         
+        
         if (shipment) {
             if (shipment.extras ) {
               shipment.extras.histories = shipment.extras.histories.map(item=>{

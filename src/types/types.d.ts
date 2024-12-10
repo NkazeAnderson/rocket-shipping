@@ -1,8 +1,9 @@
 import { IconType } from "react-icons";
 import { HookReturn } from "use-places-autocomplete";
-import { conversationT, shipmentHistoryT, shipmentT } from "./schemas";
+import { conversationT, messageT, shipmentHistoryT, shipmentT } from "./schemas";
 import { useUserT } from "../../hooks/useUser";
 import { useShipmentT } from "../../hooks/useShipments";
+import { useConversationsT } from "../../hooks/useConversations";
 type navLinkT = { text: string; icon: string; path: string };
 type button = {
   text: string;
@@ -115,19 +116,18 @@ export type RealTimeSubscriptionPayload = {$collectionId:string}&Record<string, 
 export type RealTimeSubscriptionCallbackPayload = {action:"create"|"update", target:"user", data:userT }
 |{action:"create"|"update", target:"shipment", data:shipmentT }
 |{action:"create"|"update", target:"shipmentHistory", data:shipmentHistoryT }|
-{action:"create"|"update", target:"conversation", data:conversationT }
+{action:"create"|"update", target:"conversation", data:conversationT }|
+{action:"create", target:"message", data:messageT }
 
 type appContextT = {
   shipmentsMethods:useShipmentT,
   userMethods:useUserT,
+  conversationsMethods:useConversationsT
   notifications: withId<notificationT>[];
   setNotifications: React.Dispatch<
     React.SetStateAction<withId<notificationT>[]>
   >;
-  conversations: conversationT[];
-  setConversations: React.Dispatch<
-    React.SetStateAction<conversationT[]>
-  >;
+  
   placeApi: HookReturn;
 };
 type withId<T> = T & { $id: string };

@@ -5,7 +5,9 @@ import { AppContext } from "../ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
 
 function Conversations() {
-  const { conversations } = useContext(AppContext) as appContextT;
+  const {
+    conversationsMethods: { conversations },
+  } = useContext(AppContext) as appContextT;
   return (
     <>
       <h2 className="dashboardHeadings">Conversations</h2>

@@ -6,6 +6,7 @@ import {
   withId,
 } from "@/types/types";
 import {
+  addConversation,
   addShipment,
   getConversations,
   getMyInfo,
@@ -26,20 +27,27 @@ import usePlacesAutocomplete from "use-places-autocomplete";
 import useUser from "../../../hooks/useUser";
 import { conversationT, shipmentT, userT } from "@/types/schemas";
 import useShipments from "../../../hooks/useShipments";
+import useConversations from "../../../hooks/useConversations";
 export const AppContext = createContext<appContextT | undefined>(undefined);
 
 function AppProvider({ children }: { children: React.ReactNode }) {
   const shipmentsMethods = useShipments();
   const userMethods = useUser();
+  const conversationsMethods = useConversations();
   const [subscribed, setSubscribed] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<withId<notificationT>[]>(
     []
   );
-  const [conversations, setConversations] = useState<conversationT[]>([]);
 
   // const router = useRouter();
   // const path = usePathname();
   const { user, users, addNewUser, editUser } = userMethods;
+  const {
+    conversations,
+    addNewConversation,
+    addNewconversations,
+    addNewMessage,
+  } = conversationsMethods;
   const {
     shipments,
     addNewShipment,
@@ -104,6 +112,27 @@ function AppProvider({ children }: { children: React.ReactNode }) {
             break;
         }
         break;
+      case "conversation":
+        switch (action) {
+          case "create":
+            addConversation(payload.data);
+            break;
+          case "update":
+            //  editShipmentHistory(payload.data);
+            break;
+          default:
+            break;
+        }
+        break;
+      case "message":
+        switch (action) {
+          case "create":
+            addNewMessage(payload.data);
+            break;
+          default:
+            break;
+        }
+        break;
       default:
         break;
     }
@@ -141,7 +170,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     user &&
       getConversations(user.$id)
         .then((res) => {
-          setConversations(res);
+          addNewconversations(res);
         })
         .catch((e) => {
           console.log(e);
@@ -156,8 +185,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
         notifications,
         setNotifications,
         placeApi,
-        conversations,
-        setConversations,
+        conversationsMethods,
       }}
     >
       {children}

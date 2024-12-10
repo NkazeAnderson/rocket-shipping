@@ -23,7 +23,7 @@ function Messaging() {
   const imageRef = useRef<HTMLInputElement | null>(null);
   const {
     userMethods: { user },
-    conversations,
+    conversationsMethods: { conversations },
   } = useContext(AppContext) as appContextT;
   const { sidePanelContent } = useContext(Context) as dashBoardContextT;
 
@@ -36,9 +36,6 @@ function Messaging() {
   let conversation = conversations.find(
     (item) => item.$id === sidePanelContent?.id
   );
-  console.log({ conversation });
-
-  debugger;
 
   const otherMember = useMemo(() => {
     if (!user || !conversation?.extras) {
@@ -97,7 +94,6 @@ function Messaging() {
         const id = await addNewFile(image);
         messageToSend.image = id;
       }
-      debugger;
       console.log(messageToSend);
 
       await sendMessage(messageToSend);
