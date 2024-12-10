@@ -1,16 +1,10 @@
 "use client";
-import {
-  appContextT,
-  dashBoardContextT,
-  locationT,
-  shipmentWithHistoryT,
-} from "@/types/types";
+import { appContextT, dashBoardContextT } from "@/types/types";
 import React, { useContext, useEffect, useRef } from "react";
-import { FaLandmark, FaPhone } from "react-icons/fa";
+import { FaPhone } from "react-icons/fa";
 import { FaLocationPin, FaMessage, FaPerson } from "react-icons/fa6";
 import Pill from "../ui/Pill";
 import { Context } from "./DashBoardWrapper";
-import { shipmentHistory } from "@/utils/contants";
 import { userT } from "@/types/schemas";
 import { AppContext } from "../ContextProviders/AppProvider";
 

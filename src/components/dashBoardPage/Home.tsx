@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import NotificationCard from "./NotificationCard";
 import ShipmentCard from "./ShipmentCard";
 import ViewMore from "./ViewMore";
-import { notifications, shipments } from "@/utils/contants";
+import { notifications } from "@/utils/contants";
 import { AppContext } from "../ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
 

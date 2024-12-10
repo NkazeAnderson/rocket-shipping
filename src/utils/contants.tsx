@@ -1,12 +1,7 @@
-import { userT } from "@/types/schemas";
 import {
-  conversationT,
   locationT,
-  messageT,
   navLinkT,
   notificationT,
-  shipmentHistoryT,
-  shipmentT,
   statusT,
   modeT,
   paymentMethodT,
@@ -32,7 +27,7 @@ export const partners: string[] = [
   "/partner6.png",
 ];
 
-export const defaultAccess = "RS-0658389854"
+export const defaultAccess = "RS-0658389854";
 
 export const notifications: notificationT[] = [
   {
@@ -93,37 +88,7 @@ export const paymentModes: paymentMethodT[] = [
   "Bank",
 ];
 export const packages: packageT[] = ["Crate", "Pallet", "Carton", "Envelope"];
-export const shipments: shipmentT[] = [
-  {
-    shipperName: "string",
-    shipperEmail: "string",
-    origin: "string",
-    destination: "string",
-    receiver: "string",
-    courier: "string",
-    pickupDate: "string",
-    deliveryDate: "string",
-    eta: "string",
-    product: "string",
-    mode: "Land Transport",
-    paymentMethod: "Bank",
-    quantity: 1,
-    weight: 1,
-    image: "string",
-    package: "Crate",
-    action: "None",
-    conversationId: "string",
-  },
-];
 
-export const shipmentHistory: shipmentHistoryT[] = [
-  {
-    currentLocation: "123 str",
-    date: "June 11, 2024",
-    status: "Delivered",
-    shipmentId: "Sh-1",
-  },
-];
 export const actions: actionsT[] = [
   "Crate change",
   "Insurance",

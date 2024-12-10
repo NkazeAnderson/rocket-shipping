@@ -1,19 +1,18 @@
 "use client";
 
-import { userT } from "@/types/types";
-import { users } from "@/utils/contants";
+import { userT } from "@/types/schemas";
 import React, { createContext, useState } from "react";
 
 type authContextT = {
   loggedIn: boolean;
   setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  userInfo: userT;
-  setUserInfo: React.Dispatch<React.SetStateAction<userT>>;
+  userInfo: userT | undefined;
+  setUserInfo: React.Dispatch<React.SetStateAction<userT | undefined>>;
 };
 export const AuthContext = createContext<null | authContextT>(null);
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [userInfo, setUserInfo] = useState<userT>(users[0]);
+  const [userInfo, setUserInfo] = useState<userT | undefined>(undefined);
   const contextValue: authContextT = {
     loggedIn,
     setLoggedIn,
