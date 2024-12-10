@@ -61,4 +61,5 @@ export default function useUser(){
     }
 }
 
+export type useUserT = ReturnType<typeof useUser>
 

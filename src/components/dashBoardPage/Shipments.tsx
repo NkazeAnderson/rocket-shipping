@@ -4,7 +4,9 @@ import { AppContext } from "../ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
 
 function Shipments() {
-  const { shipments } = useContext(AppContext) as appContextT;
+  const {
+    shipmentsMethods: { shipments },
+  } = useContext(AppContext) as appContextT;
   return (
     <>
       <h2 className="dashboardHeadings ">Shipments</h2>

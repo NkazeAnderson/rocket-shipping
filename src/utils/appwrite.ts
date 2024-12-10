@@ -9,7 +9,7 @@ import {
   userCollection,
 } from "./contants";
 
-import {shipmentT, userSchema, userT} from "@/types/schemas"
+import {shipmentSchema, shipmentT, userSchema, userT} from "@/types/schemas"
 import { getUserById } from "./appwrite";
 import {getImageUrl} from "./appwrite/storage"
 import { RealTimeSubscriptionCallbackPayload, RealTimeSubscriptionPayload } from "@/types/types";
@@ -56,6 +56,9 @@ const  handleSubscription = (res:RealtimeResponseEvent<unknown>, ) => {
     res.events[0].split(".")[res.events[0].split(".").length - 1];
   const payload = res.payload as RealTimeSubscriptionPayload
   let callbackPayload: RealTimeSubscriptionCallbackPayload|undefined = undefined
+  debugger
+  console.log(payload);
+  
   if (payload.$collectionId === userCollection) {
     const user = userSchema.parse(payload)
     switch (action) {
@@ -71,6 +74,29 @@ const  handleSubscription = (res:RealtimeResponseEvent<unknown>, ) => {
           action,
           target:"user",
           data:user
+        }
+        break;
+    
+      default:
+        break;
+    }
+   
+  }
+  if (payload.$collectionId === shipmentCollection) {
+    const shipment = shipmentSchema.parse(payload)
+    switch (action) {
+      case "create":
+        callbackPayload = {
+          action,
+          target:"shipment",
+          data:shipment
+        }
+        break;
+      case "update":
+        callbackPayload = {
+          action,
+          target:"shipment",
+          data:shipment
         }
         break;
     

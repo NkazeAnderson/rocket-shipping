@@ -1,6 +1,8 @@
 import { IconType } from "react-icons";
 import { HookReturn } from "use-places-autocomplete";
 import { conversationT, shipmentHistoryT, shipmentT } from "./schemas";
+import { useUserT } from "../../hooks/useUser";
+import { useShipmentT } from "../../hooks/useShipments";
 type navLinkT = { text: string; icon: string; path: string };
 type button = {
   text: string;
@@ -116,12 +118,8 @@ export type RealTimeSubscriptionCallbackPayload = {action:"create"|"update", tar
 {action:"create"|"update", target:"conversation", data:conversationT }
 
 type appContextT = {
-  shipments: shipmentT[],
-  setShipments: React.Dispatch<React.SetStateAction<shipmentT[]>>;
-  user: withId<userT> | undefined;
- // setUser: React.Dispatch<React.SetStateAction<withId<userT> | undefined>>;
-  // users: withId<userT>[]; 
-  // setUsers: React.Dispatch<React.SetStateAction<withId<userT>[]>>;
+  shipmentsMethods:useShipmentT,
+  userMethods:useUserT,
   notifications: withId<notificationT>[];
   setNotifications: React.Dispatch<
     React.SetStateAction<withId<notificationT>[]>

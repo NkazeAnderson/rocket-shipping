@@ -11,7 +11,6 @@ import EditUserForm from "./EditUserForm";
 import EditPackageForm from "./EditPackageForm";
 import { AppContext } from "../ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
-import useUser from "../../../hooks/useUser";
 
 function Admin() {
   const [addOrEditToggle, setAddOrEditToggle] = useState("add");
@@ -25,8 +24,10 @@ function Admin() {
   );
   const group = { searchUser: "" };
   const methods = useForm<typeof group>();
-  const { shipments} = useContext(AppContext) as appContextT;
-  const {users} = useUser()
+  const {
+    userMethods: { users },
+    shipmentsMethods: { shipments },
+  } = useContext(AppContext) as appContextT;
 
   return (
     <div className="w-full">
@@ -126,14 +127,10 @@ function Admin() {
         ) : addOrEditToggle === "edit" &&
           userOrPackageToggle === "user" &&
           selectedUser !== undefined ? (
-          <EditUserForm
-            user={users[selectedUser]}
-          />
+          <EditUserForm user={users[selectedUser]} />
         ) : (
           selectedShipment !== undefined && (
-            <EditPackageForm
-              selectedIndex={selectedShipment}
-            />
+            <EditPackageForm selectedIndex={selectedShipment} />
           )
         )}
 

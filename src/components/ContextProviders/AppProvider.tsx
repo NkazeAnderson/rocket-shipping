@@ -6,6 +6,7 @@ import {
   withId,
 } from "@/types/types";
 import {
+  addShipment,
   getConversations,
   getMyInfo,
   getShipments,
@@ -24,21 +25,23 @@ import React, { createContext, useCallback, useEffect, useState } from "react";
 import usePlacesAutocomplete from "use-places-autocomplete";
 import useUser from "../../../hooks/useUser";
 import { conversationT, shipmentT, userT } from "@/types/schemas";
+import useShipments from "../../../hooks/useShipments";
 export const AppContext = createContext<appContextT | undefined>(undefined);
-function InitializePlaces() {}
+
 function AppProvider({ children }: { children: React.ReactNode }) {
-  const [shipments, setShipments] = useState<shipmentT[]>([]);
-  const {user, users, addNewUser, editUser} = useUser()
+  const shipmentsMethods = useShipments();
+  const userMethods = useUser();
   const [subscribed, setSubscribed] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<withId<notificationT>[]>(
     []
   );
-  const [conversations, setConversations] = useState<
-    conversationT[]
-  >([]);
+  const [conversations, setConversations] = useState<conversationT[]>([]);
 
   const router = useRouter();
   const path = usePathname();
+  const { user, users, addNewUser, editUser } = userMethods;
+  const { shipments, addNewShipment, addNewShipments, editShipment } =
+    shipmentsMethods;
 
   const placeApi = usePlacesAutocomplete({
     requestOptions: {
@@ -50,166 +53,45 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     placeApi.init();
   });
 
-  const callbackSubscribtion = useCallback(
-    function callback(payload: RealTimeSubscriptionCallbackPayload) {
-      // users
-      const {target}= payload
-      switch (target) {
-        case "user":
-          const {action}= payload
-          switch (action) {
-            case "create":
-              addNewUser(payload.data)
-              break;
-            case "update":
-              editUser(payload.data)
-              break;
-          
-            default:
-              break;
-          }
-          break;
-      
-        default:
-          break;
-      }
+  const callbackSubscribtion = useCallback(function callback(
+    payload: RealTimeSubscriptionCallbackPayload
+  ) {
+    // users
+    const { target } = payload;
+    const { action } = payload;
+    switch (target) {
+      case "user":
+        switch (action) {
+          case "create":
+            addNewUser(payload.data);
+            break;
+          case "update":
+            editUser(payload.data);
+            break;
 
+          default:
+            break;
+        }
+        break;
+      case "shipment":
+        switch (action) {
+          case "create":
+            addNewShipment(payload.data);
+            break;
+          case "update":
+            editShipment(payload.data);
+            break;
 
-      // if (
-      //   action === "update" &&
-      //   "$collectionId" in payload &&
-      //   payload.$collectionId === userCollection
-      // ) {
-      //   //@ts-ignore
-      //   const newUser = payload as withId<userT>;
-      //   // setUsers((prev) =>
-      //   //   prev.map((value) => {
-      //   //     if (value.$id === newUser.$id) {
-      //   //       return newUser;
-      //   //     }
-      //   //     return value;
-      //   //   })
-      //   // );
-      // }
-      // conversations
+          default:
+            break;
+        }
+        break;
 
-      // if (
-      //   action === "create" &&
-      //   "$collectionId" in payload &&
-      //   payload.$collectionId === conversationCollection
-      // ) {
-      //   //@ts-ignore
-      //   const newUser = payload as withId<conversationT>;
-      // }
-      // if (
-      //   action === "update" &&
-      //   "$collectionId" in payload &&
-      //   payload.$collectionId === conversationCollection
-      // ) {
-      //   //@ts-ignore
-      //   const newConversationData = payload as withId<conversationT>;
-      //   getLastMessage(newConversationData.$id).then((res) => {
-      //     const conversationMap = conversations.map((item) => {
-      //       if (item.$id === newConversationData.$id) {
-      //         item.lastMessage = newConversationData.lastMessage;
-      //         item.messages.push(res);
-      //         return item;
-      //       }
-      //       return item;
-      //     });
-      //     setConversations(conversationMap);
-      //   });
-      // }
-
-      // // shipments;
-      // if (
-      //   action === "create" &&
-      //   "$collectionId" in payload &&
-      //   payload.$collectionId === shipmentCollection
-      // ) {
-      //   //@ts-ignore
-      //   const newShipment = payload as withId<shipmentT>;
-      //   setShipments((prev) => [newShipment, ...prev]);
-      // }
-      // if (
-      //   action === "update" &&
-      //   "$collectionId" in payload &&
-      //   payload.$collectionId === shipmentCollection
-      // ) {
-      //   //@ts-ignore
-      //   const newShipment = payload as withId<shipmentT>;
-      //   console.log("updated shipment");
-      //   setShipments((prev) =>
-      //     prev.map((value) => {
-      //       if (value.shipment.$id === newShipment.$id) {
-      //         value.shipment = newShipment;
-      //         return value;
-      //       }
-      //       return value;
-      //     })
-      //   );
-      // }
-      // // shipment history;
-      // if (
-      //   action === "create" &&
-      //   "$collectionId" in payload &&
-      //   payload.$collectionId === shipmentHistoryCollection
-      // ) {
-      //   //@ts-ignore
-      //   const newHistory = payload as withId<shipmentHistoryT>;
-      //   const shipmentWithHistory = shipments.find((item) => {
-      //     return item.shipment.$id === newHistory.shipmentId;
-      //   });
-      //   if (shipmentWithHistory) {
-      //     const histories = [newHistory, ...shipmentWithHistory.histories];
-      //     shipmentWithHistory.histories = histories;
-      //     setShipments((prev) =>
-      //       prev.map((value) => {
-      //         if (value.shipment.$id === shipmentWithHistory.shipment.$id) {
-      //           return shipmentWithHistory;
-      //         }
-      //         return value;
-      //       })
-      //     );
-      //   }
-      // }
-      // if (
-      //   action === "update" &&
-      //   "$collectionId" in payload &&
-      //   payload.$collectionId === shipmentHistoryCollection
-      // ) {
-      //   //@ts-ignore
-      //   const newHistory = payload as withId<shipmentHistoryT>;
-      //   console.log(payload);
-
-      //   const shipmentWithHistory = shipments.find((item) => {
-      //     return item.shipment.$id === newHistory.shipmentId;
-      //   });
-      //   console.log("Shipmentwith histpry", shipmentWithHistory);
-      //   console.log("Shipmentwith histpry", shipments);
-
-      //   if (shipmentWithHistory) {
-      //     const histories = shipmentWithHistory.histories.map((value) => {
-      //       if (value.$id === newHistory.$id) {
-      //         return newHistory;
-      //       } else {
-      //         return value;
-      //       }
-      //     });
-      //     shipmentWithHistory.histories = histories;
-      //     setShipments((prev) =>
-      //       prev.map((value) => {
-      //         if (value.shipment.$id === shipmentWithHistory.shipment.$id) {
-      //           return shipmentWithHistory;
-      //         }
-      //         return value;
-      //       })
-      //     );
-      //   }
-      // }
-    },
-    [shipments, users]
-  );
+      default:
+        break;
+    }
+  },
+  []);
 
   useEffect(() => {
     let unsubscribe: () => void = () => {};
@@ -234,9 +116,11 @@ function AppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     user &&
-      getShipments(user).then(async (res) => {
-        setShipments(res);
-      });
+      getShipments(user)
+        .then((res) => {
+          addNewShipments(res);
+        })
+        .catch((e) => console.log(e));
     user &&
       getConversations(user.$id)
         .then((res) => {
@@ -245,16 +129,13 @@ function AppProvider({ children }: { children: React.ReactNode }) {
         .catch((e) => {
           console.log(e);
         });
-
   }, [user]);
 
   return (
     <AppContext.Provider
       value={{
-        shipments,
-        setShipments,
-        user,
-      //  setUser,
+        shipmentsMethods,
+        userMethods,
         notifications,
         setNotifications,
         placeApi,
@@ -263,12 +144,6 @@ function AppProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
-
-      <script
-        defer
-        async
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GMAPSAPIKEY}&libraries=core,places,maps,geocoding&callback=InitializePlaces`}
-      ></script>
     </AppContext.Provider>
   );
 }

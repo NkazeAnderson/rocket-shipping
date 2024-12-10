@@ -4,16 +4,13 @@ import { BsPersonCheck } from "react-icons/bs";
 import LogOutButtonWrapper from "./LogOutButtonWrapper";
 import Link from "next/link";
 import Button from "./ui/Button";
-import { logOut } from "@/actions";
-import { account } from "@/utils/appwrite";
 import { FaRightFromBracket, FaRightToBracket } from "react-icons/fa6";
 import { AppContext } from "./ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
-import useUser from "../../hooks/useUser";
 
 function AuthButton() {
   const [pending, setPending] = useState(false);
-  const { user, deAuthenticateUser } = useUser()
+  const {userMethods: {user, deAuthenticateUser} } = useContext(AppContext) as appContextT
   return (
     <>
       {user ? (

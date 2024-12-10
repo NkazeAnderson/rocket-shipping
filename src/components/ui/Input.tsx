@@ -11,7 +11,10 @@ import { AppContext } from "../ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
 import { Suggestion } from "use-places-autocomplete";
 
-function Input<T extends FieldValues, U extends {$id:string} & Record<string, any>>({
+function Input<
+  T extends FieldValues,
+  U extends { $id: string } & Record<string, any>
+>({
   label,
   placeholder,
   type,
@@ -23,7 +26,7 @@ function Input<T extends FieldValues, U extends {$id:string} & Record<string, an
   defaultValue,
   disabled,
   location,
-  optionsDisplayKeys
+  optionsDisplayKeys,
 }: {
   label: string;
   placeholder: string;
@@ -35,7 +38,7 @@ function Input<T extends FieldValues, U extends {$id:string} & Record<string, an
   required?: boolean;
   location?: boolean;
   options?: string[] | U[];
-  optionsDisplayKeys?: (keyof U)[]
+  optionsDisplayKeys?: (keyof U)[];
   disabled?: boolean;
 }) {
   const [focused, setFocused] = useState(false);
@@ -49,15 +52,16 @@ function Input<T extends FieldValues, U extends {$id:string} & Record<string, an
   } = placeApi;
   const methods = useFormContext<T>();
   const queryText = methods.watch(name);
-  const currentValue = methods.getValues()[name]
-  
-  options && options.forEach(value => 
-    {
-     
-  }
-  )
- 
+  const currentValue = methods.getValues()[name];
+
+  options && options.forEach((value) => {});
+
   useEffect(() => {
+    console.log(queryText);
+    console.log(location);
+    console.log(focused);
+    console.log(ready);
+
     ready && focused && location && setValue(queryText);
   }, [ready, queryText]);
 
@@ -82,7 +86,7 @@ function Input<T extends FieldValues, U extends {$id:string} & Record<string, an
       // });
     };
   return (
-    <div className="w-full" >
+    <div className="w-full">
       <label htmlFor={label}>
         <p className="font-bold pb-8">
           {label}{" "}
@@ -100,32 +104,31 @@ function Input<T extends FieldValues, U extends {$id:string} & Record<string, an
           disabled={disabled}
         >
           {options.map((item, index) => {
-             let optionText = ""
-             const isSelect = typeof item === "string" && currentValue == item ? true : typeof item !== "string" && currentValue == item.$id
-             const optionValue = typeof item === "string" ? item : item.$id
-             
-             if (typeof item === "string"){
-               optionText= item
-               
-              }
-              else{
-               if (optionsDisplayKeys) {
-                 for(let key of optionsDisplayKeys) {
-                  optionText = optionText ?  `${optionText} - ${item[key]}`: item[key]
-                 }
-               }
-             }
+            let optionText = "";
+            const isSelect =
+              typeof item === "string" && currentValue == item
+                ? true
+                : typeof item !== "string" && currentValue == item.$id;
+            const optionValue = typeof item === "string" ? item : item.$id;
 
-            
-            return(
-            <option
-              key={index}
-              value={optionValue}
-              selected={isSelect }
-            >
-              {optionText}
-            </option>
-          )})}
+            if (typeof item === "string") {
+              optionText = item;
+            } else {
+              if (optionsDisplayKeys) {
+                for (let key of optionsDisplayKeys) {
+                  optionText = optionText
+                    ? `${optionText} - ${item[key]}`
+                    : item[key];
+                }
+              }
+            }
+
+            return (
+              <option key={index} value={optionValue} selected={isSelect}>
+                {optionText}
+              </option>
+            );
+          })}
         </select>
       ) : (
         <>

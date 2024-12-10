@@ -1,6 +1,10 @@
 import React, { useContext, useMemo } from "react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
-import { appContextT, dashBoardContextT, shipmentWithHistoryT } from "@/types/types";
+import {
+  appContextT,
+  dashBoardContextT,
+  shipmentWithHistoryT,
+} from "@/types/types";
 import { AppContext } from "../ContextProviders/AppProvider";
 import { Context } from "./DashBoardWrapper";
 
@@ -10,15 +14,17 @@ function ShipmentMap() {
     googleMapsApiKey: process.env.NEXT_PUBLIC_GMAPSAPIKEY as string,
   });
   const [map, setMap] = React.useState<google.maps.Map | null>(null);
-  const { shipments } = useContext(AppContext) as appContextT;
+  const {
+    shipmentsMethods: { shipments },
+  } = useContext(AppContext) as appContextT;
   const { sidePanelContent } = useContext(Context) as dashBoardContextT;
-  const shipment = shipments.find(
-    (_) => _.$id === sidePanelContent?.id
-  ) 
-  const lastHistory = shipment?.extras?.histories?shipment?.extras?.histories[0] : undefined;
+  const shipment = shipments.find((_) => _.$id === sidePanelContent?.id);
+  const lastHistory = shipment?.extras?.histories
+    ? shipment?.extras?.histories[0]
+    : undefined;
   if (
-    !shipment||
-    !lastHistory||
+    !shipment ||
+    !lastHistory ||
     !shipment.originLat ||
     !shipment.originLong ||
     !shipment.destinationLat ||

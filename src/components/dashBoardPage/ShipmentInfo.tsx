@@ -78,32 +78,29 @@ function ShipmentInfo() {
       firstElement.current && firstElement.current.scrollIntoView(false);
     }, 1000);
   }, [sidePanelContent?.id]);
-  const { shipments } = useContext(AppContext) as appContextT;
-  const shipment = shipments.find(
-    (_) => _.$id === sidePanelContent?.id
-  ) 
-  const shipmentStatus = shipment?.extras?.histories?.length ? shipment.extras.histories[0].status : undefined
-  const courierInfo = shipment?.extras?.courierInfo
-  const receiverInfo = shipment?.extras?.receiverInfo
-  const histories = shipment?.extras?.histories
-  
+  const {
+    shipmentsMethods: { shipments },
+  } = useContext(AppContext) as appContextT;
+  const shipment = shipments.find((_) => _.$id === sidePanelContent?.id);
+  const shipmentStatus = shipment?.extras?.histories?.length
+    ? shipment.extras.histories[0].status
+    : undefined;
+  const courierInfo = shipment?.extras?.courierInfo;
+  const receiverInfo = shipment?.extras?.receiverInfo;
+  const histories = shipment?.extras?.histories;
+
   if (!shipment) {
-    return <p className="py-32"> Select a shipment</p>
+    return <p className="py-32"> Select a shipment</p>;
   }
   return (
     <>
       <div ref={firstElement} className="p-16 rounded-15 w-full bg-black">
-        <h3 className=" text-white font-bold">
-          Shipment No: {shipment.$id}
-        </h3>
+        <h3 className=" text-white font-bold">Shipment No: {shipment.$id}</h3>
       </div>
       <div className="flex justify-start w-full p-16 items-center sticky top-0  bg-black/70 text-white space-x-16">
         <h4 className="font-bold">Status:</h4>
         <div className="w-fit animate-pulse ease-linear duration-[4000]">
-         {shipmentStatus && <Pill
-            text={shipmentStatus}
-            isprimary
-          />}
+          {shipmentStatus && <Pill text={shipmentStatus} isprimary />}
         </div>
       </div>
       <div className="p-16">
@@ -114,7 +111,7 @@ function ShipmentInfo() {
             <h4 className="font-bold text-brown">Sender Information</h4>
             <UserDetails
               user={{
-                $id:"",
+                $id: "",
                 name: shipment.shipperName,
                 email: shipment.shipperEmail,
               }}
@@ -148,10 +145,7 @@ function ShipmentInfo() {
             heading="Quantity"
             data={shipment.quantity.toString()}
           />
-          <ShipmentData
-            heading="Weight"
-            data={shipment.weight.toString()}
-          />
+          <ShipmentData heading="Weight" data={shipment.weight.toString()} />
           <ShipmentData heading="Product" data={shipment.product} />
           <ShipmentData heading="Package" data={shipment.package} />
           <ShipmentData

@@ -1,20 +1,19 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import Input from "../ui/Input";
 import { FormProvider, useForm } from "react-hook-form";
 import Link from "next/link";
 import Button from "../ui/Button";
-import {loginFormT } from "@/types/types";
+import {appContextT, loginFormT } from "@/types/types";
 import { useRouter } from "next/navigation";
 import { FaPlane } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { AppContext } from "../ContextProviders/AppProvider";
-import useUser from "../../../hooks/useUser";
 
 function Loginform() {
   const methods = useForm<loginFormT>();
   const [pending, setPending] = useState(false);
- const {user, authenticateUser, isAuthenticated}= useUser()
+  const {userMethods: {user, authenticateUser, isAuthenticated} } = useContext(AppContext) as appContextT
   const router = useRouter();
 
   const sumbit= useCallback(async (data:{email:string, access:string}) => {

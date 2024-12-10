@@ -11,7 +11,7 @@ function Conversations() {
       <h2 className="dashboardHeadings">Conversations</h2>
       <div className="py-24">
         {conversations.map((item) => (
-          <ConversationCard key={item.$id} props={item} />
+          <ConversationCard key={item.$id} conversation={item} />
         ))}
       </div>
     </>

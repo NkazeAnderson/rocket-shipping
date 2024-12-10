@@ -7,7 +7,9 @@ import { AppContext } from "../ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
 
 function Home() {
-  const { shipments } = useContext(AppContext) as appContextT;
+  const {
+    shipmentsMethods: { shipments },
+  } = useContext(AppContext) as appContextT;
   return (
     <>
       <h2 className="dashboardHeadings">Notifications</h2>

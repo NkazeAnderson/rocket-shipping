@@ -81,6 +81,6 @@ export const messageSchema = z.object(
 type imageExtras= {imageToUpload?:FileList, imageUrl?:string}
 export type userT = z.infer<typeof userSchema> & {extras?:imageExtras}
 export type shipmentHistoryT = z.infer<typeof shipmentHistorySchema>
-export type shipmentT = z.infer<typeof shipmentSchema> & { extras? : { courierInfo?: userT, receiverInfo?:userT, histories?:shipmentHistoryT[]}&imageExtras}
+export type shipmentT = z.infer<typeof shipmentSchema> & { extras? : { courierInfo: userT, receiverInfo:userT, histories:shipmentHistoryT[]}&imageExtras}
 export type messageT = z.infer<typeof messageSchema> & {extras?: {imageUrl?:string}}
 export type conversationT = z.infer<typeof conversationSchema> & {extras?: { messages:messageT[], member1Info:userT, member2Info:userT} } 

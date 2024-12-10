@@ -1,18 +1,18 @@
 import React from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
-import {
-  modes,
-  packages,
-  paymentModes,
-} from "@/utils/contants";
-import {
-  FormProvider,
-  SubmitHandler,
-  useForm,
-} from "react-hook-form";
+import { modes, packages, paymentModes } from "@/utils/contants";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 
-import { addConversation, addNewFile, addShipment, addShipmentHistory, db, getConversationId, storage } from "@/utils/appwrite";
+import {
+  addConversation,
+  addNewFile,
+  addShipment,
+  addShipmentHistory,
+  db,
+  getConversationId,
+  storage,
+} from "@/utils/appwrite";
 import toast from "react-hot-toast";
 import { getLatLong } from "@/utils";
 import { shipmentT, userT } from "@/types/schemas";
@@ -21,22 +21,8 @@ function AddPackageForm({ users }: { users: userT[] }) {
   const methods = useForm<shipmentT>();
   const onSubmit: SubmitHandler<shipmentT> = async (data) => {
     try {
-      
-      // let conversationId = await getConversationId(
-      //   data.courier,
-      //   data.receiver
-      // );
-      // if (!conversationId) {
-      //   const conversation: conversationT = {
-      //     member1: data.courier,
-      //     member2: data.receiver,
-      //   };
-      //  conversationId = await addConversation(conversation)
-      // }
-      // data.conversationId = conversationId;
-     
-      await addShipment(data)
-      
+      await addShipment(data);
+
       methods.reset();
       toast.success("Successfully added package");
     } catch (error) {
@@ -174,7 +160,12 @@ function AddPackageForm({ users }: { users: userT[] }) {
           name="weight"
           required
         />
-        <Input label="Image" placeholder="image" type="file" name="extras.imageToUpload" />
+        <Input
+          label="Image"
+          placeholder="image"
+          type="file"
+          name="extras.imageToUpload"
+        />
 
         <div className="w-full flex justify-center">
           <Button

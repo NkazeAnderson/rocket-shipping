@@ -11,14 +11,14 @@ import { Context } from "./DashBoardWrapper";
 import Badge from "../ui/Badge";
 import { BiImage } from "react-icons/bi";
 import { conversationT } from "@/types/schemas";
-import useUser from "../../../hooks/useUser";
+import { AppContext } from "../ContextProviders/AppProvider";
 
 function ConversationCard({ conversation }: { conversation: conversationT }) {
   const subject: subjectT = "conversation";
   const { setShowSidePanel, setSidePanelContent } = useContext(
     Context
   ) as dashBoardContextT;
-  const {user} = useUser()
+  const {userMethods: {user} } = useContext(AppContext) as appContextT
 
   const otherMember= useMemo(()=>{
     if (!user || !conversation?.extras) {

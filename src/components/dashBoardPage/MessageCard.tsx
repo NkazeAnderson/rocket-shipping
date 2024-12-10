@@ -1,5 +1,5 @@
 "use client";
-import { appContextT} from "@/types/types";
+import { appContextT } from "@/types/types";
 import Image from "next/image";
 import React, { useContext } from "react";
 import { FaCheckCircle } from "react-icons/fa";
@@ -7,7 +7,9 @@ import { AppContext } from "../ContextProviders/AppProvider";
 import { messageT } from "@/types/schemas";
 
 function MessageCard({ message }: { message: messageT }) {
-  const { user } = useContext(AppContext) as appContextT;
+  const {
+    userMethods: { user },
+  } = useContext(AppContext) as appContextT;
   return (
     <div className={`flex w-full my-16`}>
       <div

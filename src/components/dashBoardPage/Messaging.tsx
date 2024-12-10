@@ -11,10 +11,7 @@ import {
 } from "@/types/types";
 import { AppContext } from "../ContextProviders/AppProvider";
 import { addConversation, addNewFile, sendMessage, storage } from "@/utils/appwrite";
-import { bucket } from "@/utils/contants";
-import { ID } from "appwrite";
 import toast from "react-hot-toast";
-import useUser from "../../../hooks/useUser";
 import { messageT } from "@/types/schemas";
 
 function Messaging() {
@@ -22,9 +19,9 @@ function Messaging() {
   const [pending, setPending] = useState(false);
   const [image, setImage] = useState<null | File>(null);
   const imageRef = useRef<HTMLInputElement | null>(null);
-  const { conversations} = useContext(AppContext) as appContextT;
+  const {userMethods:{user}, conversations} = useContext(AppContext) as appContextT;
   const { sidePanelContent } = useContext(Context) as dashBoardContextT;
-  const {user} = useUser()
+  
   const lastElement = useRef<null | HTMLDivElement>(null);
   const clearNewMessages = () => {
     setMessage("");

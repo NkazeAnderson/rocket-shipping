@@ -1,38 +1,26 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
-import {
-  actions,
-  modes,
-  packages,
-  paymentModes,
-} from "@/utils/contants";
-import {
-  FormProvider,
-  SubmitHandler,
-  useForm,
-} from "react-hook-form";
+import { actions, modes, packages, paymentModes } from "@/utils/contants";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { updateShipment } from "@/utils/appwrite";
 import EditShipmentHistoryForm from "./EditShipmentHistoryForm";
 import AddShipmentHistoryForm from "./AddShipmentHistoryForm";
 import { shipmentT, userT } from "@/types/schemas";
-import useUser from "../../../hooks/useUser";
 import { AppContext } from "../ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
 
-function EditPackageForm({
-  selectedIndex,
-}: {
-  selectedIndex: number;
-}) {
-  const {users}= useUser()
-  const {shipments} = useContext(AppContext) as appContextT
-  const shipment = shipments[selectedIndex]
+function EditPackageForm({ selectedIndex }: { selectedIndex: number }) {
+  const {
+    userMethods: { users },
+    shipmentsMethods: { shipments },
+  } = useContext(AppContext) as appContextT;
+  const shipment = shipments[selectedIndex];
   shipment.pickupDate = shipment.pickupDate.split("T")[0];
   shipment.deliveryDate = shipment.deliveryDate.split("T")[0];
 
-  const methods = useForm<shipmentT>({defaultValues:shipment});
+  const methods = useForm<shipmentT>({ defaultValues: shipment });
   const shipmentHistoryList = shipment.extras?.histories;
   const [editHistory, setEditHistory] = useState<undefined | number>();
   const [addHistory, setAddHistory] = useState<boolean>(false);
@@ -187,7 +175,12 @@ function EditPackageForm({
             options={actions}
             name="action"
           />
-          <Input label="Image" placeholder="image" type="file" name="extra.imageToUpload" />
+          <Input
+            label="Image"
+            placeholder="image"
+            type="file"
+            name="extra.imageToUpload"
+          />
 
           <div className="w-full flex justify-center">
             <Button

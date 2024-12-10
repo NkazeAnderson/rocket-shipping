@@ -47,8 +47,8 @@ export async function getConversationId(member1: string, member2: string) {
         return undefined;
     }
   }
-  export async function getMessages(shipmentId:string) {
-    const messagesRef =  await db.listDocuments(database, messageCollection, [Query.equal("shipmentId", shipmentId)])
+  export async function getMessages(conversationId:string) {
+    const messagesRef =  await db.listDocuments(database, messageCollection, [Query.equal("conversationId", conversationId)])
     return messageSchema.array().parse(messagesRef.documents)
   }
   export async function getConversations(userId: string) {

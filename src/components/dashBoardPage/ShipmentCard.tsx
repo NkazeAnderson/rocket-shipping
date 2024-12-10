@@ -13,15 +13,13 @@ import {
 import { profilePicPlaceholder } from "@/utils/contants";
 import { shipmentT } from "@/types/schemas";
 import { AppContext } from "../ContextProviders/AppProvider";
-import useUser from "../../../hooks/useUser";
 
 function ShipmentCard({ shipment }: { shipment: shipmentT }) {
   const subject: subjectT = "shipment";
   const { setShowSidePanel, setSidePanelContent } = useContext(
     Context
   ) as dashBoardContextT;
-  const {conversations} = useContext(AppContext) as appContextT
-  const {user} = useUser()
+  const { userMethods:{user}, conversations} = useContext(AppContext) as appContextT
   const conversation = conversations.find(
     (item) => item.member1 === user?.$id || item.member2 === user?.$id
   )
