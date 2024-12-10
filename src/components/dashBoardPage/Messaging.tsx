@@ -5,12 +5,14 @@ import MessageCard from "./MessageCard";
 import { FaCamera, FaPaperPlane } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import { Context } from "./DashBoardWrapper";
-import {
-  appContextT,
-  dashBoardContextT,
-} from "@/types/types";
+import { appContextT, dashBoardContextT } from "@/types/types";
 import { AppContext } from "../ContextProviders/AppProvider";
-import { addConversation, addNewFile, sendMessage, storage } from "@/utils/appwrite";
+import {
+  addConversation,
+  addNewFile,
+  sendMessage,
+  storage,
+} from "@/utils/appwrite";
 import toast from "react-hot-toast";
 import { messageT } from "@/types/schemas";
 
@@ -19,9 +21,12 @@ function Messaging() {
   const [pending, setPending] = useState(false);
   const [image, setImage] = useState<null | File>(null);
   const imageRef = useRef<HTMLInputElement | null>(null);
-  const {userMethods:{user}, conversations} = useContext(AppContext) as appContextT;
+  const {
+    userMethods: { user },
+    conversations,
+  } = useContext(AppContext) as appContextT;
   const { sidePanelContent } = useContext(Context) as dashBoardContextT;
-  
+
   const lastElement = useRef<null | HTMLDivElement>(null);
   const clearNewMessages = () => {
     setMessage("");
@@ -30,19 +35,21 @@ function Messaging() {
 
   let conversation = conversations.find(
     (item) => item.$id === sidePanelContent?.id
-  )
-  
-  const otherMember= useMemo(()=>{
+  );
+  console.log({ conversation });
+
+  debugger;
+
+  const otherMember = useMemo(() => {
     if (!user || !conversation?.extras) {
-      return undefined
+      return undefined;
     }
     if (user.$id === conversation.member1) {
-      return conversation.extras.member2Info
+      return conversation.extras.member2Info;
+    } else {
+      return conversation.extras.member1Info;
     }
-    else{
-      return conversation.extras.member1Info
-    }
-  }, [conversation])
+  }, [conversation]);
 
   useEffect(() => {
     if (image) {
@@ -57,46 +64,52 @@ function Messaging() {
   async function submit() {
     setPending(true);
     try {
-    
-      if (!conversation && user && sidePanelContent && sidePanelContent.subject === "conversation") {
+      if (
+        !conversation &&
+        user &&
+        sidePanelContent &&
+        sidePanelContent.subject === "conversation"
+      ) {
         conversation = {
-          member1:sidePanelContent.id,
-          member2:user.$id,
-          $id:""
-        }
-        const id =await addConversation(conversation)
-        conversation.$id = id
+          member1: sidePanelContent.id,
+          member2: user.$id,
+          $id: "",
+        };
+        const id = await addConversation(conversation);
+        conversation.$id = id;
       }
 
       if (!user || !conversation) {
-        throw new Error("User and Conversation required")
+        throw new Error("User and Conversation required");
       }
-      
+
       const messageToSend: messageT = {
         $id: "",
-        conversationId:conversation.$id,
+        conversationId: conversation.$id,
         timeStamp: new Date().getTime(),
-        sender:user.$id
-       }
+        sender: user.$id,
+      };
 
-       if (message) {
-        messageToSend.text = message
-       }
-       if (image) {
+      if (message) {
+        messageToSend.text = message;
+      }
+      if (image) {
         const id = await addNewFile(image);
-        messageToSend.image = id
-       }
+        messageToSend.image = id;
+      }
+      debugger;
+      console.log(messageToSend);
+
       await sendMessage(messageToSend);
       setPending(false);
     } catch (error) {
       console.log(error);
-      
+
       setPending(false);
       toast.error("Error sending message");
     }
   }
 
- 
   return (
     <div className=" w-full flex-1 relative">
       <div className="flex justify-between sticky top-0 items-center bg-black p-8 rounded-b-15 text-white">
@@ -172,53 +185,52 @@ function Messaging() {
               }}
             />
           </div>
-            <div className={pending ? `animate-ping` : ""}>
-
-          {message ? (
-            <span
-              className="p-24 hover:cursor-pointer"
-              onClick={() => {
-                !pending &&
-                  submit().then(() => {
-                    clearNewMessages();
-                  });
-              }}
-            >
-              <FaPaperPlane
-                className={`text-success rotate-12 ${
-                  pending && "animate-pulse"
-                }`}
-                size={25}
-              />
-            </span>
-          ) : !image ? (
-            <span
-              className="p-24 hover:cursor-pointer"
-              onClick={() => {
-                imageRef.current && imageRef.current.click();
-              }}
-            >
-              <FaCamera className="text-success " size={25} />
-            </span>
-          ) : (
-            <span
-              className="p-24 hover:cursor-pointer"
-              onClick={() => {
-                !pending &&
-                  submit().then(() => {
-                    clearNewMessages();
-                  });
-              }}
-            >
-              <FaPaperPlane
-                className={`text-success rotate-12 ${
-                  pending && "animate-pulse"
-                }`}
-                size={25}
-              />
-            </span>
-          )}
-            </div>
+          <div className={pending ? `animate-ping` : ""}>
+            {message ? (
+              <span
+                className="p-24 hover:cursor-pointer"
+                onClick={() => {
+                  !pending &&
+                    submit().then(() => {
+                      clearNewMessages();
+                    });
+                }}
+              >
+                <FaPaperPlane
+                  className={`text-success rotate-12 ${
+                    pending && "animate-pulse"
+                  }`}
+                  size={25}
+                />
+              </span>
+            ) : !image ? (
+              <span
+                className="p-24 hover:cursor-pointer"
+                onClick={() => {
+                  imageRef.current && imageRef.current.click();
+                }}
+              >
+                <FaCamera className="text-success " size={25} />
+              </span>
+            ) : (
+              <span
+                className="p-24 hover:cursor-pointer"
+                onClick={() => {
+                  !pending &&
+                    submit().then(() => {
+                      clearNewMessages();
+                    });
+                }}
+              >
+                <FaPaperPlane
+                  className={`text-success rotate-12 ${
+                    pending && "animate-pulse"
+                  }`}
+                  size={25}
+                />
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>

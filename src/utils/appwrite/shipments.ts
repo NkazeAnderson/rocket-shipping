@@ -1,4 +1,4 @@
-import { shipmentHistorySchema, shipmentHistoryT, shipmentSchema, shipmentT, userT } from "@/types/schemas";
+import { shipmentHistorySchema, shipmentHistoryT, shipmentSchema, shipmentT, userT, withExtras } from "@/types/schemas";
 import { addNewFile, db, getImageUrl, getUserById } from "../appwrite";
 import { database, shipmentCollection, shipmentHistoryCollection } from "../contants";
 import { ID, Query } from "appwrite";
@@ -58,7 +58,6 @@ export async function addShipmentHistory(shipmentId:string, shipmentHistory:ship
 
 export async function updateShipmentHistory(shipmentHistory:shipmentHistoryT, previewShipmentHistory:shipmentHistoryT) {
   if (shipmentHistory.currentLocation !== previewShipmentHistory.currentLocation) {
-    debugger
     const currentCords = await getLatLong(shipmentHistory.currentLocation);
     shipmentHistory.currentLat = currentCords.lat;
     shipmentHistory.currentLong = currentCords.lng;
@@ -92,6 +91,16 @@ export async function updateShipment(shipment:shipmentT, previousShipment: shipm
    await db.updateDocument(database, shipmentCollection, shipment.$id, prepareShipmentForDb(shipment));
 }
 
+export async function getShipmentExtras(shipment:shipmentT) {
+  const extras = {
+    histories:await getShipmentHistory(shipment.$id),
+    imageUrl:getImageUrl(shipment.image),
+    courierInfo: await getUserById(shipment.courier),
+    receiverInfo: await getUserById(shipment.receiver),
+  }
+  return extras
+}
+
 export async function getShipments(user: userT) {
     const shipmentsList: shipmentWithHistoryT[] = [];
     const shipmentsRef = user.isAdmin
@@ -103,12 +112,7 @@ export async function getShipments(user: userT) {
     const shipments:shipmentT[] = shipmentSchema.array().parse(shipmentsRef.documents)
     for (let index in shipments) {
       const shipment = shipments[Number(index)]
-      shipment.extras = {
-          histories:await getShipmentHistory(shipment.$id),
-          imageUrl:getImageUrl(shipment.image),
-          courierInfo: await getUserById(shipment.courier),
-          receiverInfo: await getUserById(shipment.receiver),
-        }
+      shipment.extras = await getShipmentExtras(shipment)
     }
     return shipments;
   }

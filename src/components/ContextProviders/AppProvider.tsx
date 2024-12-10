@@ -37,11 +37,17 @@ function AppProvider({ children }: { children: React.ReactNode }) {
   );
   const [conversations, setConversations] = useState<conversationT[]>([]);
 
-  const router = useRouter();
-  const path = usePathname();
+  // const router = useRouter();
+  // const path = usePathname();
   const { user, users, addNewUser, editUser } = userMethods;
-  const { shipments, addNewShipment, addNewShipments, editShipment } =
-    shipmentsMethods;
+  const {
+    shipments,
+    addNewShipment,
+    addNewShipments,
+    editShipment,
+    addShipmentHistory,
+    editShipmentHistory,
+  } = shipmentsMethods;
 
   const placeApi = usePlacesAutocomplete({
     requestOptions: {
@@ -86,7 +92,18 @@ function AppProvider({ children }: { children: React.ReactNode }) {
             break;
         }
         break;
-
+      case "shipmentHistory":
+        switch (action) {
+          case "create":
+            addShipmentHistory(payload.data);
+            break;
+          case "update":
+            editShipmentHistory(payload.data);
+            break;
+          default:
+            break;
+        }
+        break;
       default:
         break;
     }

@@ -66,7 +66,8 @@ function AddPackageForm({ users }: { users: userT[] }) {
           label="Receiver"
           placeholder="Select Receiver"
           type="options"
-          options={users.map((user) => `${user.name} - ${user.email}`)}
+          options={users}
+          optionsDisplayKeys={["name", "email"]}
           name="receiver"
           required
         />
@@ -83,9 +84,8 @@ function AddPackageForm({ users }: { users: userT[] }) {
           label="Courier"
           placeholder="Select Receiver"
           type="options"
-          options={users
-            .filter((value) => value.isAdmin)
-            .map((user, index) => `${user.name} - ${user.email}`)}
+          options={users.filter((value) => value.isAdmin)}
+          optionsDisplayKeys={["name", "email"]}
           name="courier"
           required
         />

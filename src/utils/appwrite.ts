@@ -9,10 +9,11 @@ import {
   userCollection,
 } from "./contants";
 
-import {shipmentSchema, shipmentT, userSchema, userT} from "@/types/schemas"
+import {shipmentHistorySchema, shipmentHistoryT, shipmentSchema, shipmentT, userSchema, userT} from "@/types/schemas"
 import { getUserById } from "./appwrite";
 import {getImageUrl} from "./appwrite/storage"
 import { RealTimeSubscriptionCallbackPayload, RealTimeSubscriptionPayload } from "@/types/types";
+import { getShipmentExtras } from "./appwrite/shipments";
 
 const client = new Client();
 client
@@ -41,24 +42,26 @@ export function subscribeToAdmin(
       `databases.${database}.collections.${conversationCollection}.documents`,
     ],
     (res) => {
-      const callbackPayload = handleSubscription(res)
+      handleSubscription(res).then((callbackPayload)=>{
+        callbackPayload &&  callbackFunction(callbackPayload);
+      }).catch(e=>{
+        console.log(e);
         
-     callbackPayload &&  callbackFunction(callbackPayload);
+      })
+        
+     
     }
   );
   return unsubscribe;
 }
 
-const  handleSubscription = (res:RealtimeResponseEvent<unknown>, ) => {
+const  handleSubscription = async (res:RealtimeResponseEvent<unknown>, ) => {
   console.log("Real time data loading");
   
   const action =
     res.events[0].split(".")[res.events[0].split(".").length - 1];
   const payload = res.payload as RealTimeSubscriptionPayload
   let callbackPayload: RealTimeSubscriptionCallbackPayload|undefined = undefined
-  debugger
-  console.log(payload);
-  
   if (payload.$collectionId === userCollection) {
     const user = userSchema.parse(payload)
     switch (action) {
@@ -83,7 +86,8 @@ const  handleSubscription = (res:RealtimeResponseEvent<unknown>, ) => {
    
   }
   if (payload.$collectionId === shipmentCollection) {
-    const shipment = shipmentSchema.parse(payload)
+    const shipment:shipmentT = shipmentSchema.parse(payload)
+    shipment.extras = await getShipmentExtras(shipment)
     switch (action) {
       case "create":
         callbackPayload = {
@@ -97,6 +101,29 @@ const  handleSubscription = (res:RealtimeResponseEvent<unknown>, ) => {
           action,
           target:"shipment",
           data:shipment
+        }
+        break;
+    
+      default:
+        break;
+    }
+   
+  }
+  if (payload.$collectionId === shipmentHistoryCollection) {
+    const shipmentHistory:shipmentHistoryT = shipmentHistorySchema.parse(payload)
+    switch (action) {
+      case "create":
+        callbackPayload = {
+          action,
+          target:"shipmentHistory",
+          data:shipmentHistory
+        }
+        break;
+      case "update":
+        callbackPayload = {
+          action,
+          target:"shipmentHistory",
+          data:shipmentHistory
         }
         break;
     
@@ -138,9 +165,11 @@ export function subscribeToUser(
       `databases.${database}.collections.${userCollection}.documents.${userId}`,
     ],
     (res) => {
-      const callbackPayload = handleSubscription(res)
-        
-     callbackPayload &&  callbackFunction(callbackPayload);
+      handleSubscription(res).then((callbackPayload)=>{
+        callbackPayload &&  callbackFunction(callbackPayload);
+      }).catch(e=>{
+        console.log(e);  
+      })
 
     }
   );

@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { addShipmentHistory, db } from "@/utils/appwrite";
 
 import { shipmentHistoryT } from "@/types/schemas";
+import { status } from "@/utils/contants";
 
 function AddShipmentHistoryForm({
   shipmentId,
@@ -17,7 +18,7 @@ function AddShipmentHistoryForm({
   const methods = useForm<shipmentHistoryT>();
   const onSubmit: SubmitHandler<shipmentHistoryT> = async (data) => {
     try {
-      await addShipmentHistory(shipmentId, data)
+      await addShipmentHistory(shipmentId, data);
       methods.reset();
       toast.success("Successfully added history shipment");
       hide();
@@ -39,6 +40,14 @@ function AddShipmentHistoryForm({
         />
 
         <Input label="Date" placeholder="Date" type="date" name={"date"} />
+
+        <Input
+          label="Status"
+          placeholder="Status"
+          type="options"
+          options={status}
+          name={"status"}
+        />
 
         <div className="w-full flex justify-center">
           <Button

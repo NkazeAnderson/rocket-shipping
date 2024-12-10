@@ -52,12 +52,16 @@ function DashBoardWrapper() {
   const [screenSize, setScreenSize] = useState(0);
   const router = useRouter();
   const wrapper = useRef<null | HTMLDivElement>(null);
-  const { userMethods:{user}, conversations } = useContext(AppContext) as appContextT;
+  const {
+    userMethods: { user },
+    conversations,
+  } = useContext(AppContext) as appContextT;
   useEffect(() => {
     screenSize === 0 && setScreenSize(window.innerWidth);
     window.addEventListener("resize", (e) => {
       setScreenSize(window.innerWidth);
     });
+    setShowSidePanel(false);
   }, [screenSize]);
 
   useGSAP(() => {

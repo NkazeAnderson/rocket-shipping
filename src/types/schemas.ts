@@ -84,3 +84,4 @@ export type shipmentHistoryT = z.infer<typeof shipmentHistorySchema>
 export type shipmentT = z.infer<typeof shipmentSchema> & { extras? : { courierInfo: userT, receiverInfo:userT, histories:shipmentHistoryT[]}&imageExtras}
 export type messageT = z.infer<typeof messageSchema> & {extras?: {imageUrl?:string}}
 export type conversationT = z.infer<typeof conversationSchema> & {extras?: { messages:messageT[], member1Info:userT, member2Info:userT} } 
+export type withExtras<T extends {extras?:Record<string, any>}> = Required<Pick<T, "extras">> &  Omit<T, "extras">

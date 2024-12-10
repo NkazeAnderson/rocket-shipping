@@ -16,7 +16,9 @@ function EditPackageForm({ selectedIndex }: { selectedIndex: number }) {
     userMethods: { users },
     shipmentsMethods: { shipments },
   } = useContext(AppContext) as appContextT;
-  const shipment = shipments[selectedIndex];
+  const shipment = useMemo(() => {
+    return shipments[selectedIndex];
+  }, [selectedIndex, shipments]);
   shipment.pickupDate = shipment.pickupDate.split("T")[0];
   shipment.deliveryDate = shipment.deliveryDate.split("T")[0];
 
@@ -35,6 +37,10 @@ function EditPackageForm({ selectedIndex }: { selectedIndex: number }) {
       toast.error("Error editing shipment");
     }
   };
+
+  useEffect(() => {
+    methods.reset(shipment);
+  }, [shipment]);
 
   return (
     <>
