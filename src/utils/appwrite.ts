@@ -1,8 +1,9 @@
-import { Client, Account, Databases, Storage, Query, ID, RealtimeResponseEvent } from "appwrite";
+import { Client, Account, Databases, Storage, Query, ID, RealtimeResponseEvent, Functions } from "appwrite";
 import {
   bucket,
   conversationCollection,
   database,
+  emailFunctionId,
   messageCollection,
   shipmentCollection,
   shipmentHistoryCollection,
@@ -10,8 +11,6 @@ import {
 } from "./contants";
 
 import {conversationSchema, conversationT, shipmentHistorySchema, shipmentHistoryT, shipmentSchema, shipmentT, userSchema, userT} from "@/types/schemas"
-import { getUserById } from "./appwrite";
-import {getImageUrl} from "./appwrite/storage"
 import { RealTimeSubscriptionCallbackPayload, RealTimeSubscriptionPayload } from "@/types/types";
 import { getShipmentExtras } from "./appwrite/shipments";
 import { getMessage } from "./appwrite";
@@ -24,6 +23,31 @@ client
 export const account = new Account(client);
 export const storage = new Storage(client);
 export const db = new Databases(client);
+
+export const functions = new Functions(client);
+
+client
+    .setProject('<PROJECT_ID>') // Your project ID
+;
+
+
+
+  async  function sendEmail(messageParams:{to:string, text:string, subject:string}){
+
+    try {
+      functions.createExecution(
+        emailFunctionId,  // functionId
+         JSON.stringify(messageParams) ,  // body (optional)
+        false,  // async (optional)
+       
+    );
+    } catch (error) {
+      
+    }
+
+    }
+
+
 
 export async function getUsers() {
   const users = await db.listDocuments(database, userCollection);

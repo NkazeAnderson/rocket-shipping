@@ -284,5 +284,6 @@ export const shipmentCollection = "66a76de00030d63f37e0";
 export const shipmentHistoryCollection = "671ca238002e6cd68770";
 export const conversationCollection = "672701ec00298c0187f1";
 export const messageCollection = "672701fc0018283d308f";
+export const emailFunctionId = "675916f600015aaab7ed";
 export const profilePicPlaceholder =
   "https://cloud.appwrite.io/v1/storage/buckets/671bbd68001407857b37/files/67210bf6001ce8f34c2c/view?project=6674479b00230f8c4e57&project=6674479b00230f8c4e57";
