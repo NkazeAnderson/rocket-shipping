@@ -154,9 +154,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
       setSubscribed(true);
     }
     return () => {
-      console.log("Unsubscribing");
-
-      subscribed && unsubscribe();
+      unsubscribe();
     };
   }, [shipments]);
 
