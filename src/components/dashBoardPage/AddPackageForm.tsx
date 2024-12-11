@@ -11,10 +11,11 @@ import {
   addShipmentHistory,
   db,
   getConversationId,
+  sendEmail,
   storage,
 } from "@/utils/appwrite";
 import toast from "react-hot-toast";
-import { getLatLong } from "@/utils";
+import { getLatLong, sendNewShipmentEmail } from "@/utils";
 import { shipmentT, userT } from "@/types/schemas";
 
 function AddPackageForm({ users }: { users: userT[] }) {
@@ -22,7 +23,8 @@ function AddPackageForm({ users }: { users: userT[] }) {
   const onSubmit: SubmitHandler<shipmentT> = async (data) => {
     try {
       await addShipment(data);
-
+      const receiver = users.find((item) => item.$id === data.receiver);
+      receiver && sendNewShipmentEmail(receiver);
       methods.reset();
       toast.success("Successfully added package");
     } catch (error) {

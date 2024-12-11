@@ -1,4 +1,6 @@
+import { userT } from "@/types/schemas";
 import { getGeocode, getLatLng } from "use-places-autocomplete";
+import { sendEmail } from "./appwrite";
 
 export async function getLatLong(description: string) {
   const [result, ...res] = await getGeocode({ address: description });
@@ -42,4 +44,12 @@ export function getFromLocalStore(key:string) {
       }
     }
     return data
+}
+
+export function sendNewShipmentEmail(receiver:userT) {
+  sendEmail({
+    text: `Hi ${receiver.name.toUpperCase()}, You have a New Shipment`,
+    to: receiver.email,
+    subject: "New Shipmnet Registered",
+  });
 }

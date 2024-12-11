@@ -32,7 +32,7 @@ client
 
 
 
-  async  function sendEmail(messageParams:{to:string, text:string, subject:string}){
+export  async  function sendEmail(messageParams:{to:string, text:string, subject:string}){
 
     try {
       functions.createExecution(
@@ -42,6 +42,7 @@ client
        
     );
     } catch (error) {
+      console.log(error);
       
     }
 
