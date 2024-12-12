@@ -57,11 +57,6 @@ function Input<
   options && options.forEach((value) => {});
 
   useEffect(() => {
-    console.log(queryText);
-    console.log(location);
-    console.log(focused);
-    console.log(ready);
-
     ready && focused && location && setValue(queryText);
   }, [ready, queryText]);
 

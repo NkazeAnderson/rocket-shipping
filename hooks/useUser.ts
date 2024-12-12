@@ -12,6 +12,8 @@ export default function useUser(){
            await logIn(email, password)
                 setIsAuthenticated(true)
        } catch (error) {
+        console.log(error);
+        
            setIsAuthenticated(false)
            throw new Error("Invalid Credentials");
        } 
@@ -47,6 +49,8 @@ export default function useUser(){
         setUser(res)
     }).catch(e=>console.log(e)
     ) :  setUser(undefined)
+    console.log({user, isAuthenticated});
+    
     },[isAuthenticated])
 
     useEffect(()=>{

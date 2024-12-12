@@ -36,7 +36,7 @@ export async function getMyInfo():Promise<userT> {
     }
   }
   export async function logIn(email:string, password:string) {
-    await account.createEmailPasswordSession(email, password);
+  !(await getAuthStatus()) &&  await account.createEmailPasswordSession(email, password);
   }
   export async function logOut() {
     await account.deleteSession("current")

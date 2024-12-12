@@ -26,12 +26,6 @@ export const db = new Databases(client);
 
 export const functions = new Functions(client);
 
-client
-    .setProject('<PROJECT_ID>') // Your project ID
-;
-
-
-
 export  async  function sendEmail(messageParams:{to:string, text:string, subject:string}){
 
     try {
