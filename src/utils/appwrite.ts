@@ -75,9 +75,9 @@ export function subscribeToAdmin(
   return unsubscribe;
 }
 
-const  handleSubscription = async (res:RealtimeResponseEvent<unknown>, ) => {
+const  handleSubscription = async (res:RealtimeResponseEvent<unknown>, myinfo?:boolean ) => {
   console.log("Real time data loading");
-  
+
   const action =
     res.events[0].split(".")[res.events[0].split(".").length - 1];
   const payload = res.payload as RealTimeSubscriptionPayload
@@ -88,14 +88,14 @@ const  handleSubscription = async (res:RealtimeResponseEvent<unknown>, ) => {
       case "create":
         callbackPayload = {
           action,
-          target:"user",
+          target: myinfo ? "user" : "users",
           data:user
         }
         break;
       case "update":
         callbackPayload = {
           action,
-          target:"user",
+          target:myinfo ? "user" : "users",
           data:user
         }
         break;
@@ -189,28 +189,30 @@ export function subscribeToUser(
   shipments: shipmentT[],
   callbackFunction: (payload:RealTimeSubscriptionCallbackPayload) => void
 ) {
-  const shipmentsIds:string[] = []
-  const shipmertHististoriesIds:string[] = []
-  shipments.forEach(shipment=>{
-    shipmentsIds.push(shipment.$id),
-    shipment.extras?.histories?.forEach(history=>{
-      shipmertHististoriesIds.push(history.$id)
-    })
-  })
+  // const shipmentsIds:string[] = []
+  // const shipmertHististoriesIds:string[] = []
+  // shipments.forEach(shipment=>{
+  //   shipmentsIds.push(shipment.$id),
+  //   shipment.extras?.histories?.forEach(history=>{
+  //     shipmertHististoriesIds.push(history.$id)
+  //   })
+  // })
   const unsubscribe = client.subscribe(
     [
-      ...shipmentsIds.map(
-        (value) =>
-          `databases.${database}.collections.${shipmentCollection}.documents.${value}`
-      ),
-      ...shipmertHististoriesIds.map(
-        (value) =>
-          `databases.${database}.collections.${shipmentHistoryCollection}.documents.${value}`
-      ),
+      // ...shipmentsIds.map(
+      //   (value) =>
+      //     `databases.${database}.collections.${shipmentCollection}.documents.${value}`
+      // ),
+      // ...shipmertHististoriesIds.map(
+      //   (value) =>
+      //     `databases.${database}.collections.${shipmentHistoryCollection}.documents.${value}`
+      // ),
       `databases.${database}.collections.${userCollection}.documents.${userId}`,
     ],
     (res) => {
-      handleSubscription(res).then((callbackPayload)=>{
+      
+      
+      handleSubscription(res, true).then((callbackPayload)=>{
         callbackPayload &&  callbackFunction(callbackPayload);
       }).catch(e=>{
         console.log(e);  

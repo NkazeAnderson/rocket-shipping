@@ -101,7 +101,6 @@ function Messaging() {
           otherMember.conversations.push(chatId);
           user.conversations.push(chatId);
           otherMember.notifications.push(notificationId);
-          user.notifications.push(notificationId);
         }
         conversation.$id = chatId;
       }

@@ -42,7 +42,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
 
   // const router = useRouter();
   // const path = usePathname();
-  const { user, users, addNewUser, editUser } = userMethods;
+  const { user, users, addNewUser, editUser, editMyInfo } = userMethods;
   const {
     conversations,
     addNewConversation,
@@ -74,8 +74,19 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     // users
     const { target } = payload;
     const { action } = payload;
+
     switch (target) {
       case "user":
+        switch (action) {
+          case "update":
+            editMyInfo(payload.data);
+            break;
+
+          default:
+            break;
+        }
+        break;
+      case "users":
         switch (action) {
           case "create":
             addNewUser(payload.data);
@@ -142,20 +153,16 @@ function AppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let unsubscribe: () => void = () => {};
-    if (user && shipments.length && !subscribed) {
-      if (!user.isAdmin) {
-        unsubscribe = subscribeToUser(
-          user.$id,
-          shipments,
-          callbackSubscribtion
-        );
-      } else {
-        unsubscribe = subscribeToAdmin(callbackSubscribtion);
+    let unsubscribeAdmin: () => void = () => {};
+    if (user) {
+      unsubscribe = subscribeToUser(user.$id, shipments, callbackSubscribtion);
+      if (user.isAdmin) {
+        unsubscribeAdmin = subscribeToAdmin(callbackSubscribtion);
       }
-      setSubscribed(true);
     }
     return () => {
       unsubscribe();
+      unsubscribeAdmin();
     };
   }, [shipments]);
 

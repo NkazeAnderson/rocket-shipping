@@ -33,7 +33,9 @@ function ConversationCard({ conversation }: { conversation: conversationT }) {
     if (!conversation?.extras?.messages.length) {
       return undefined;
     }
-    return conversation.extras.messages[0];
+    return conversation.extras.messages[
+      conversation.extras.messages.length - 1
+    ];
   }, [conversation]);
 
   if (!conversation.extras) {
@@ -59,7 +61,7 @@ function ConversationCard({ conversation }: { conversation: conversationT }) {
               fill
               style={{ objectFit: "cover" }}
               className="rounded-full"
-              src={otherMember?.image || "/no-pic.jpg"}
+              src={otherMember?.extras?.imageUrl || "/no-pic.jpg"}
               alt=""
             />
           </div>

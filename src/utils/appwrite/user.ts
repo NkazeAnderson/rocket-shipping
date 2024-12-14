@@ -1,8 +1,8 @@
 import { userSchema, userT } from "@/types/schemas";
 import { account, addNewFile, db, getImageUrl } from "../appwrite";
 import { database, defaultAccess, userCollection } from "../contants";
-import { ID, Query } from "appwrite";
-import { getFromLocalStore, saveToLocalStore, stripOutAppwriteMetaData } from "..";
+import { ID, Query, Role } from "appwrite";
+import { stripOutAppwriteMetaData } from "..";
 
 function prepareUserForDb(user:userT) {
   user.access &&  delete user.access
@@ -16,11 +16,9 @@ export async function getMyInfo():Promise<userT> {
     const request =  db.listDocuments(database, userCollection, [
       Query.equal("email", data.email),
     ])
+    
     const userInfo = (await request).documents[0]
-    request.then(user=>{
-      saveToLocalStore("myInfo", user.documents[0])
-      console.log(user.documents[0]);  
-    });
+   
     const user:userT = userSchema.parse(userInfo)
     if (user.image) {
       const imageUrl = getImageUrl(user.image)
@@ -31,6 +29,8 @@ export async function getMyInfo():Promise<userT> {
         user.extras = {imageUrl}
       }
     }
+    user.isAdmin = data.labels.some(item => item === "admin")
+  
     return user;
   }
   

@@ -123,7 +123,7 @@ function Admin() {
         {addOrEditToggle === "add" && userOrPackageToggle === "user" ? (
           <AddUserForm />
         ) : addOrEditToggle === "add" && userOrPackageToggle === "package" ? (
-          <AddPackageForm users={users} />
+          <AddPackageForm />
         ) : addOrEditToggle === "edit" &&
           userOrPackageToggle === "user" &&
           selectedUser !== undefined ? (

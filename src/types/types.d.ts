@@ -104,11 +104,12 @@ type shipmentWithHistoryT = {
 };
 
 export type RealTimeSubscriptionPayload = {$collectionId:string}&Record<string, string>
-export type RealTimeSubscriptionCallbackPayload = {action:"create"|"update", target:"user", data:userT }
+export type RealTimeSubscriptionCallbackPayload = {action:"create"|"update", target:"users", data:userT }
 |{action:"create"|"update", target:"shipment", data:shipmentT }
 |{action:"create"|"update", target:"shipmentHistory", data:shipmentHistoryT }|
 {action:"create"|"update", target:"conversation", data:conversationT }|
-{action:"create", target:"message", data:messageT }
+{action:"create", target:"message", data:messageT } |
+{action:"create"|"update", target:"user", data:userT }
 
 type appContextT = {
   shipmentsMethods:useShipmentT,

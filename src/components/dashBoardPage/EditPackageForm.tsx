@@ -13,7 +13,7 @@ import { appContextT } from "@/types/types";
 
 function EditPackageForm({ selectedIndex }: { selectedIndex: number }) {
   const {
-    userMethods: { users },
+    userMethods: { users, user },
     shipmentsMethods: { shipments },
   } = useContext(AppContext) as appContextT;
   const shipment = useMemo(() => {
@@ -95,16 +95,18 @@ function EditPackageForm({ selectedIndex }: { selectedIndex: number }) {
             required
           />
 
-          <Input
-            label="Courier"
-            placeholder="Select Receiver"
-            type="options"
-            options={users}
-            optionsDisplayKeys={["name", "email"]}
-            defaultValue={shipment.courier}
-            name="courier"
-            required
-          />
+          {user && (
+            <Input
+              label="Courier"
+              placeholder="Select Courier"
+              type="options"
+              options={[user, ...users]}
+              optionsDisplayKeys={["name", "email"]}
+              defaultValue={shipment.courier}
+              name="courier"
+              required
+            />
+          )}
 
           <Input
             label="PickUp Date"

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import { modes, packages, paymentModes } from "@/utils/contants";
@@ -7,26 +7,52 @@ import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import {
   addConversation,
   addNewFile,
+  addNotification,
   addShipment,
   addShipmentHistory,
   db,
   getConversationId,
   sendEmail,
   storage,
+  UpdateUser,
 } from "@/utils/appwrite";
 import toast from "react-hot-toast";
 import { getLatLong, sendNewShipmentEmail } from "@/utils";
-import { shipmentT, userT } from "@/types/schemas";
+import { notificationT, shipmentT, userT } from "@/types/schemas";
+import { AppContext } from "../ContextProviders/AppProvider";
+import { appContextT } from "@/types/types";
 
-function AddPackageForm({ users }: { users: userT[] }) {
+function AddPackageForm() {
+  const {
+    userMethods: { users, user },
+    shipmentsMethods: { shipments },
+  } = useContext(AppContext) as appContextT;
   const methods = useForm<shipmentT>();
   const onSubmit: SubmitHandler<shipmentT> = async (data) => {
     try {
-      await addShipment(data);
+      const shipmentId = await addShipment(data);
       const receiver = users.find((item) => item.$id === data.receiver);
+      if (receiver?.shipments && user?.shipments) {
+        receiver.shipments.push(shipmentId);
+        user.shipments.push(shipmentId);
+        await UpdateUser(receiver);
+        await UpdateUser(user);
+      }
       receiver && sendNewShipmentEmail(receiver);
       methods.reset();
       toast.success("Successfully added package");
+      const notification: notificationT = {
+        $id: "",
+        heading: "You have a new shipment",
+        description: "You have a new shipment from " + data.shipperName,
+        appEntity: "shipment",
+        appEntityId: shipmentId,
+      };
+      const notificationId = await addNotification(notification);
+      if (receiver?.notifications) {
+        receiver.notifications.push(notificationId);
+        await UpdateUser(receiver);
+      }
     } catch (error) {
       console.log(error);
 
@@ -82,15 +108,17 @@ function AddPackageForm({ users }: { users: userT[] }) {
           required
         />
 
-        <Input
-          label="Courier"
-          placeholder="Select Receiver"
-          type="options"
-          options={users.filter((value) => value.isAdmin)}
-          optionsDisplayKeys={["name", "email"]}
-          name="courier"
-          required
-        />
+        {user && (
+          <Input
+            label="Courier"
+            placeholder="Select Courier"
+            type="options"
+            options={[user, ...users]}
+            optionsDisplayKeys={["name", "email"]}
+            name="courier"
+            required
+          />
+        )}
 
         <Input
           label="PickUp Date"
