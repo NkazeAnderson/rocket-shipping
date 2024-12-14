@@ -24,23 +24,13 @@ export function getFromLocalStore(key:string) {
 }
 
  export function stripOutAppwriteMetaData<T extends Record<string, any> >(data:T) {
-    //@ts-ignore
-    data.$collectionId && delete data.$collectionId;
-    //@ts-ignore
-    data.$createdAt && delete data.$createdAt;
-    //@ts-ignore
-    data.$databaseId && delete data.$databaseId;
-    //@ts-ignore
-    data.$permissions && delete data.$permissions;
-    //@ts-ignore
-    data.$updatedAt && delete data.$updatedAt;
-    //@ts-ignore
-    data.$id && delete data.$id;
-
+  
     const keys = Object.keys(data)
-    for(let key in keys) {
+    for(let key of keys) { 
       if (key.startsWith("$")) {
         delete data[key]
+        console.log("deleted........");
+        
       }
     }
     return data

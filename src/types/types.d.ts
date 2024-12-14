@@ -48,15 +48,6 @@ type reviewT = {
   text: string;
 };
 
-type notificationT = {
-  id: string;
-  title: string;
-  text: string;
-  subjectId: string;
-  subject: subjectT;
-  action?: string;
-  conversationId?: string;
-};
 
 type signUpFormT = Required<Pick<userT, "name" | "email" | "access">>;
 type loginFormT = Required<Pick<userT, "email" | "access">>;

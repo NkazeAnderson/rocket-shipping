@@ -1,13 +1,11 @@
 import { z } from "zod";
 
-
-
 export const statusSchema = z.enum(["Registered","Picked Up","Out for Delivery","In Transit","On Hold","Cancelled","Delivered"])
 export const transportModeSchema = z.enum([ "Air Freight","Land Transport","Rail Transport","Ship Transport"])
 export const packagingSchema = z.enum(["Crate","Pallet","Carton","Envelope"])
 export const paymentMethodSchema = z.enum([ "Cash","Zelle","Apple Pay","Gift Card","Cashapp","Paypal","Google Pay","Credit Card","Bank"])
 export const actionSchema = z.enum(["Insurance","Crate change","None","Clearance","Accommodation","Change of state","City permit","Crate fee","Delivery fee","Smoke test","Insurance renewal","Step up Insurance"])
-
+export const appEntitiesSchema = z.enum(["shipment" , "notification" , "conversation" , "admin"])
 export const userSchema = z.object({
   $id:z.string(),
   name: z.string(),
@@ -15,7 +13,10 @@ export const userSchema = z.object({
   phone:  z.string().or(z.null()).optional(),
   access:  z.string().or(z.null()).optional(),
   image:  z.string().or(z.null()).optional(),
-  isAdmin: z.boolean().or(z.null()).optional()   
+  isAdmin: z.boolean().or(z.null()).optional(), 
+  conversations:z.string().array().or(z.null()).optional(),
+  notifications:z.string().array().or(z.null()).optional(),
+  shipments: z.string().array().or(z.null()).optional()
 })
 export const  locationSchema = z.object( {
   street: z.string(),
@@ -78,10 +79,21 @@ export const messageSchema = z.object(
   }
 ) 
 
+export const notificationSchema = z.object({
+  $id: z.string(),
+  heading: z.string(),
+  description: z.string(),
+  appEntityId: z.string(),
+  appEntity: appEntitiesSchema.exclude(["admin","notification"]),
+  action: z.string().or(z.null()).optional(),
+  viewed:z.boolean().or(z.null()).optional()
+})
+
 type imageExtras= {imageToUpload?:FileList, imageUrl?:string}
 export type userT = z.infer<typeof userSchema> & {extras?:imageExtras}
 export type shipmentHistoryT = z.infer<typeof shipmentHistorySchema>
 export type shipmentT = z.infer<typeof shipmentSchema> & { extras? : { courierInfo: userT, receiverInfo:userT, histories:shipmentHistoryT[]}&imageExtras}
 export type messageT = z.infer<typeof messageSchema> & {extras?: {imageUrl?:string}}
 export type conversationT = z.infer<typeof conversationSchema> & {extras?: { messages:messageT[], member1Info:userT, member2Info:userT} } 
+export type notificationT = z.infer<typeof notificationSchema>  
 export type withExtras<T extends {extras?:Record<string, any>}> = Required<Pick<T, "extras">> &  Omit<T, "extras">

@@ -102,14 +102,16 @@ export async function getShipmentExtras(shipment:shipmentT) {
 }
 
 export async function getShipments(user: userT) {
-    const shipmentsList: shipmentWithHistoryT[] = [];
-    const shipmentsRef = user.isAdmin
-      ? await db.listDocuments(database, shipmentCollection)
-      : await db.listDocuments(database, shipmentCollection, [
-          Query.equal("receiver", user.$id),
-        ]);
+  let shipmentsList = []
+  if (user.shipments?.length) {
+    for(let shipmentId of user.shipments) {
+      const shipment = await db.getDocument(database, shipmentCollection, shipmentId)
+      shipmentsList.push(shipment)
+    }
+    
+  }
 
-    const shipments:shipmentT[] = shipmentSchema.array().parse(shipmentsRef.documents)
+    const shipments:shipmentT[] = shipmentSchema.array().parse(shipmentsList)
     for (let index in shipments) {
       const shipment = shipments[Number(index)]
       shipment.extras = await getShipmentExtras(shipment)

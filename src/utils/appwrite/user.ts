@@ -16,13 +16,20 @@ export async function getMyInfo():Promise<userT> {
     const request =  db.listDocuments(database, userCollection, [
       Query.equal("email", data.email),
     ])
-    const userInfo = getFromLocalStore("myInfo") || (await request).documents[0]
+    const userInfo = (await request).documents[0]
     request.then(user=>{
       saveToLocalStore("myInfo", user.documents[0])
+      console.log(user.documents[0]);  
     });
-    const user = userSchema.parse(userInfo)
+    const user:userT = userSchema.parse(userInfo)
     if (user.image) {
-      user.image = getImageUrl(user.image);
+      const imageUrl = getImageUrl(user.image)
+      if (user.extras){
+        user.extras.imageUrl = imageUrl
+      }
+      else {
+        user.extras = {imageUrl}
+      }
     }
     return user;
   }
@@ -100,5 +107,6 @@ export async function getMyInfo():Promise<userT> {
   if (image) {
     user.image = image
   }
+  debugger
     await db.updateDocument(database, userCollection, user.$id, prepareUserForDb(user));
   }

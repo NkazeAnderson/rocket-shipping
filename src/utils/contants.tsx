@@ -1,7 +1,7 @@
+import { notificationT } from "@/types/schemas";
 import {
   locationT,
   navLinkT,
-  notificationT,
   statusT,
   modeT,
   paymentMethodT,
@@ -31,20 +31,21 @@ export const defaultAccess = "RS-0658389854";
 
 export const notifications: notificationT[] = [
   {
-    id: "Nt-1",
-    text: "New Shipment from New York to Miami is now registered for delivery ORDER NO: RS-108287177271",
-    title: "New Shipment Registered",
-    subjectId: "Sh-1",
-    subject: "shipment",
+    $id: "76655556",
+    heading: "New shipment Registered",
+    description: "You have a new shipment",
+    appEntity: "shipment",
+    appEntityId: "123456789",
+    viewed: false,
   },
   {
-    id: "Nt-2",
-    text: "New Shipment from New York to Miami is now registered for delivery ORDER NO: RS-108287177271",
-    title: "New Shipment Registered",
-    subjectId: "Sh-2",
-    subject: "shipment",
+    $id: "766555562",
+    heading: "New shipment Registered",
+    description: "You have a new shipment",
+    appEntity: "shipment",
+    appEntityId: "123456789",
+    viewed: false,
     action: "Insurance",
-    conversationId: "Cv-1",
   },
 ];
 
@@ -284,6 +285,7 @@ export const shipmentCollection = "66a76de00030d63f37e0";
 export const shipmentHistoryCollection = "671ca238002e6cd68770";
 export const conversationCollection = "672701ec00298c0187f1";
 export const messageCollection = "672701fc0018283d308f";
+export const notificationCollection = "675b45d300208e18a44f";
 export const emailFunctionId = "675916f600015aaab7ed";
 export const profilePicPlaceholder =
   "https://cloud.appwrite.io/v1/storage/buckets/671bbd68001407857b37/files/67210bf6001ce8f34c2c/view?project=6674479b00230f8c4e57&project=6674479b00230f8c4e57";

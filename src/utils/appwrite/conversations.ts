@@ -1,7 +1,7 @@
 import { ID, Query } from "appwrite";
 import { conversationCollection, database, messageCollection } from "../contants";
 import { db, getImageUrl, getUserById } from "../appwrite";
-import { conversationSchema, conversationT, messageSchema, messageT } from "@/types/schemas";
+import { conversationSchema, conversationT, messageSchema, messageT, userT } from "@/types/schemas";
 import { stripOutAppwriteMetaData } from "..";
 
 function prepareConversationForDb(conversation:conversationT) {
@@ -51,19 +51,17 @@ export async function getConversationId(member1: string, member2: string) {
     const messagesRef =  await db.listDocuments(database, messageCollection, [Query.equal("conversationId", conversationId)])
     return messageSchema.array().parse(messagesRef.documents)
   }
-  export async function getConversations(userId: string) {
-
-    const conversationRef = await db.listDocuments(
-      database,
-      conversationCollection,
-      [
-        Query.or([
-          Query.equal("member1", userId),
-          Query.equal("member2", userId),
-        ]),
-      ]
-    );
-    const conversations = conversationSchema.array().parse(conversationRef.documents)
+  export async function getConversations(user: userT) {
+    let conversationsList = []
+    if (user.conversations?.length) {
+      for(let conversationId of user.conversations) {
+        const conversation = await db.getDocument(database, conversationCollection, conversationId)
+        conversationsList.push(conversation)
+      }
+      
+    }
+ 
+    const conversations = conversationSchema.array().parse(conversationsList)
     
     for(let conversationIndex in conversations) {
       const index= Number(conversationIndex)
@@ -77,6 +75,8 @@ export async function getConversationId(member1: string, member2: string) {
     }
     return conversations;
   }
+
+
   
   export async function getMessage(messageId: string) {
     const messageRef = await db.getDocument(database, messageCollection, messageId);

@@ -10,16 +10,20 @@ import { AppContext } from "../ContextProviders/AppProvider";
 import {
   addConversation,
   addNewFile,
+  addNotification,
+  getUserById,
   sendMessage,
   storage,
+  UpdateUser,
 } from "@/utils/appwrite";
 import toast from "react-hot-toast";
-import { messageT } from "@/types/schemas";
+import { messageT, notificationT, userT } from "@/types/schemas";
 
 function Messaging() {
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
   const [image, setImage] = useState<null | File>(null);
+  const [otherMember, setOtherMember] = useState<undefined | userT>(undefined);
   const imageRef = useRef<HTMLInputElement | null>(null);
   const {
     userMethods: { user },
@@ -37,14 +41,20 @@ function Messaging() {
     (item) => item.$id === sidePanelContent?.id
   );
 
-  const otherMember = useMemo(() => {
+  useEffect(() => {
     if (!user || !conversation?.extras) {
-      return undefined;
+      sidePanelContent &&
+        getUserById(sidePanelContent.id).then((user) => {
+          setOtherMember(user);
+        });
+      return;
     }
     if (user.$id === conversation.member1) {
-      return conversation.extras.member2Info;
+      setOtherMember(conversation.extras.member2Info);
+      return;
     } else {
-      return conversation.extras.member1Info;
+      setOtherMember(conversation.extras.member1Info);
+      return;
     }
   }, [conversation]);
 
@@ -61,6 +71,7 @@ function Messaging() {
   async function submit() {
     setPending(true);
     try {
+      const startNewConverstions = !conversation;
       if (
         !conversation &&
         user &&
@@ -72,8 +83,27 @@ function Messaging() {
           member2: user.$id,
           $id: "",
         };
-        const id = await addConversation(conversation);
-        conversation.$id = id;
+        const chatId = await addConversation(conversation);
+        const notification: notificationT = {
+          $id: "",
+          heading: "You have a new chat",
+          description: "You have a new message from " + user.name,
+          appEntity: "conversation",
+          appEntityId: chatId,
+        };
+        const notificationId = await addNotification(notification);
+        if (
+          user.conversations &&
+          user.notifications &&
+          otherMember?.conversations &&
+          otherMember?.notifications
+        ) {
+          otherMember.conversations.push(chatId);
+          user.conversations.push(chatId);
+          otherMember.notifications.push(notificationId);
+          user.notifications.push(notificationId);
+        }
+        conversation.$id = chatId;
       }
 
       if (!user || !conversation) {
@@ -97,6 +127,8 @@ function Messaging() {
       console.log(messageToSend);
 
       await sendMessage(messageToSend);
+      startNewConverstions && UpdateUser(user);
+      startNewConverstions && otherMember && UpdateUser(otherMember);
       setPending(false);
     } catch (error) {
       console.log(error);

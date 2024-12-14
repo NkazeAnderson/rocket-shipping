@@ -1,15 +1,13 @@
 "use client";
 import {
   appContextT,
-  notificationT,
   RealTimeSubscriptionCallbackPayload,
   withId,
 } from "@/types/types";
 import {
-  addConversation,
-  addShipment,
   getConversations,
   getMyInfo,
+  getNotifications,
   getShipments,
   getUsers,
   subscribeToAdmin,
@@ -25,7 +23,12 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import usePlacesAutocomplete from "use-places-autocomplete";
 import useUser from "../../../hooks/useUser";
-import { conversationT, shipmentT, userT } from "@/types/schemas";
+import {
+  conversationT,
+  notificationT,
+  shipmentT,
+  userT,
+} from "@/types/schemas";
 import useShipments from "../../../hooks/useShipments";
 import useConversations from "../../../hooks/useConversations";
 export const AppContext = createContext<appContextT | undefined>(undefined);
@@ -35,9 +38,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
   const userMethods = useUser();
   const conversationsMethods = useConversations();
   const [subscribed, setSubscribed] = useState<boolean>(false);
-  const [notifications, setNotifications] = useState<withId<notificationT>[]>(
-    []
-  );
+  const [notifications, setNotifications] = useState<notificationT[]>([]);
 
   // const router = useRouter();
   // const path = usePathname();
@@ -115,7 +116,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
       case "conversation":
         switch (action) {
           case "create":
-            addConversation(payload.data);
+            addNewConversation(payload.data);
             break;
           case "update":
             //  editShipmentHistory(payload.data);
@@ -166,9 +167,17 @@ function AppProvider({ children }: { children: React.ReactNode }) {
         })
         .catch((e) => console.log(e));
     user &&
-      getConversations(user.$id)
+      getConversations(user)
         .then((res) => {
           addNewconversations(res);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    user &&
+      getNotifications(user)
+        .then((res) => {
+          setNotifications(res);
         })
         .catch((e) => {
           console.log(e);
