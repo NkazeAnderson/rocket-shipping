@@ -51,29 +51,32 @@ export async function getConversationId(member1: string, member2: string) {
     const messagesRef =  await db.listDocuments(database, messageCollection, [Query.equal("conversationId", conversationId)])
     return messageSchema.array().parse(messagesRef.documents)
   }
+
   export async function getConversations(user: userT) {
-    let conversationsList = []
+    let conversations:conversationT[] = []
     if (user.conversations?.length) {
       for(let conversationId of user.conversations) {
-        const conversation = await db.getDocument(database, conversationCollection, conversationId)
-        conversationsList.push(conversation)
+        const conversation = await getConversation(conversationId)
+        conversations.push(conversation)
       }
-      
     }
- 
-    const conversations = conversationSchema.array().parse(conversationsList)
     
-    for(let conversationIndex in conversations) {
-      const index= Number(conversationIndex)
-      const conversation:conversationT = conversations[index]
-      const extras:conversationT["extras"] = {
-        messages: await getMessages(conversation.$id),
-        member1Info: await getUserById(conversation.member1),
-        member2Info:await getUserById(conversation.member2),
-      }
-      conversation.extras = extras
-    }
     return conversations;
+  }
+  export async function getConversation(id: string) {
+   
+    const conversationRef = await db.getDocument(database, conversationCollection, id)
+   
+    const conversation:conversationT = conversationSchema.parse(conversationRef)
+
+    const extras:conversationT["extras"] = {
+      messages: await getMessages(conversation.$id),
+      member1Info: await getUserById(conversation.member1),
+      member2Info:await getUserById(conversation.member2),
+    }
+    conversation.extras = extras
+
+    return conversation;
   }
 
 

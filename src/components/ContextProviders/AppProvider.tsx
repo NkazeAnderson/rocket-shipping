@@ -5,6 +5,8 @@ import {
   withId,
 } from "@/types/types";
 import {
+  getConversation,
+  getConversationId,
   getConversations,
   getMyInfo,
   getNotifications,
@@ -95,6 +97,19 @@ function AppProvider({ children }: { children: React.ReactNode }) {
                   ] as string;
                   getShipment(lastShipment).then((res) => {
                     addNewShipment(res);
+                  });
+                }
+              }
+              if (user?.conversations && payload.data.conversations?.length) {
+                if (
+                  user.conversations.length !==
+                  payload.data.conversations.length
+                ) {
+                  const lastChat = payload.data.conversations[
+                    payload.data.conversations.length - 1
+                  ] as string;
+                  getConversation(lastChat).then((res) => {
+                    addNewConversation(res);
                   });
                 }
               }
