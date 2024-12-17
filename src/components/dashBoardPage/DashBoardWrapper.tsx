@@ -56,6 +56,7 @@ function DashBoardWrapper() {
     userMethods: { user },
     conversationsMethods: { conversations },
   } = useContext(AppContext) as appContextT;
+  !user && router.push("/auth/login");
   useEffect(() => {
     screenSize === 0 && setScreenSize(window.innerWidth);
     window.addEventListener("resize", (e) => {

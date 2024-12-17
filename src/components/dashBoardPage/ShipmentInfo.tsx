@@ -41,16 +41,18 @@ function UserDetails({ user, location }: { user: userT; location: string }) {
           <p className="">{`${location}`}</p>
         </div>
       </div>
-      <div className="pb-16">
-        <div className="flex space-x-8 items-center">
-          <FaPhone className="text-primary" size={20} />
-          <h5 className=" text-brown font-bold">Phone</h5>
+      {user.phone && (
+        <div className="pb-16">
+          <div className="flex space-x-8 items-center">
+            <FaPhone className="text-primary" size={20} />
+            <h5 className=" text-brown font-bold">Phone</h5>
+          </div>
+          <div className="flex space-x-8 items-center">
+            <FaPerson className="text-primary opacity-0" size={20} />
+            <p className="">{user.phone}</p>
+          </div>
         </div>
-        <div className="flex space-x-8 items-center">
-          <FaPerson className="text-primary opacity-0" size={20} />
-          <p className="">+17767263217</p>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

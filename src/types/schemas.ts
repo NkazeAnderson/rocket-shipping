@@ -10,13 +10,13 @@ export const userSchema = z.object({
   $id:z.string(),
   name: z.string(),
   email: z.string().email(),
-  phone:  z.string().or(z.null()).optional(),
-  access:  z.string().or(z.null()).optional(),
-  image:  z.string().or(z.null()).optional(),
-  isAdmin: z.boolean().or(z.null()).optional(), 
-  conversations:z.string().array().or(z.null()).optional(),
-  notifications:z.string().array().or(z.null()).optional(),
-  shipments: z.string().array().or(z.null()).optional()
+  phone:  z.string().nullish(),
+  access:  z.string().nullish(),
+  image:  z.string().nullish(),
+  isAdmin: z.boolean().nullish(), 
+  conversations:z.string().array().nullish(),
+  notifications:z.string().array().nullish(),
+  shipments: z.string().array().nullish()
 })
 export const  locationSchema = z.object( {
   street: z.string(),
@@ -29,11 +29,11 @@ export const shipmentSchema = z.object({
   shipperName: z.string(),
   shipperEmail: z.string().email(),
   origin: z.string(),
-  originLat: z.number().or(z.null()).optional(),
-  originLong: z.number().or(z.null()).optional(),
+  originLat: z.coerce.number().nullish(),
+  originLong: z.coerce.number().nullish(),
   destination: z.string(),
-  destinationLat: z.number().or(z.null()).optional(),
-  destinationLong: z.number().or(z.null()).optional(),
+  destinationLat: z.coerce.number().nullish(),
+  destinationLong: z.coerce.number().nullish(),
   receiver: z.string(), 
   courier: z.string(),
   pickupDate: z.string(),
@@ -42,20 +42,21 @@ export const shipmentSchema = z.object({
   product: z.string(),
   mode: transportModeSchema,
   paymentMethod: paymentMethodSchema,
-  quantity: z.number(),
-  weight: z.number(),
-  image: z.string(),
+  quantity: z.coerce.number(),
+  weight: z.coerce.number(),
+  image: z.string().nullish(),
   package: packagingSchema,
-  action: actionSchema.or(z.null()).optional(),
-  conversationId: z.string().or(z.null()).optional()
+  action: actionSchema.nullish(),
+  conversationId: z.string().nullish(),
+  histories:z.string().array().optional()
 })
 
 export const shipmentHistorySchema = z.object({
   $id:z.string(),
   date: z.string(),
   currentLocation: z.string(),
-  currentLat: z.number().or(z.null()).optional(),
-  currentLong: z.number().or(z.null()).optional(),
+  currentLat: z.coerce.number().nullish(),
+  currentLong: z.coerce.number().nullish(),
   status: statusSchema,
   shipmentId: z.string(),
 })
@@ -64,18 +65,18 @@ export const conversationSchema = z.object({
   $id:z.string(),
   member1: z.string(),
   member2: z.string(),
-  lastMessageId: z.string().or(z.literal("shipping-img-new")) .or(z.null()).optional(),
+  lastMessageId: z.string().or(z.literal("shipping-img-new")) .nullish(),
 })
 
 export const messageSchema = z.object(
   {
     $id:z.string(),
     sender: z.string(),
-    text: z.string().or(z.null()).optional(),
-    read: z.boolean().or(z.null()).optional(),
-    image: z.string().or(z.null()).optional(),
+    text: z.string().nullish(),
+    read: z.boolean().nullish(),
+    image: z.string().nullish(),
     conversationId: z.string(),
-    timeStamp: z.number(),
+    timeStamp: z.coerce.number(),
   }
 ) 
 
@@ -85,8 +86,8 @@ export const notificationSchema = z.object({
   description: z.string(),
   appEntityId: z.string(),
   appEntity: appEntitiesSchema.exclude(["admin","notification"]),
-  action: z.string().or(z.null()).optional(),
-  viewed:z.boolean().or(z.null()).optional()
+  action: z.string().nullish(),
+  viewed:z.boolean().nullish()
 })
 
 type imageExtras= {imageToUpload?:FileList, imageUrl?:string}

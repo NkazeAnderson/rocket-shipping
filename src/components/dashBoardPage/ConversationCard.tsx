@@ -17,6 +17,7 @@ function ConversationCard({ conversation }: { conversation: conversationT }) {
   ) as dashBoardContextT;
   const {
     userMethods: { user },
+    conversationsMethods: { conversations },
   } = useContext(AppContext) as appContextT;
 
   const otherMember = useMemo(() => {
@@ -36,7 +37,7 @@ function ConversationCard({ conversation }: { conversation: conversationT }) {
     return conversation.extras.messages[
       conversation.extras.messages.length - 1
     ];
-  }, [conversation]);
+  }, [conversation, conversations]);
 
   if (!conversation.extras) {
     return null;

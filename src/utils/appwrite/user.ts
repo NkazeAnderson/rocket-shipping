@@ -4,11 +4,11 @@ import { database, defaultAccess, userCollection } from "../contants";
 import { ID, Query, Role } from "appwrite";
 import { stripOutAppwriteMetaData } from "..";
 
-function prepareUserForDb(user:userT) {
+function prepareUserForDb(user:Partial<userT>) {
   user.access &&  delete user.access
     user.extras && delete user.extras
     stripOutAppwriteMetaData(user)
-    return userSchema.omit({$id:true}).parse(user)
+    return userSchema.partial().parse(user)
 }
 
 export async function getMyInfo():Promise<userT> {
@@ -29,7 +29,7 @@ export async function getMyInfo():Promise<userT> {
         user.extras = {imageUrl}
       }
     }
-    user.isAdmin = data.labels.some(item => item === "admin")
+  //  user.isAdmin = data.labels.some(item => item === "admin")
   
     return user;
   }
@@ -99,7 +99,7 @@ export async function getMyInfo():Promise<userT> {
     return id
   }
 
-  export async function UpdateUser(user:userT){ 
+  export async function UpdateUser(user:Partial<userT> & {$id:string}){ 
     const image = user.extras?.imageToUpload?.length
     ? 
       await addNewFile(user.extras?.imageToUpload[0])
@@ -107,6 +107,6 @@ export async function getMyInfo():Promise<userT> {
   if (image) {
     user.image = image
   }
-  debugger
+   
     await db.updateDocument(database, userCollection, user.$id, prepareUserForDb(user));
   }

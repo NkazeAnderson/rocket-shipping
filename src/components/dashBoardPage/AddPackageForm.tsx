@@ -30,29 +30,23 @@ function AddPackageForm() {
   const methods = useForm<shipmentT>();
   const onSubmit: SubmitHandler<shipmentT> = async (data) => {
     try {
-      const shipmentId = await addShipment(data);
       const receiver = users.find((item) => item.$id === data.receiver);
-      if (receiver?.shipments && user?.shipments) {
-        receiver.shipments.push(shipmentId);
-        user.shipments.push(shipmentId);
-        await UpdateUser(receiver);
-        await UpdateUser(user);
+      if (receiver && user) {
+        if (data.extras) {
+          data.extras.courierInfo = user;
+          data.extras.receiverInfo = receiver;
+        } else {
+          data.extras = {
+            courierInfo: user,
+            receiverInfo: receiver,
+            histories: [],
+          };
+        }
       }
-      receiver && sendNewShipmentEmail(receiver);
+      const shipmentId = await addShipment(data);
+
       methods.reset();
       toast.success("Successfully added package");
-      const notification: notificationT = {
-        $id: "",
-        heading: "You have a new shipment",
-        description: "You have a new shipment from " + data.shipperName,
-        appEntity: "shipment",
-        appEntityId: shipmentId,
-      };
-      const notificationId = await addNotification(notification);
-      if (receiver?.notifications) {
-        receiver.notifications.push(notificationId);
-        await UpdateUser(receiver);
-      }
     } catch (error) {
       console.log(error);
 
@@ -177,7 +171,7 @@ function AddPackageForm() {
           placeholder="1"
           type="number"
           min={1}
-          max={10}
+          max={100}
           name="quantity"
           required
         />

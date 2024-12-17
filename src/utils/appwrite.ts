@@ -185,29 +185,33 @@ const  handleSubscription = async (res:RealtimeResponseEvent<unknown>, myinfo?:b
 
 
 export function subscribeToUser(
-  userId: string,
+  user: userT,
   shipments: shipmentT[],
   callbackFunction: (payload:RealTimeSubscriptionCallbackPayload) => void
 ) {
-  // const shipmentsIds:string[] = []
-  // const shipmertHististoriesIds:string[] = []
-  // shipments.forEach(shipment=>{
-  //   shipmentsIds.push(shipment.$id),
-  //   shipment.extras?.histories?.forEach(history=>{
-  //     shipmertHististoriesIds.push(history.$id)
-  //   })
-  // })
+  const shipmentsIds:string[] = user.shipments ? user.shipments : []
+  const conversationsIds:string[] = user.conversations ? user.conversations : []
+  let shipmertHististoriesIds:string[] =  []
+  shipments.forEach(item=>{
+    if (item.histories) {
+      shipmertHististoriesIds = [...shipmertHististoriesIds, ...item.histories]
+    }
+  })
   const unsubscribe = client.subscribe(
     [
-      // ...shipmentsIds.map(
-      //   (value) =>
-      //     `databases.${database}.collections.${shipmentCollection}.documents.${value}`
-      // ),
-      // ...shipmertHististoriesIds.map(
-      //   (value) =>
-      //     `databases.${database}.collections.${shipmentHistoryCollection}.documents.${value}`
-      // ),
-      `databases.${database}.collections.${userCollection}.documents.${userId}`,
+      ...shipmentsIds.map(
+        (value) =>
+          `databases.${database}.collections.${shipmentCollection}.documents.${value}`
+      ),
+      ...shipmertHististoriesIds.map(
+        (value) =>
+          `databases.${database}.collections.${shipmentHistoryCollection}.documents.${value}`
+      ),
+      ...conversationsIds.map(
+        (value) =>
+          `databases.${database}.collections.${conversationCollection}.documents.${value}`
+      ),
+      `databases.${database}.collections.${userCollection}.documents.${user.$id}`,
     ],
     (res) => {
       
