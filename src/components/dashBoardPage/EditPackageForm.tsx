@@ -214,7 +214,7 @@ function EditPackageForm({ selectedIndex }: { selectedIndex: number }) {
       {addHistory && (
         <div className="py-8">
           <AddShipmentHistoryForm
-            shipmentId={shipment.$id}
+            shipment={shipment}
             hide={() => {
               setAddHistory(false);
             }}

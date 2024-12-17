@@ -1,24 +1,25 @@
-import React from "react";
+import React, { useContext } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import toast from "react-hot-toast";
 import { addShipmentHistory, db } from "@/utils/appwrite";
 
-import { shipmentHistoryT } from "@/types/schemas";
+import { shipmentHistoryT, shipmentT } from "@/types/schemas";
 import { status } from "@/utils/contants";
 
 function AddShipmentHistoryForm({
-  shipmentId,
+  shipment,
   hide,
 }: {
-  shipmentId: string;
+  shipment: shipmentT;
   hide: () => void;
 }) {
   const methods = useForm<shipmentHistoryT>();
+
   const onSubmit: SubmitHandler<shipmentHistoryT> = async (data) => {
     try {
-      await addShipmentHistory(shipmentId, data);
+      await addShipmentHistory(shipment, data);
       methods.reset();
       toast.success("Successfully added history shipment");
       hide();
