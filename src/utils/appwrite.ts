@@ -26,22 +26,6 @@ export const db = new Databases(client);
 
 export const functions = new Functions(client);
 
-export  async  function sendEmail(messageParams:{to:string, text:string, subject:string}){
-
-    try {
-      functions.createExecution(
-        emailFunctionId,  // functionId
-         JSON.stringify(messageParams) ,  // body (optional)
-        false,  // async (optional)
-       
-    );
-    } catch (error) {
-      console.log(error);
-      
-    }
-
-    }
-
 
 
 export async function getUsers() {

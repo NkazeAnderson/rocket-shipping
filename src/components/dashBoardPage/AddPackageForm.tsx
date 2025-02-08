@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
-import { modes, packages, paymentModes } from "@/utils/contants";
+import { defaultAccess, modes, packages, paymentModes } from "@/utils/contants";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 
 import {
@@ -12,7 +12,6 @@ import {
   addShipmentHistory,
   db,
   getConversationId,
-  sendEmail,
   storage,
   UpdateUser,
 } from "@/utils/appwrite";
@@ -21,6 +20,7 @@ import { getLatLong, sendNewShipmentEmail } from "@/utils";
 import { notificationT, shipmentT, userT } from "@/types/schemas";
 import { AppContext } from "../ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
+import { sendEmail } from "@/utils/appwrite/emailer";
 
 function AddPackageForm() {
   const {
@@ -47,6 +47,16 @@ function AddPackageForm() {
 
       methods.reset();
       toast.success("Successfully added package");
+      sendEmail({
+        action: "shipment registered",
+        userEmail: data.extras?.receiverInfo.email || "",
+        accessKey: defaultAccess,
+        product: data.product,
+        destination: data.destination,
+        arrivalDate: data.deliveryDate,
+        shipperName: data.shipperName,
+        userName: data.extras?.receiverInfo.name || "",
+      });
     } catch (error) {
       console.log(error);
 

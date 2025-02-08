@@ -30,8 +30,11 @@ export const partners: string[] = [
 export const defaultAccess = "RS-0658389854";
 
 export const contactInfo = {
-  email: "info@rocketshippping.com",
+  email: "info@email.nexapremierlogistics.com",
+  sitename: "Nexa Premier Logistics",
 };
+
+export const emailFuncUrl = "http://675916f7b7a780e745c0.appwrite.global/";
 
 export const notifications: notificationT[] = [
   {
