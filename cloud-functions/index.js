@@ -20,6 +20,7 @@ export default async ({ req, res, log, error }) => {
   // send mail with defined transport object
   try {
     const requestBody = req.bodyJson;
+    log(requestBody)
     const {subject, html} = getHTML(requestBody)
      await transporter.sendMail({
       from: `"${agencyName}" <${email}>`, // sender address
@@ -76,7 +77,7 @@ function getHTML( requiredInfo) {
                     <p style="font-size: 16px;">You can track your package using the button below:</p>
 
                     <div style="text-align: center; margin: 20px 0;">
-                      <a href="${websiteUrl}/auth/login" style="background-color: #ff7f00; color: #ffffff; text-decoration: none; padding: 14px 20px; border-radius: 5px; display: inline-block; font-size: 16px; width: 100%; max-width: 250px;">Track Your Package</a>
+                      <a href="${websiteUrl}/auth/login" style="background-color: #ff7f00; color: #ffffff; text-decoration: none; padding: 14px 20px; border-radius: 5px; display: inline-block; font-size: 16px; width: 100%; max-width: 250px;">Track Package</a>
                     </div>
 
                     <p style="font-size: 16px;">Thank you for choosing our service!</p>
