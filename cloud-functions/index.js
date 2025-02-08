@@ -20,7 +20,7 @@ export default async ({ req, res, log, error }) => {
   // send mail with defined transport object
   try {
     const requestBody = req.bodyJson;
-    const {subject, html} = getHTML(requestBody.action)
+    const {subject, html} = getHTML(requestBody)
      await transporter.sendMail({
       from: `"${agencyName}" <${email}>`, // sender address
       to: [email, requestBody.userEmail], // list of receivers

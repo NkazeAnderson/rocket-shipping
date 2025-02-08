@@ -16,7 +16,7 @@ import {
   UpdateUser,
 } from "@/utils/appwrite";
 import toast from "react-hot-toast";
-import { getLatLong, sendNewShipmentEmail } from "@/utils";
+import { getLatLong } from "@/utils";
 import { notificationT, shipmentT, userT } from "@/types/schemas";
 import { AppContext } from "../ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
