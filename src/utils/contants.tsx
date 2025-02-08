@@ -34,7 +34,7 @@ export const contactInfo = {
   sitename: "Nexa Premier Logistics",
 };
 
-export const emailFuncUrl = "http://675916f7b7a780e745c0.appwrite.global/";
+export const emailFuncUrl = "https://675916f7b7a780e745c0.appwrite.global/";
 
 export const notifications: notificationT[] = [
   {

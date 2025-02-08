@@ -3,7 +3,7 @@ import { addNewFile, addNotification, db, getImageUrl, getUserById, UpdateUser }
 import { database, shipmentCollection, shipmentHistoryCollection } from "../contants";
 import { ID, Query } from "appwrite";
 import { shipmentWithHistoryT } from "@/types/types";
-import { getLatLong, sendNewShipmentEmail, stripOutAppwriteMetaData } from "..";
+import { getLatLong, stripOutAppwriteMetaData } from "..";
 
 function prepareShipmentForDb(shipment:Partial<shipmentT>) {
   shipment.extras && delete shipment.extras
@@ -55,9 +55,7 @@ export async function addShipment(shipment:shipmentT) {
       await UpdateUser({$id:receiver.$id, shipments:receiver.shipments});
       await UpdateUser({$id:user.$id, shipments:user.shipments});
     }
-    if (receiver) {
-      receiver && sendNewShipmentEmail(receiver);
-    }
+   
     const notification: notificationT = {
       $id: "",
       heading: "You have a new shipment",

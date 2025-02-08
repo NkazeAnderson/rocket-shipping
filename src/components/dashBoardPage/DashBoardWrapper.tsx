@@ -68,6 +68,7 @@ function DashBoardWrapper() {
 
   useEffect(() => {
     shipments.length &&
+      !user?.isAdmin &&
       (() => {
         setShowSidePanel(true);
         setSidePanelContent({

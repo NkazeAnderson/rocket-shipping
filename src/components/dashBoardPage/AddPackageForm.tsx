@@ -28,6 +28,7 @@ function AddPackageForm() {
     shipmentsMethods: { shipments },
   } = useContext(AppContext) as appContextT;
   const methods = useForm<shipmentT>();
+
   const onSubmit: SubmitHandler<shipmentT> = async (data) => {
     try {
       const receiver = users.find((item) => item.$id === data.receiver);
