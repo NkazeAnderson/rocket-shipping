@@ -29,6 +29,10 @@ export const partners: string[] = [
 
 export const defaultAccess = "RS-0658389854";
 
+export const contactInfo = {
+  email: "info@rocketshippping.com",
+};
+
 export const notifications: notificationT[] = [
   {
     $id: "76655556",

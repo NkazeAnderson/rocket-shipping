@@ -6,9 +6,10 @@ import Image from "next/image";
 import { FaMap } from "react-icons/fa";
 import { Context } from "./DashBoardWrapper";
 import { appContextT, dashBoardContextT, subjectT } from "@/types/types";
-import { profilePicPlaceholder } from "@/utils/contants";
+import { contactInfo, profilePicPlaceholder } from "@/utils/contants";
 import { shipmentT } from "@/types/schemas";
 import { AppContext } from "../ContextProviders/AppProvider";
+import Link from "next/link";
 
 function ShipmentCard({ shipment }: { shipment: shipmentT }) {
   const subject: subjectT = "shipment";
@@ -24,12 +25,18 @@ function ShipmentCard({ shipment }: { shipment: shipmentT }) {
   );
 
   const shipmentStatus = shipment?.extras?.histories?.length
-    ? shipment.extras.histories[0].status
+    ? shipment.extras.histories.toReversed()[0].status
     : undefined;
   const courierInfo = shipment?.extras?.courierInfo;
 
   return (
-    <div className="dashboardCardBG w-full rounded-15 text-white border border-success mb-24">
+    <div
+      className="dashboardCardBG w-full rounded-15 text-white border border-success mb-24"
+      onClick={() => {
+        setShowSidePanel((prev) => !prev);
+        setSidePanelContent({ id: shipment.$id, subject });
+      }}
+    >
       <div className="flex justify-between items-center">
         <div className="bg-black flex w-full rounded-t-15 py-8 px-16 border-b border-white items-center justify-between space-x-8">
           <div>
@@ -38,7 +45,27 @@ function ShipmentCard({ shipment }: { shipment: shipmentT }) {
               #{shipment.$id ? shipment.$id.slice(0, 7) : "New Shipment"}
             </h5>
           </div>
-          {shipmentStatus && <Pill text={shipmentStatus} isprimary={false} />}
+          {shipmentStatus && (
+            <div>
+              {shipmentStatus && (
+                <Pill
+                  text={shipmentStatus}
+                  isprimary={
+                    shipmentStatus &&
+                    ["In Transit", "On Hold", "Cancelled"].includes(
+                      shipmentStatus
+                    )
+                  }
+                  danger={
+                    shipmentStatus &&
+                    ["In Transit", "On Hold", "Cancelled"].includes(
+                      shipmentStatus
+                    )
+                  }
+                />
+              )}
+            </div>
+          )}
         </div>
       </div>
       <div className=" px-48  rounded-15 py-8 space-y-8">
@@ -65,26 +92,21 @@ function ShipmentCard({ shipment }: { shipment: shipmentT }) {
 
         <div className="flex items center justify-between py-16">
           <div>
-            <span
-              className=" hover:cursor-pointer"
-              onClick={() => {
-                setShowSidePanel((prev) => !prev);
-                setSidePanelContent({ id: shipment.$id, subject });
-              }}
-            >
+            <span className=" hover:cursor-pointer">
               <Pill text="Info" isprimary icon={FaFileLines} />
             </span>
           </div>
           <div>
             <span
               className=" hover:cursor-pointer"
-              onClick={() => {
+              onClick={(e) => {
                 setShowSidePanel((prev) => !prev);
                 setSidePanelContent({
                   id: shipment?.$id,
                   maps: true,
                   subject,
                 });
+                e.stopPropagation();
               }}
             >
               <Pill text="Maps" isprimary outlined icon={FaMap} />
@@ -108,22 +130,24 @@ function ShipmentCard({ shipment }: { shipment: shipmentT }) {
               <p>Courier</p>
             </div>
           </div>
-          <div
-            className="rounded-[100%] p-16 md:p-24 bg-success text-white hover:cursor-pointer"
-            onClick={() => {
-              setShowSidePanel((prev) => !prev);
-              setSidePanelContent({
-                id: conversation?.$id
-                  ? conversation.$id
-                  : user && user.$id === shipment.courier
-                  ? shipment.receiver
-                  : shipment.courier,
-                subject: "conversation",
-              });
-            }}
-          >
-            <FaComment size={25} />
-          </div>
+          <Link href={"mailto:" + contactInfo.email}>
+            <div
+              className="rounded-[100%] p-16 md:p-24 bg-success text-white hover:cursor-pointer"
+              // onClick={() => {
+              //   setShowSidePanel((prev) => !prev);
+              //   setSidePanelContent({
+              //     id: conversation?.$id
+              //       ? conversation.$id
+              //       : user && user.$id === shipment.courier
+              //       ? shipment.receiver
+              //       : shipment.courier,
+              //     subject: "conversation",
+              //   });
+              // }}
+            >
+              <FaComment size={25} />
+            </div>
+          </Link>
         </div>
       )}
     </div>

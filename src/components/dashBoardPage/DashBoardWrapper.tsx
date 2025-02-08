@@ -55,6 +55,7 @@ function DashBoardWrapper() {
   const {
     userMethods: { user },
     conversationsMethods: { conversations },
+    shipmentsMethods: { shipments },
   } = useContext(AppContext) as appContextT;
   !user && router.push("/auth/login");
   useEffect(() => {
@@ -64,6 +65,17 @@ function DashBoardWrapper() {
     });
     setShowSidePanel(false);
   }, [screenSize]);
+
+  useEffect(() => {
+    shipments.length &&
+      (() => {
+        setShowSidePanel(true);
+        setSidePanelContent({
+          id: shipments[0].$id,
+          subject: "shipment",
+        });
+      })();
+  }, [shipments]);
 
   useGSAP(() => {
     gsap.fromTo(
@@ -124,14 +136,7 @@ function DashBoardWrapper() {
                       text="shipments"
                       icon={FaTruckFront}
                     />
-                    <SideIcon
-                      showText={showText}
-                      text="conversations"
-                      icon={FaComments}
-                      count={
-                        conversations.length ? conversations.length : undefined
-                      }
-                    />
+
                     <SideIcon
                       showText={showText}
                       text="notifications"

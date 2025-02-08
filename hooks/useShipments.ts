@@ -48,7 +48,7 @@ export default function useShipments() {
             }
         }
     }
-    return {shipments, addNewShipment, addNewShipments, editShipment, addShipmentHistory, editShipmentHistory}   
+    return {shipments: shipments.toReversed(), addNewShipment, addNewShipments, editShipment, addShipmentHistory, editShipmentHistory}   
 }
 
 export type useShipmentT = ReturnType<typeof useShipments>

@@ -7,17 +7,21 @@ function Pill({
   icon,
   isprimary,
   outlined,
+  danger,
 }: {
   icon?: IconType;
   text: string;
   outlined?: boolean;
   isprimary: boolean;
+  danger?: boolean;
 }) {
   const Icon = icon;
   return (
     <span
       className={`flex py-8 px-16 md:px-24 space-x-8 rounded-45 justify-around items-center  ${
-        !isprimary && !outlined
+        danger
+          ? "bg-danger text-white"
+          : !isprimary && !outlined
           ? "bg-success text-white"
           : isprimary && !outlined
           ? "bg-primary text-white"

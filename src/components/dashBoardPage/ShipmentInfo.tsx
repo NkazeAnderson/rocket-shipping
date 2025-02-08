@@ -67,7 +67,8 @@ function ShipmentData({ heading, data }: { heading: string; data: string }) {
 }
 
 function ShipmentInfo() {
-  const { sidePanelContent } = useContext(Context) as dashBoardContextT;
+  const { sidePanelContent, setShowSidePanel, setSidePanelContent } =
+    useContext(Context) as dashBoardContextT;
   const firstElement = useRef<null | HTMLDivElement>(null);
   useEffect(() => {
     setTimeout(() => {
@@ -79,7 +80,7 @@ function ShipmentInfo() {
   } = useContext(AppContext) as appContextT;
   const shipment = shipments.find((_) => _.$id === sidePanelContent?.id);
   const shipmentStatus = shipment?.extras?.histories?.length
-    ? shipment.extras.histories[0].status
+    ? shipment.extras.histories.toReversed()[0].status
     : undefined;
   const courierInfo = shipment?.extras?.courierInfo;
   const receiverInfo = shipment?.extras?.receiverInfo;
@@ -95,9 +96,42 @@ function ShipmentInfo() {
       </div>
       <div className="flex justify-start w-full p-16 items-center sticky top-0  bg-black/70 text-white space-x-16">
         <h4 className="font-bold">Status:</h4>
-        <div className="w-fit animate-pulse ease-linear duration-[4000]">
-          {shipmentStatus && <Pill text={shipmentStatus} isprimary />}
+        <div
+          className={`w-fit ${
+            shipmentStatus &&
+            ["In Transit", "On Hold", "Cancelled"].includes(shipmentStatus) &&
+            "animate-pulse"
+          } ease-linear duration-[4000]`}
+        >
+          {shipmentStatus && (
+            <Pill
+              text={shipmentStatus}
+              isprimary={
+                shipmentStatus &&
+                ["In Transit", "On Hold", "Cancelled"].includes(shipmentStatus)
+              }
+              danger={
+                shipmentStatus &&
+                ["In Transit", "On Hold", "Cancelled"].includes(shipmentStatus)
+              }
+            />
+          )}
         </div>
+        <div className="flex-grow"></div>
+        <p
+          className="p-8 rounded-15 bg-success text-white ml-auto hover:cursor-pointer"
+          onClick={(e) => {
+            setShowSidePanel(true);
+            setSidePanelContent({
+              id: shipment?.$id,
+              maps: true,
+              subject: "shipment",
+            });
+            e.stopPropagation();
+          }}
+        >
+          View map
+        </p>
       </div>
       <div className="p-16">
         <h2 className="dashboardHeadings text-center">Users</h2>
@@ -167,7 +201,7 @@ function ShipmentInfo() {
             </tr>
           </thead>
           <tbody>
-            {histories?.map((item, index) => (
+            {histories?.toReversed().map((item, index) => (
               <tr
                 key={item.$id}
                 className={`my-8 ${index % 2 === 1 && "bg-dark-gray/20"}`}

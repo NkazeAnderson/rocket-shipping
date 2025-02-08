@@ -17,10 +17,11 @@ function ShipmentMap() {
   const {
     shipmentsMethods: { shipments },
   } = useContext(AppContext) as appContextT;
-  const { sidePanelContent } = useContext(Context) as dashBoardContextT;
+  const { sidePanelContent, setShowSidePanel, setSidePanelContent } =
+    useContext(Context) as dashBoardContextT;
   const shipment = shipments.find((_) => _.$id === sidePanelContent?.id);
   const lastHistory = shipment?.extras?.histories
-    ? shipment?.extras?.histories[0]
+    ? shipment?.extras?.histories.toReversed()[0]
     : undefined;
   if (
     !shipment ||
@@ -65,40 +66,40 @@ function ShipmentMap() {
     setMap(null);
   }
   return isLoaded ? (
-    <GoogleMap
-      mapContainerStyle={{ width: "100%", flex: 1 }}
-      center={current}
-      zoom={16}
-      onLoad={onLoad}
-      onUnmount={onUnmount}
-    >
-      {/* Child components, such as markers, info windows, etc. */}
-      {origin.lat !== current.lat && origin.lng !== current.lng && (
+    <>
+      <GoogleMap
+        mapContainerStyle={{ width: "100%", flex: 1 }}
+        center={current}
+        zoom={16}
+        onLoad={onLoad}
+        onUnmount={onUnmount}
+      >
+        {/* Child components, such as markers, info windows, etc. */}
+        {origin.lat !== current.lat && origin.lng !== current.lng && (
+          <Marker
+            position={origin}
+            label={{
+              text: "Origin",
+              className: "pb-48 text-success font-semibold",
+            }}
+          />
+        )}
         <Marker
-          position={origin}
+          position={destination}
           label={{
-            text: "Origin",
+            text: "Destination",
             className: "pb-48 text-success font-semibold",
           }}
         />
-      )}
-      <Marker
-        position={destination}
-        label={{
-          text: "Destination",
-          className: "pb-48 text-success font-semibold",
-        }}
-      />
-      <Marker
-        position={current}
-        icon={customMarkerIcon}
-        label={{
-          text: "Current location",
-          className: "pb-48 text-success font-semibold",
-        }}
-        animation={google.maps.Animation.BOUNCE}
-      />
-    </GoogleMap>
+        <Marker
+          position={current}
+          label={{
+            text: "Current location",
+            className: "pb-48 text-success font-semibold",
+          }}
+        />
+      </GoogleMap>
+    </>
   ) : (
     <></>
   );

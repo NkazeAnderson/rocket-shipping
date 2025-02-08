@@ -51,6 +51,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
 
   // const router = useRouter();
   // const path = usePathname();
+
   const { user, users, addNewUser, editUser, editMyInfo } = userMethods;
   const {
     conversations,
