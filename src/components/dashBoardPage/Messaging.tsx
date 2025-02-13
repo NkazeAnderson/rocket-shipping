@@ -123,7 +123,6 @@ function Messaging() {
         const id = await addNewFile(image);
         messageToSend.image = id;
       }
-      console.log(messageToSend);
 
       await sendMessage(messageToSend);
       startNewConverstions && UpdateUser(user);

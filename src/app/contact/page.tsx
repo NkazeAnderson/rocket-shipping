@@ -1,4 +1,5 @@
 import ContactForm from "@/components/contact/ContactForm";
+import { contactInfo } from "@/utils/contants";
 import React from "react";
 import { BiPhone } from "react-icons/bi";
 import { FaLocationPin } from "react-icons/fa6";
@@ -19,7 +20,7 @@ function ContactPage() {
               will be assigned so handle your inquires in details
             </p>
             <div className="pl-16 border-l-4 border-white mt-32">
-              {/* <div className="space-y-8 mb-16">
+              <div className="space-y-8 mb-16">
                 <div className="flex items-center">
                   <div className="w-16 border-2 -translate-x-16"></div>
                   <h3>Phone</h3>
@@ -27,12 +28,12 @@ function ContactPage() {
                 <div className="flex items-center space-x-8 pl-16 text-[yellow]">
                   <BiPhone size={35} />
                   <p className="underline">
-                    <a href="tel:+16121771777">
-                      <strong>+1 612-177-1777</strong>
+                    <a href={`tel:${contactInfo.phone}`}>
+                      <strong>{contactInfo.phone}</strong>
                     </a>
                   </p>
                 </div>
-              </div> */}
+              </div>
               <div className="space-y-8 mb-16">
                 <div className="flex items-center">
                   <div className="w-16 border-2 -translate-x-16"></div>
@@ -41,8 +42,8 @@ function ContactPage() {
                 <div className="flex items-center space-x-8 pl-16 text-[yellow]">
                   <MdEmail size={35} />
                   <p className="underline">
-                    <a href="mailto:info@rocketshippping.com">
-                      <strong>info@rocketshippping.com</strong>
+                    <a href={`mailto:${contactInfo.email}`}>
+                      <strong>{contactInfo.email}</strong>
                     </a>
                   </p>
                 </div>

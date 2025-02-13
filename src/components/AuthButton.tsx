@@ -10,15 +10,17 @@ import { appContextT } from "@/types/types";
 
 function AuthButton() {
   const [pending, setPending] = useState(false);
-  const {userMethods: {user, deAuthenticateUser} } = useContext(AppContext) as appContextT
+  const {
+    userMethods: { user, deAuthenticateUser },
+  } = useContext(AppContext) as appContextT;
   return (
     <>
       {user ? (
-        <div className="md:flex md:space-x-8 space-y-8 md:space-y-0 items-center text-primary">
+        <div className="md:flex flex-col-reverse md:space-x-8 space-y-8 items-center text-primary">
           <div className="flex space-x-8 items-center">
             <BsPersonCheck size={25} />
             <p className=" italic font-semibold text-[14px] text-primary">
-              {user.email }
+              {user.email}
             </p>
           </div>
           <LogOutButtonWrapper>
@@ -26,7 +28,7 @@ function AuthButton() {
               onClick={async () => {
                 setPending(true);
                 try {
-                  await deAuthenticateUser()
+                  await deAuthenticateUser();
                 } catch (error) {}
 
                 setPending(false);

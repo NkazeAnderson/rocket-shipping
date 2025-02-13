@@ -9,7 +9,7 @@ function Logo({ white, persist }: { white?: boolean; persist?: boolean }) {
       <p
         className={`text-[35px] font-extrabold italic ${
           !persist && "hidden"
-        } lg:inline ${white ? "text-white" : "text-black"}`}
+        } lg:inline ${white ? "text-white" : "text-primary"}`}
       >
         {companyInfo.name}
       </p>

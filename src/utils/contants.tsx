@@ -32,6 +32,7 @@ export const defaultAccess = "RS-0658389854";
 export const contactInfo = {
   email: "info@email.nexapremierlogistics.com",
   sitename: "Nexa Premier Logistics",
+  phone: "+13107361336",
 };
 
 export const emailFuncUrl = "https://675916f7b7a780e745c0.appwrite.global/";
@@ -286,10 +287,10 @@ export const companyInfo: {
   phone: string;
   address: string;
 } = {
-  name: "Rocket Shipping",
+  name: "Nexa Premier",
   logo: "/logo.png",
-  email: "info@rocketshippping.com",
-  phone: "+19727727261",
+  email: "info@email.nexapremierlogistics.com",
+  phone: "+13107361336",
   address: "123 East Baffalo, New York, NY, 10882",
 };
 
