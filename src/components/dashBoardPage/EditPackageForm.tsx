@@ -10,6 +10,7 @@ import AddShipmentHistoryForm from "./AddShipmentHistoryForm";
 import { shipmentT, userT } from "@/types/schemas";
 import { AppContext } from "../ContextProviders/AppProvider";
 import { appContextT } from "@/types/types";
+import { sendEmail } from "@/utils/appwrite/emailer";
 
 function EditPackageForm({ selectedIndex }: { selectedIndex: number }) {
   const {
@@ -32,6 +33,15 @@ function EditPackageForm({ selectedIndex }: { selectedIndex: number }) {
   const onSubmit: SubmitHandler<shipmentT> = async (data) => {
     try {
       await updateShipment(data, shipment);
+      if (data.action && data.action !== "None") {
+        sendEmail({
+          action: "shipment action",
+          id: shipment.$id,
+          courrier: shipment.extras?.courierInfo.name ?? "",
+          product: shipment.product,
+          cause: data.action,
+        });
+      }
       methods.reset();
       toast.success("Successfully editted shipment");
     } catch (error) {
