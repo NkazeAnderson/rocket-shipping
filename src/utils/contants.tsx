@@ -87,6 +87,7 @@ export const modes: modeT[] = [
 export const paymentModes: paymentMethodT[] = [
   "Cash",
   "Zelle",
+  "Chime",
   "Apple Pay",
   "Gift Card",
   "Cashapp",
@@ -95,7 +96,14 @@ export const paymentModes: paymentMethodT[] = [
   "Credit Card",
   "Bank",
 ];
-export const packages: packageT[] = ["Crate", "Pallet", "Carton", "Envelope"];
+export const packages: packageT[] = [
+  "Crate",
+  "Pallet",
+  "Carton",
+  "Envelope",
+  "Open Carrier",
+  "Close Carrier",
+];
 
 export const actions: actionsT[] = [
   "Crate change",

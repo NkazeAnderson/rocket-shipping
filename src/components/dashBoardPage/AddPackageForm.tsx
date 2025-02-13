@@ -27,11 +27,20 @@ function AddPackageForm() {
     userMethods: { users, user },
     shipmentsMethods: { shipments },
   } = useContext(AppContext) as appContextT;
-  const methods = useForm<shipmentT>();
+  const methods = useForm<shipmentT>({
+    defaultValues: {
+      pickupDate: new Date().toLocaleDateString(),
+      quantity: 1,
+      weight: 1,
+    },
+  });
 
   const onSubmit: SubmitHandler<shipmentT> = async (data) => {
     try {
       const receiver = users.find((item) => item.$id === data.receiver);
+      if (!receiver) {
+        return;
+      }
       if (receiver && user) {
         if (data.extras) {
           data.extras.courierInfo = user;
@@ -46,18 +55,19 @@ function AddPackageForm() {
       }
       const shipmentId = await addShipment(data);
 
-      methods.reset();
       toast.success("Successfully added package");
+
       sendEmail({
         action: "shipment registered",
-        userEmail: data.extras?.receiverInfo.email || "",
+        userEmail: receiver.email,
         accessKey: defaultAccess,
         product: data.product,
         destination: data.destination,
         arrivalDate: data.deliveryDate,
         shipperName: data.shipperName,
-        userName: data.extras?.receiverInfo.name || "",
+        userName: receiver.name,
       });
+      methods.reset();
     } catch (error) {
       console.log(error);
 
@@ -185,6 +195,7 @@ function AddPackageForm() {
           max={100}
           name="quantity"
           required
+          defaultValue={1}
         />
         <Input
           label="Weight in Kg"
@@ -193,6 +204,7 @@ function AddPackageForm() {
           min={1}
           max={10000}
           name="weight"
+          defaultValue={1}
           required
         />
         <Input

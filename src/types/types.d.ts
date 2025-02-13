@@ -69,7 +69,7 @@ type modeT =
   | "Land Transport"
   | "Rail Transport"
   | "Ship Transport";
-type packageT = "Crate" | "Pallet" | "Carton" | "Envelope";
+type packageT = "Crate" | "Pallet" | "Carton" | "Envelope"| "Open Carrier"|"Close Carrier";
 type paymentMethodT =
   | "Cash"
   | "Zelle"
@@ -79,6 +79,7 @@ type paymentMethodT =
   | "Paypal"
   | "Google Pay"
   | "Credit Card"
+  | "Chime"
   | "Bank";
 
 
