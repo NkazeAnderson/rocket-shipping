@@ -19,6 +19,13 @@ const transporter = nodemailer.createTransport({
 export default async ({ req, res, log, error }) => {
   // send mail with defined transport object
   try {
+    if (req.method === 'OPTIONS') {
+      return res.send('', 200, {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      })
+    }
+    
     const requestBody = req.bodyJson;
     log(requestBody)
     const {subject, html} = getHTML(requestBody)
