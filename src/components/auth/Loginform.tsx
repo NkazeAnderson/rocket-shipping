@@ -55,7 +55,7 @@ function Loginform() {
         />
         <div>
           <Link
-            className="text-right font-bold underline "
+            className="text-right font-bold underline hidden"
             href={"/auth/reset-password"}
           >
             Forgot access key
