@@ -27,7 +27,7 @@ export const partners: string[] = [
   "/partner6.png",
 ];
 
-export const defaultAccess = "RS-0658389854";
+export const defaultAccess = "NEXA0658389854";
 
 export const contactInfo = {
   email: "info@email.nexapremierlogistics.com",
